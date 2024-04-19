@@ -13,6 +13,7 @@ public class displayCard : MonoBehaviour
     public int position;
     public bool team;
     public bool boost;
+    public int points;
     public int attackOriginal;
 
     // Start is called before the first frame update
@@ -22,5 +23,6 @@ public class displayCard : MonoBehaviour
         attackText.text = card.attack.ToString();
         artImage.sprite = card.cardImage;
         attackOriginal = card.attack;
+        points = card.attack;
     }
 }
