@@ -9,13 +9,23 @@ public class TurnSystem : MonoBehaviour
     public TextMeshProUGUI turnText;
     public GameObject hand1;
     public GameObject hand2;
+    public bool round;
+    public void OnClick()
+    {
+        EndYourTurn();
+        round =! round;
+    }
     void Start()
     {
         EndYourTurn();
     }
     public void EndYourTurn()
     {
-        isYourTurn =! isYourTurn;
+        if(!round)
+        {
+            isYourTurn =! isYourTurn;
+        
+        }
         if(isYourTurn)
         {
             turnText.text = "Your Turn";
@@ -28,6 +38,7 @@ public class TurnSystem : MonoBehaviour
             HideEnemyCards(hand1,false);
             HideEnemyCards(hand2,true);
         }     
+        
     }
     public void HideEnemyCards(GameObject hand,bool myHand)
     {

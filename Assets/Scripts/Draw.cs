@@ -12,6 +12,14 @@ public class Draw : MonoBehaviour
     public deckManager deck2;
    /* public TextMeshProUGUI deck1Size;
     public TextMeshProUGUI deck2Size;*/
+    void Start()
+    {
+        for(int i = 0; i <10;i++)
+        {
+            Draw1();
+            Draw2();
+        }
+    }
     public void Draw1()
     {
         List<GameObject> deckCards = deck1.GetCards();
