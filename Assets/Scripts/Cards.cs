@@ -11,6 +11,8 @@ public class Cards : ScriptableObject
     public int zone;
     public string description;
     public bool golden;
+    public int effect;
+    public bool buff;
     // Start is called before the first frame update
    public void Print()
    {

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Drawing;
 
 public class TurnSystem : MonoBehaviour
 {
@@ -9,11 +10,30 @@ public class TurnSystem : MonoBehaviour
     public TextMeshProUGUI turnText;
     public GameObject hand1;
     public GameObject hand2;
+    public PointCount playerpoints ;
     public bool round;
+    int counter;
     public void OnClick()
     {
-        EndYourTurn();
+        counter++;
+        if(counter==2)
+        {
+            counter=0;
+            int pPoints = int.Parse(playerpoints.playerpoints.text);
+            int ePoints = int.Parse(playerpoints.enemyPoints.text);;
+            if(pPoints<ePoints)
+            {
+
+            }
+            else
+            {
+                
+            }
+        }
         round =! round;
+        isYourTurn =! isYourTurn;
+        EndYourTurn();
+        
     }
     void Start()
     {
