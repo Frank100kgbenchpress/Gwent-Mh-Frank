@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Barioth
   attack: 7
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: d6423f0c314631c40ae7d6f43bd52454, type: 3}
   id: 8
   zone: 3
   description: The Tundra Shadow
   golden: 0
+  effect: 0
+  buff: 0

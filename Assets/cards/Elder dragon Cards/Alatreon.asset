@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Alatreon
   attack: 10
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: 1340adb34df4ccd41b0c759b9a2ef218, type: 3}
   id: 30
   zone: 9
   description: Four Elements
   golden: 0
+  effect: 0
+  buff: 0

@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Rathalos
   attack: 8
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: bdd7fd89a0840a94bbddc8d051578cc3, type: 3}
   id: 1
   zone: 2
   description: The king of the sky
   golden: 0
+  effect: 0
+  buff: 0

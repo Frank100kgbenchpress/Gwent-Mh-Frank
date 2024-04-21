@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Jungle Zone
   attack: 0
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: ed9fae23684000744ac2c316590d4939, type: 3}
   id: 17
   zone: 7
   description: This zone Benefits all monsters
   golden: 0
+  effect: 2
+  buff: 0

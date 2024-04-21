@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Amatsu
   attack: 0
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: fb0866e32111e94428061f0658aa4c20, type: 3}
   id: 32
   zone: 11
   description: 
   golden: 0
+  effect: 0
+  buff: 0

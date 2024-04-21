@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Giadrome
   attack: 0
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: 968b41f8c4c96b641bc63df99aa458bc, type: 3}
   id: 13
   zone: 1
   description: Rockie Hunter Starter Pack Be Like
   golden: 0
+  effect: 0
+  buff: 0

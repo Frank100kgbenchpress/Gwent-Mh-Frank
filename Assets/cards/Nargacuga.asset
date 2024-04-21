@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Nargacuga
   attack: 7
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: 58976b4d76933dd46817eae17cc885bc, type: 3}
   id: 5
   zone: 3
   description: The Shadow
   golden: 0
+  effect: 0
+  buff: 0

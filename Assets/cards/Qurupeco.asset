@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Qurupeco
   attack: 0
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: 6d9f5b8329fd5614996ce73b871ec760, type: 3}
   id: 10
   zone: 6
   description: The Rathalos And Rathian hommie
   golden: 0
+  effect: 1
+  buff: 0

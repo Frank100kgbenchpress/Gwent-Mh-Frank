@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Rathian
   attack: 6
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: 4c3148fc62118074c83fc2f2e4005e06, type: 3}
   id: 2
   zone: 1
   description: The Earth Queen
   golden: 0
+  effect: 0
+  buff: 0

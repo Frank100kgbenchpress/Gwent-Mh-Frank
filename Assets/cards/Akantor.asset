@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Akantor
   attack: 12
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: 48ad18fd1e108b84eab0f363e0cca231, type: 3}
   id: 6
   zone: 1
   description: The King Of Lava
   golden: 0
+  effect: 0
+  buff: 0

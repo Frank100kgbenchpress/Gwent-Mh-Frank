@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Thundra Zone
   attack: 0
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: 41c187e6ec9979349abc6a148fd4a4b8, type: 3}
   id: 15
   zone: 7
   description: This Zone Beneficiates ice type Monsters
   golden: 0
+  effect: 2
+  buff: 0

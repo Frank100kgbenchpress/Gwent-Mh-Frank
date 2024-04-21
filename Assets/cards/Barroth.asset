@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Barroth
   attack: 0
-  cardImage: {fileID: 0}
+  cardImage: {fileID: 21300000, guid: a2c527d75d870a14783203666cb12f13, type: 3}
   id: 12
   zone: 4
   description: The troyan of Monsters
   golden: 0
+  effect: 1
+  buff: 0
