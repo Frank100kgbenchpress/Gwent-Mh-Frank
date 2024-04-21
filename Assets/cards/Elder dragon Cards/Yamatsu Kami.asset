@@ -19,3 +19,5 @@ MonoBehaviour:
   zone: 10
   description: The Islands
   golden: 0
+  effect: 9
+  buff: 0

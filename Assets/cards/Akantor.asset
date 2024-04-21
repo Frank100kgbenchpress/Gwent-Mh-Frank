@@ -19,5 +19,5 @@ MonoBehaviour:
   zone: 1
   description: The King Of Lava
   golden: 0
-  effect: 0
+  effect: 8
   buff: 0

@@ -19,5 +19,5 @@ MonoBehaviour:
   zone: 11
   description: 
   golden: 0
-  effect: 0
+  effect: 1
   buff: 0

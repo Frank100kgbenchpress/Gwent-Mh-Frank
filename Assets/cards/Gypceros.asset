@@ -19,5 +19,5 @@ MonoBehaviour:
   zone: 2
   description: The Lier
   golden: 0
-  effect: 0
+  effect: 6
   buff: 0

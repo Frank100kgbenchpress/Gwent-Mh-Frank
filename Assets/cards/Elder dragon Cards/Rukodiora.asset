@@ -19,3 +19,5 @@ MonoBehaviour:
   zone: 10
   description: A dangerous Elder Dragon
   golden: 0
+  effect: 6
+  buff: 0

@@ -19,5 +19,5 @@ MonoBehaviour:
   zone: 9
   description: The Elder Dragon Of Terror
   golden: 1
-  effect: 0
+  effect: 4
   buff: 0

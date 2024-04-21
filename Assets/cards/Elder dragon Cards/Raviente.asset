@@ -19,3 +19,5 @@ MonoBehaviour:
   zone: 13
   description: is Always Angry
   golden: 0
+  effect: 1
+  buff: 0

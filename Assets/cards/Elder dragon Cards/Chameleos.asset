@@ -19,3 +19,5 @@ MonoBehaviour:
   zone: 12
   description: Poison Elder Dragon
   golden: 0
+  effect: 1
+  buff: 0

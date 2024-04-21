@@ -19,3 +19,5 @@ MonoBehaviour:
   zone: 8
   description: The Second Biggest Elder Dragon
   golden: 0
+  effect: 8
+  buff: 0

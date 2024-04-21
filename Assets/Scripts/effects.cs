@@ -56,7 +56,7 @@ public class effects : MonoBehaviour
         }
         if(hability==10)
         {
-            
+            Average(card);
         }
         if(hability==11)
         {
@@ -625,6 +625,58 @@ public class effects : MonoBehaviour
                     break;
                 }   
             }
+        }
+    }
+    void Average(GameObject cardPlayed)
+    {
+        int sum = 0;
+        int div = 0;
+        zone1 = GameObject.Find("MeleeZone");
+        foreach (var Transform in zone1.transform)
+        {
+            displayCard[] cards = zone1.GetComponentsInChildren<displayCard>();
+            foreach (var card in cards)
+            {
+                if(card.card.golden) continue;
+                
+                sum += card.points;
+                div++;   
+            }   
+        }
+        zone2 = GameObject.Find("EnemyMeleeZone");
+        foreach (var Transform in zone2.transform)
+        {
+            displayCard[] cards = zone2.GetComponentsInChildren<displayCard>();
+            foreach (var card in cards)
+            {
+                if(card.card.golden) continue;
+                
+                sum += card.points;
+                div++;   
+            }   
+        }
+        sum /= div;
+        foreach (var Transform in zone1.transform)
+        {
+            displayCard [] cards = zone1.GetComponentsInChildren<displayCard>();
+            foreach (var card in cards)
+            {
+                if(card.card.golden) continue;
+                
+                card.points = sum;
+                card.attackText.text = card.points.ToString();   
+            }    
+        }
+        foreach (var Transform in zone2.transform)
+        {
+            displayCard [] cards = zone2.GetComponentsInChildren<displayCard>();
+            foreach (var card in cards)
+            {
+                if(card.card.golden) continue;
+                
+                card.points = sum;
+                card.attackText.text = card.points.ToString();   
+            }    
         }
     }
 }

@@ -19,3 +19,5 @@ MonoBehaviour:
   zone: 8
   description: The Inferno Emperor
   golden: 0
+  effect: 5
+  buff: 0

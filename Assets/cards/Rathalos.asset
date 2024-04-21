@@ -19,5 +19,5 @@ MonoBehaviour:
   zone: 2
   description: The king of the sky
   golden: 0
-  effect: 0
+  effect: 5
   buff: 0

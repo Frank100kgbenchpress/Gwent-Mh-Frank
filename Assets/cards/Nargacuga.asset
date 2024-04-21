@@ -19,5 +19,5 @@ MonoBehaviour:
   zone: 3
   description: The Shadow
   golden: 0
-  effect: 0
+  effect: 9
   buff: 0

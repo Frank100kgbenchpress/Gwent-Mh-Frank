@@ -19,5 +19,5 @@ MonoBehaviour:
   zone: 9
   description: Four Elements
   golden: 0
-  effect: 0
+  effect: 10
   buff: 0
