@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: c3ae1cc523c44734899bff834934ccf9, type: 3}
   id: 27
   zone: 9
-  description: The Biggest Elder Dragon
+  description: ' Biggest Elder Dragon'
   golden: 0
   effect: 0
   buff: 0

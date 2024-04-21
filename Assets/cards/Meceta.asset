@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: 1347c862524a04f46841357b753559d1, type: 3}
   id: 18
   zone: 7
-  description: 'Turns Day Sunny '
+  description: Turns Day Sunny ,cleaning the weather zone
   golden: 0
   effect: 3
   buff: 0

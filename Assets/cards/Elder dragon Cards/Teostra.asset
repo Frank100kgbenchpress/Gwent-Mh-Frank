@@ -17,7 +17,8 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: 4d59a98ba04a34f4e8838a44facd3642, type: 3}
   id: 20
   zone: 8
-  description: The Inferno Emperor
+  description: Inferno Emperor, if there are more like him in board multiply his
+    power
   golden: 0
   effect: 5
   buff: 0

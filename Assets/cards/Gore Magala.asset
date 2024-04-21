@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: c056ad07dd460844590149cf4b0e47ec, type: 3}
   id: 3
   zone: 2
-  description: Wvyvern Golden
+  description: Wvyvern Golden that benefits his row whith 5 points
   golden: 1
   effect: 4
   buff: 0

@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: 1340adb34df4ccd41b0c759b9a2ef218, type: 3}
   id: 30
   zone: 9
-  description: Four Elements
+  description: 'Four Elements, calls  a weather '
   golden: 0
   effect: 10
   buff: 0

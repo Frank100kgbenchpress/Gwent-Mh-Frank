@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: ed9fae23684000744ac2c316590d4939, type: 3}
   id: 17
   zone: 7
-  description: This zone Benefits all monsters
+  description: turns asedius monster attack to 1
   golden: 0
   effect: 2
   buff: 0

@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: f85bf883e8eda8c4dadae57f4d71ea5f, type: 3}
   id: 21
   zone: 8
-  description: The Inferno Queen
+  description: Inferno Queen , destroy the card with lowest attack in melee zone
   golden: 0
   effect: 7
   buff: 0

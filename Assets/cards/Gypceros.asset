@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: 3f7cb8b33da698f46b2d480ee5a47ac8, type: 3}
   id: 9
   zone: 2
-  description: The Lier
+  description: destroy enemy card with higth attack
   golden: 0
   effect: 6
   buff: 0

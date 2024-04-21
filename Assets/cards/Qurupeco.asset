@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: 6d9f5b8329fd5614996ce73b871ec760, type: 3}
   id: 10
   zone: 6
-  description: The Rathalos And Rathian hommie
+  description: it benefits asedius monsters with 5 points
   golden: 0
   effect: 1
   buff: 0

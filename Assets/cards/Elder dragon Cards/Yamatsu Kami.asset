@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: 3849a4af8d3e9cb428612613b0d0b896, type: 3}
   id: 24
   zone: 10
-  description: The Islands
+  description: The Island, calls a weather
   golden: 0
   effect: 9
   buff: 0

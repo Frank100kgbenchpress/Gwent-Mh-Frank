@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: 48ad18fd1e108b84eab0f363e0cca231, type: 3}
   id: 6
   zone: 1
-  description: The King Of Lava
+  description: The King Of Lava when enters to game destroy the zone with more cards
   golden: 0
   effect: 8
   buff: 0

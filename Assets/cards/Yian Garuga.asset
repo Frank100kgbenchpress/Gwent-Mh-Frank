@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: 1c4ddf75097683a4980f26beb7bbf83e, type: 3}
   id: 11
   zone: 5
-  description: The Rathian Far Away Cousin
+  description: benefits distance monsters with 5 points
   golden: 0
   effect: 1
   buff: 0

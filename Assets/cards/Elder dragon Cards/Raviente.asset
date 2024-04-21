@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: c088ebbfae637e949878d4d0956e5825, type: 3}
   id: 31
   zone: 13
-  description: is Always Angry
+  description: supply asedius monsters with  5 points
   golden: 0
   effect: 1
   buff: 0

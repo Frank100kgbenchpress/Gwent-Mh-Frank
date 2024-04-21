@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: bdd7fd89a0840a94bbddc8d051578cc3, type: 3}
   id: 1
   zone: 2
-  description: The king of the sky
+  description: The king of the sky, if he sees another rathalos multiply his power
   golden: 0
   effect: 5
   buff: 0

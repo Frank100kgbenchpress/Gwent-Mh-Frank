@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: 1b03abb9415d9fd4eb6e95869e4136d0, type: 3}
   id: 26
   zone: 10
-  description: A dangerous Elder Dragon
+  description: destroy enemy card with higth attack
   golden: 0
   effect: 6
   buff: 0

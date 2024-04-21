@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: 4c3148fc62118074c83fc2f2e4005e06, type: 3}
   id: 2
   zone: 1
-  description: The Earth Queen
+  description: The Earth Queen , calls a weather
   golden: 0
   effect: 10
   buff: 0

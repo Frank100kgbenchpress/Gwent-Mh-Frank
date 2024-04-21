@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: 8c31b7cb09d68e441b44a75fc0113c29, type: 3}
   id: 4
   zone: 1
-  description: El Carnivoro
+  description: destroy melee card with lowest attack
   golden: 0
   effect: 7
   buff: 0

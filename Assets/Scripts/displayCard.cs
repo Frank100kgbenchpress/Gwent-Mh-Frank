@@ -9,6 +9,7 @@ public class displayCard : MonoBehaviour
     public Cards card;
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI attackText;
+    public TextMeshProUGUI description;
     public Image artImage;
     public int position;
     public bool team;
@@ -24,5 +25,6 @@ public class displayCard : MonoBehaviour
         artImage.sprite = card.cardImage;
         attackOriginal = card.attack;
         points = card.attack;
+        description.text = card.description;
     }
 }
