@@ -14,11 +14,10 @@ public class Draw : MonoBehaviour
     public TextMeshProUGUI deck2Size;*/
     void Start()
     {
-        for(int i = 0; i <10;i++)
-        {
-            Draw1();
-            Draw2();
-        }
+        Hand1 = GameObject.Find("PlayerHand");
+        Hand2 = GameObject.Find("EnemyHand");
+        deck1 = GameObject.Find("deckManager1").GetComponent<deckManager>();
+        deck2 = GameObject.Find("deckManager2").GetComponent<deckManager>();
     }
     public void Draw1()
     {

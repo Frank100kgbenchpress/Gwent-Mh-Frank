@@ -9,6 +9,12 @@ public class DragAndDrop : MonoBehaviour
     private bool isDraggin = false;
     private bool isOverDropZone = false;
     private GameObject dropZone;
+    public TurnSystem endturn;
+    public TurnSystem turns;
+    public effects effect;
+    public deckManager deck;
+    public Draw draw;
+
     
 
 
@@ -39,12 +45,15 @@ public class DragAndDrop : MonoBehaviour
     }
     public void EndDrag()
     {
-        TurnSystem turns = GameObject.Find("GameManager").GetComponent<TurnSystem>();
+        
         isDraggin = false;
         if(isOverDropZone && CorrectZone())
         {
+            turns = GameObject.Find("GameManager").GetComponent<TurnSystem>();
             transform.SetParent(dropZone.transform, false);
-            turns.EndYourTurn();
+            turns.EndTurn();
+            effect = GameObject.Find("GameManager").GetComponent<effects>();
+            effect.UseEffect(gameObject.GetComponent<displayCard>().card.effect,gameObject);
         }
         else
         {

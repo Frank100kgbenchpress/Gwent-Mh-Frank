@@ -151,9 +151,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1250609658}
-  - {fileID: 853815915}
-  - {fileID: 2069859530}
   - {fileID: 1451348977}
   - {fileID: 1712902688}
   - {fileID: 497720076}
@@ -959,6 +956,44 @@ RectTransform:
   m_AnchoredPosition: {x: 0.00001502, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &745417474
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 745417475}
+  m_Layer: 5
+  m_Name: EnemySupportZones
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &745417475
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 745417474}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1250609658}
+  - {fileID: 853815915}
+  - {fileID: 2069859530}
+  m_Father: {fileID: 1588061752}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &853815915 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7730667981824288372, guid: 5cd8bbd996593be45ba3510efd7ce395, type: 3}
@@ -976,6 +1011,7 @@ GameObject:
   - component: {fileID: 860915462}
   - component: {fileID: 860915464}
   - component: {fileID: 860915465}
+  - component: {fileID: 860915466}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -997,10 +1033,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isYourTurn: 0
   turnText: {fileID: 721005807}
+  playerpoints: {fileID: 0}
+  enemyPoints: {fileID: 0}
   hand1: {fileID: 1050920124}
   hand2: {fileID: 1984005071}
-  playerpoints: {fileID: 0}
+  playerpoint: {fileID: 0}
   round: 0
+  useDecoy: 0
+  team: 0
+  draw: {fileID: 0}
+  change: {fileID: 0}
+  change1: {fileID: 0}
+  pass: 0
+  counter: 0
 --- !u!4 &860915463
 Transform:
   m_ObjectHideFlags: 0
@@ -1058,6 +1103,25 @@ MonoBehaviour:
   wheatherUse: 0
   effectLoop: 0
   effect: {fileID: 0}
+  decoy: {fileID: 0}
+  draw: {fileID: 0}
+--- !u!114 &860915466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 860915461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49a90b1a2fb8edc45b6701f695f89cb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Card: {fileID: 0}
+  Hand1: {fileID: 1050920124}
+  Hand2: {fileID: 1984005071}
+  deck1: {fileID: 1356169588}
+  deck2: {fileID: 1499553725}
 --- !u!1 &896293687 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5933519672587098211, guid: e348184b132145f41a55984e2fa2e4bc, type: 3}
@@ -1102,9 +1166,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 878350375226835345}
-  - {fileID: 587325008}
-  - {fileID: 1603134601}
-  - {fileID: 1599374259}
   - {fileID: 896293688}
   - {fileID: 1276666844}
   m_Father: {fileID: 1588061752}
@@ -1213,6 +1274,44 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5033845494478690444, guid: e66a07c3c39077448b26ca2e5daef03f, type: 3}
   m_PrefabInstance: {fileID: 7959896178286573494}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1294293239
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1294293240}
+  m_Layer: 5
+  m_Name: SupportZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1294293240
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294293239}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 587325008}
+  - {fileID: 1603134601}
+  - {fileID: 1599374259}
+  m_Father: {fileID: 1588061752}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1356169587
 GameObject:
   m_ObjectHideFlags: 0
@@ -1469,7 +1568,6 @@ GameObject:
   - component: {fileID: 1497397243}
   - component: {fileID: 1497397242}
   - component: {fileID: 1497397241}
-  - component: {fileID: 1497397244}
   m_Layer: 5
   m_Name: PassTurn
   m_TagString: Untagged
@@ -1541,7 +1639,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1497397244}
+      - m_Target: {fileID: 860915462}
         m_TargetAssemblyTypeName: TurnSystem, Assembly-CSharp
         m_MethodName: OnClick
         m_Mode: 1
@@ -1591,24 +1689,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1497397239}
   m_CullTransparentMesh: 1
---- !u!114 &1497397244
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1497397239}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89b128c7da6d823448d4729a2205d3c3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isYourTurn: 0
-  turnText: {fileID: 721005807}
-  hand1: {fileID: 1050920124}
-  hand2: {fileID: 1984005071}
-  playerpoints: {fileID: 0}
-  round: 0
 --- !u!1 &1499553724
 GameObject:
   m_ObjectHideFlags: 0
@@ -1686,7 +1766,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1079196182}
+    m_TransformParent: {fileID: 1294293240}
     m_Modifications:
     - target: {fileID: -2779455468002549278, guid: d417a75ab6cb58b4685bba0ef80232f8, type: 3}
       propertyPath: idZone
@@ -1890,6 +1970,8 @@ RectTransform:
   - {fileID: 1079196182}
   - {fileID: 127686947}
   - {fileID: 234869921}
+  - {fileID: 1294293240}
+  - {fileID: 745417475}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2485,6 +2567,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5642695158326460190, guid: d801f8e327cfe33409e77b016e053ff5, type: 3}
+      propertyPath: m_Size.y
+      value: 6.9262085
+      objectReference: {fileID: 0}
+    - target: {fileID: 5642695158326460190, guid: d801f8e327cfe33409e77b016e053ff5, type: 3}
+      propertyPath: m_Offset.y
+      value: -1.309845
+      objectReference: {fileID: 0}
     - target: {fileID: 6892381742504751612, guid: d801f8e327cfe33409e77b016e053ff5, type: 3}
       propertyPath: m_Name
       value: EnemyDistanceZone
@@ -2594,6 +2684,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemyMeleeZone
       objectReference: {fileID: 0}
+    - target: {fileID: 6250265900156834756, guid: 79411c943e612a34ab473f955706c82f, type: 3}
+      propertyPath: m_Size.x
+      value: 205.59344
+      objectReference: {fileID: 0}
+    - target: {fileID: 6250265900156834756, guid: 79411c943e612a34ab473f955706c82f, type: 3}
+      propertyPath: m_Size.y
+      value: 6.926239
+      objectReference: {fileID: 0}
+    - target: {fileID: 6250265900156834756, guid: 79411c943e612a34ab473f955706c82f, type: 3}
+      propertyPath: m_Offset.x
+      value: -6.2344055
+      objectReference: {fileID: 0}
+    - target: {fileID: 6250265900156834756, guid: 79411c943e612a34ab473f955706c82f, type: 3}
+      propertyPath: m_Offset.y
+      value: -1.3098297
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2607,6 +2713,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1079196182}
     m_Modifications:
+    - target: {fileID: 1065257367528372795, guid: 2a6a9fb3c382aad459c7d43f09ea8590, type: 3}
+      propertyPath: m_Size.x
+      value: 200.10431
+      objectReference: {fileID: 0}
+    - target: {fileID: 1065257367528372795, guid: 2a6a9fb3c382aad459c7d43f09ea8590, type: 3}
+      propertyPath: m_Size.y
+      value: 8.028458
+      objectReference: {fileID: 0}
+    - target: {fileID: 1065257367528372795, guid: 2a6a9fb3c382aad459c7d43f09ea8590, type: 3}
+      propertyPath: m_Offset.x
+      value: -2.7920837
+      objectReference: {fileID: 0}
+    - target: {fileID: 1065257367528372795, guid: 2a6a9fb3c382aad459c7d43f09ea8590, type: 3}
+      propertyPath: m_Offset.y
+      value: -0.7587204
+      objectReference: {fileID: 0}
     - target: {fileID: 2243008231525463257, guid: 2a6a9fb3c382aad459c7d43f09ea8590, type: 3}
       propertyPath: m_Name
       value: MeleeZone
@@ -2709,6 +2831,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1079196182}
     m_Modifications:
+    - target: {fileID: 2195332519310060234, guid: e348184b132145f41a55984e2fa2e4bc, type: 3}
+      propertyPath: m_Size.x
+      value: 203.82703
+      objectReference: {fileID: 0}
+    - target: {fileID: 2195332519310060234, guid: e348184b132145f41a55984e2fa2e4bc, type: 3}
+      propertyPath: m_Size.y
+      value: 7.0115128
+      objectReference: {fileID: 0}
+    - target: {fileID: 2195332519310060234, guid: e348184b132145f41a55984e2fa2e4bc, type: 3}
+      propertyPath: m_Offset.x
+      value: -4.033081
+      objectReference: {fileID: 0}
+    - target: {fileID: 2195332519310060234, guid: e348184b132145f41a55984e2fa2e4bc, type: 3}
+      propertyPath: m_Offset.y
+      value: -1.2671928
+      objectReference: {fileID: 0}
     - target: {fileID: 2378393933486502647, guid: e348184b132145f41a55984e2fa2e4bc, type: 3}
       propertyPath: idZone
       value: 3
@@ -2808,7 +2946,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 127686947}
+    m_TransformParent: {fileID: 745417475}
     m_Modifications:
     - target: {fileID: 1072457245985814583, guid: 896c30facb9ff4d46b009988b64de6e3, type: 3}
       propertyPath: m_Pivot.x
@@ -3014,7 +3152,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1079196182}
+    m_TransformParent: {fileID: 1294293240}
     m_Modifications:
     - target: {fileID: 750690868754811783, guid: 2de706382ab9af74c9432a246d8f6e25, type: 3}
       propertyPath: idZone
@@ -3252,7 +3390,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 127686947}
+    m_TransformParent: {fileID: 745417475}
     m_Modifications:
     - target: {fileID: 893626818903771612, guid: 3f042878df5464445bc72f573c418df3, type: 3}
       propertyPath: m_Pivot.x
@@ -3456,6 +3594,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemyAsediusZone
       objectReference: {fileID: 0}
+    - target: {fileID: 8255347391695425642, guid: cbf090cceaa20ba439fa028f3a53f827, type: 3}
+      propertyPath: m_Size.x
+      value: 225.78107
+      objectReference: {fileID: 0}
+    - target: {fileID: 8255347391695425642, guid: cbf090cceaa20ba439fa028f3a53f827, type: 3}
+      propertyPath: m_Size.y
+      value: 7.5121155
+      objectReference: {fileID: 0}
+    - target: {fileID: 8255347391695425642, guid: cbf090cceaa20ba439fa028f3a53f827, type: 3}
+      propertyPath: m_Offset.x
+      value: 3.2656555
+      objectReference: {fileID: 0}
+    - target: {fileID: 8255347391695425642, guid: cbf090cceaa20ba439fa028f3a53f827, type: 3}
+      propertyPath: m_Offset.y
+      value: -1.0168915
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3467,7 +3621,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1079196182}
+    m_TransformParent: {fileID: 1294293240}
     m_Modifications:
     - target: {fileID: 1329349143595251484, guid: ac7f1c161e8182548ba14150933880da, type: 3}
       propertyPath: idZone
@@ -3582,6 +3736,22 @@ PrefabInstance:
       propertyPath: idZone
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 4314920607466363512, guid: e66a07c3c39077448b26ca2e5daef03f, type: 3}
+      propertyPath: m_Size.x
+      value: 203.82715
+      objectReference: {fileID: 0}
+    - target: {fileID: 4314920607466363512, guid: e66a07c3c39077448b26ca2e5daef03f, type: 3}
+      propertyPath: m_Size.y
+      value: 7.01149
+      objectReference: {fileID: 0}
+    - target: {fileID: 4314920607466363512, guid: e66a07c3c39077448b26ca2e5daef03f, type: 3}
+      propertyPath: m_Offset.x
+      value: -5.89447
+      objectReference: {fileID: 0}
+    - target: {fileID: 4314920607466363512, guid: e66a07c3c39077448b26ca2e5daef03f, type: 3}
+      propertyPath: m_Offset.y
+      value: -1.2672043
+      objectReference: {fileID: 0}
     - target: {fileID: 5033845494478690444, guid: e66a07c3c39077448b26ca2e5daef03f, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3677,7 +3847,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 127686947}
+    m_TransformParent: {fileID: 745417475}
     m_Modifications:
     - target: {fileID: 2709476509799794093, guid: 5cd8bbd996593be45ba3510efd7ce395, type: 3}
       propertyPath: idZone

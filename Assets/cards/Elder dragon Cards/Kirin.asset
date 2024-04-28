@@ -19,5 +19,5 @@ MonoBehaviour:
   zone: 9
   description: Thunder Horse
   golden: 0
-  effect: 0
+  effect: 11
   buff: 0

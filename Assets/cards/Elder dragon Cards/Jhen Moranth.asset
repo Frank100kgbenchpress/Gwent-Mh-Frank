@@ -19,5 +19,5 @@ MonoBehaviour:
   zone: 9
   description: ' Biggest Elder Dragon'
   golden: 0
-  effect: 0
+  effect: 12
   buff: 0

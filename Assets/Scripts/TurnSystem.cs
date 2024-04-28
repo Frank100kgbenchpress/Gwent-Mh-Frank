@@ -3,62 +3,56 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Drawing;
+using System.Diagnostics.Tracing;
 
 public class TurnSystem : MonoBehaviour
 {
     public bool isYourTurn;
     public TextMeshProUGUI turnText;
+    public TextMeshProUGUI playerpoints;
+    public TextMeshProUGUI enemyPoints;
     public GameObject hand1;
     public GameObject hand2;
-    public PointCount playerpoints ;
+    public PointCount playerpoint ;
     public bool round;
-    int counter;
-    public void OnClick()
+    public bool useDecoy;
+    public bool team;
+    public Draw draw;
+    public Change change;
+    public Change change1;
+    public bool pass;
+    public int counter=0;
+    public void OnClick() //This method is to manage the rounds
     {
+        round =! round;
+        isYourTurn =! isYourTurn;
+        EndTurn();
         counter++;
         if(counter==2)
         {
-            counter=0;
-            int pPoints = int.Parse(playerpoints.playerpoints.text);
-            int ePoints = int.Parse(playerpoints.enemyPoints.text);;
-            if(pPoints<ePoints)
-            {
-
-            }
-            else
-            {
-                
-            }
+            counter = 0;
         }
-        round =! round;
-        isYourTurn =! isYourTurn;
-        EndYourTurn();
-        
     }
-    void Start()
-    {
-        EndYourTurn();
-    }
-    public void EndYourTurn()
+    public void EndTurn() //This method changes turns every time is called
     {
         if(!round)
         {
             isYourTurn =! isYourTurn;
-        
         }
-        if(isYourTurn)
+        UpdateTurnUI();
+    }
+    private void UpdateTurnUI()
+    {
+        if (isYourTurn)
         {
             turnText.text = "Your Turn";
-            HideEnemyCards(hand1,true);
-            HideEnemyCards(hand2,false);
+            // Aquí puedes agregar más lógica para preparar el turno del jugador
         }
         else
         {
-            turnText.text = "Opponent Turn"; 
-            HideEnemyCards(hand1,false);
-            HideEnemyCards(hand2,true);
-        }     
-        
+            turnText.text = "Opponent Turn";
+            // Aquí puedes agregar más lógica para preparar el turno del enemigo
+        }
     }
     public void HideEnemyCards(GameObject hand,bool myHand)
     {
@@ -80,5 +74,13 @@ public class TurnSystem : MonoBehaviour
                 card.transform.position = hidecard;
             }
         }        
+    }
+    public void NoMove(GameObject hand,bool move)
+    {
+        DragAndDrop[] cards = hand.GetComponentsInChildren<DragAndDrop>();
+        foreach(DragAndDrop card in cards)
+        {
+            card.enabled = move;
+        }
     }    
 }

@@ -19,5 +19,5 @@ MonoBehaviour:
   zone: 1
   description: The King Of Ice
   golden: 0
-  effect: 0
+  effect: 12
   buff: 0

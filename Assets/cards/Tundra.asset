@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe0514f88f433fd4e94ea7029ce09e5a, type: 3}
   m_Name: Tundra
   m_EditorClassIdentifier: 
-  name: Thundra Zone
+  name: Tundra Zone
   attack: 0
   cardImage: {fileID: 21300000, guid: 41c187e6ec9979349abc6a148fd4a4b8, type: 3}
   id: 15
