@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: a2c527d75d870a14783203666cb12f13, type: 3}
   id: 12
   zone: 4
-  description: supply melee monsters with 5 points
+  description: increase melee monsters attack with 5 points
   golden: 0
   effect: 1
   buff: 0

@@ -171,16 +171,14 @@ public class effects : MonoBehaviour
         
         if(cardPosition==1)
         {
-            displayCard[] cards = zone1.GetComponentsInChildren<displayCard>();
             zone1 = GameObject.Find("MeleeZone");
+            displayCard[] cards = zone1.GetComponentsInChildren<displayCard>();
             foreach(var card in cards)
             {
                 if(id==card.card.id)
                 {
                     counter++;
-                    Debug.Log("counter = "+ counter);
                 }
-
             }
             foreach(var card in cards)
             {
@@ -193,8 +191,8 @@ public class effects : MonoBehaviour
         }
         if(cardPosition==2)
         {
-            displayCard[] cards = zone1.GetComponentsInChildren<displayCard>();
             zone1 = GameObject.Find("DistanceZone");
+            displayCard[] cards = zone1.GetComponentsInChildren<displayCard>();
             foreach(var card in cards)
             {
                 if(id==card.card.id)

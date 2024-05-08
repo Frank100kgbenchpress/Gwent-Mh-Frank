@@ -10,7 +10,7 @@ public class Change : MonoBehaviour
     public int counter;
     public void OnClick()
     {
-        movement = GameObject.Find("BattleSystem").GetComponent<TurnSystem>();
+        movement = GameObject.Find("GameManager").GetComponent<TurnSystem>();
         if(change == true)
         {
             movement.NoMove(hand,true);

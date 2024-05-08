@@ -13,9 +13,4 @@ public class Cards : ScriptableObject
     public bool golden;
     public int effect;
     public bool buff;
-    // Start is called before the first frame update
-   public void Print()
-   {
-        Debug.Log(name + ": ");
-   }
 }

@@ -22,16 +22,113 @@ public class TurnSystem : MonoBehaviour
     public Change change1;
     public bool pass;
     public int counter=0;
+    public int playerWin;
+    public int enemyWin;
+    private RotateScreen rotateGame;
+    
+    private void Start() 
+    {
+        rotateGame = FindObjectOfType<RotateScreen>();
+        draw = GameObject.Find("GameManager").GetComponent<Draw>();
+        for (int i = 0; i < 10; i++)
+        {
+            if(i<7)
+            {
+                draw.Draw1();
+            }
+            draw.Draw2();
+        }
+        EndTurn();
+        change = GameObject.Find("Change").GetComponent<Change>();
+        change1 = GameObject.Find("EnemyChange").GetComponent<Change>();
+        change.change = true;
+        change1.change = true;
+        change1.Hide();
+        NoMove(hand1,false);
+        NoMove(hand2,false);
+    }   
     public void OnClick() //This method is to manage the rounds
     {
-        round =! round;
+       
+        if(isYourTurn)
+        {
+            if(change.change)
+            {
+                NoMove(hand1,true);
+                change.change = false;
+                change.Hide();
+            }
+        }
+        if(!isYourTurn)
+        {
+            if(change1.change)
+            {
+                NoMove(hand2,true);
+                change1.change = false;
+                change1.Hide();
+            }   
+        }
+         round =! round;
         isYourTurn =! isYourTurn;
         EndTurn();
         counter++;
         if(counter==2)
         {
-            counter = 0;
+            
+             draw = GameObject.Find("GameManager").GetComponent<Draw>();
+            for(int i=0;i<2;i++) 
+            {
+                draw.Draw1();
+                draw.Draw2();
+            }
+            //winner = GameObject.Find("FinalPanel").GetComponent<WinnerScreen>();
+            int playerPoints = int.Parse(playerpoints.text);
+            int enemypoints  = int.Parse(enemyPoints.text);
+            if(playerPoints > enemypoints) 
+            {
+                playerWin++;
+                if(playerWin ==1)
+                {
+                    //Image roundColor = GameObject.Find("RoundC1").GetComponent<Image>();
+                    //roundColor.color = Color.green; //This turns the red circules to green;
+                }
+                else if(enemyWin ==2)
+                {
+                    //Image roundColor = GameObject.Find("RoundC2").GetComponent<Image>();
+                    //roundColor.color = Color.green;
+                }
+                else if(enemypoints >= playerPoints)
+            {
+                enemyWin++;
+                if(enemyWin ==1)
+                {
+                    //Image roundColor = GameObject.Find("RoundC3").GetComponent<Image>();
+                    //roundColor.color = Color.green;
+                }
+                else if(enemyWin ==2)
+                {
+                    //Image roundColor = GameObject.Find("RoundC4").GetComponent<Image>();
+                    //roundColor.color = Color.green;
+                }
+                //winner.RoundShow("P2");
+                isYourTurn = true;
+                EndTurn();
+            }
+            if(playerWin == 2)
+            {
+                //winner.FinalShow("P1");
+            }
+            else if(enemyWin == 2)
+            {
+                //winner.FinalShow("P2");
+            }
+                //winner.RoundShow("P1");
+                isYourTurn = false;
+                EndTurn();
+            }
+            Clean();
         }
+        counter = 0;
     }
     public void EndTurn() //This method changes turns every time is called
     {
@@ -46,12 +143,17 @@ public class TurnSystem : MonoBehaviour
         if (isYourTurn)
         {
             turnText.text = "Your Turn";
-            // Aquí puedes agregar más lógica para preparar el turno del jugador
+            HideEnemyCards(hand1,true);
+            HideEnemyCards(hand2,false); 
+            rotateGame.RotateBack();
         }
         else
         {
             turnText.text = "Opponent Turn";
-            // Aquí puedes agregar más lógica para preparar el turno del enemigo
+            HideEnemyCards(hand2,true);
+            HideEnemyCards(hand1,false);
+            rotateGame.RotateCamera();
+            RotateCards(hand2);
         }
     }
     public void HideEnemyCards(GameObject hand,bool myHand)
@@ -60,18 +162,14 @@ public class TurnSystem : MonoBehaviour
         {
             foreach(Transform card in hand.transform)
             {
-                Vector3 hidecard = card.transform.position;
-                hidecard.z = 0;
-                card.transform.position = hidecard;
+                card.gameObject.SetActive(true);
             }
         }
         else
         {
             foreach(Transform card in hand.transform)
             {
-                Vector3 hidecard = card.transform.position;
-                hidecard.z = -10;
-                card.transform.position = hidecard;
+                card.gameObject.SetActive(false);
             }
         }        
     }
@@ -82,5 +180,56 @@ public class TurnSystem : MonoBehaviour
         {
             card.enabled = move;
         }
-    }    
+    }
+    void Clean() //This method eliminates the cards from the field
+    {
+        GameObject units = GameObject.Find("UnitsZones");
+        foreach(Transform zone in units.transform)
+        {
+            foreach(Transform card in zone.transform)
+            {
+                Destroy(card.gameObject);
+            }
+        }
+        GameObject units1 = GameObject.Find("EnemyUnitsZones");
+        foreach(Transform zone in units1.transform)
+        {
+            foreach(Transform card in zone.transform)
+            {
+                Destroy(card.gameObject);
+            }
+        }
+        GameObject support = GameObject.Find("SupportZone");
+        foreach(Transform zone in support.transform)
+        {
+            foreach(Transform card in zone.transform)
+            {
+                Destroy(card.gameObject);
+            }
+        }
+        GameObject support1 = GameObject.Find("EnemySupportZones");
+        foreach(Transform zone in support1.transform)
+        {
+            foreach(Transform card in zone.transform)
+            {
+                Destroy(card.gameObject);
+            }
+        }
+        GameObject weather = GameObject.Find("WeatherZone");
+        foreach(Transform card in weather.transform)
+        {
+            displayCard cardDisplay = card.gameObject.GetComponent<displayCard>();
+            Destroy(card.gameObject);
+        }
+    } 
+    public void RotateCards(GameObject Hand) //This method rotates the player2 cards
+    {
+        UnityEngine.Quaternion pos = transform.rotation;
+        foreach(Transform card in Hand.transform)
+        {
+            pos = card.transform.rotation;
+            pos = UnityEngine.Quaternion.Euler(180f,180f,0);
+            card.transform.rotation = pos;
+        }
+    }
 }

@@ -14,6 +14,7 @@ public class DragAndDrop : MonoBehaviour
     public effects effect;
     public deckManager deck;
     public Draw draw;
+    public Change change;
 
     
 
@@ -51,6 +52,38 @@ public class DragAndDrop : MonoBehaviour
         {
             turns = GameObject.Find("GameManager").GetComponent<TurnSystem>();
             transform.SetParent(dropZone.transform, false);
+            if(effect.effectLoop)
+            {
+                displayCard[] cards = new displayCard[6];
+                cards[0] = GameObject.Find("SupportMeleeZone").GetComponentInChildren<displayCard>();
+                cards[1] = GameObject.Find("SupportDistanceZone").GetComponentInChildren<displayCard>();
+                cards[2] = GameObject.Find("SupportAsediusZone").GetComponentInChildren<displayCard>();
+                cards[3] = GameObject.Find("EnemySupportAsediusZone").GetComponentInChildren<displayCard>();
+                cards[4] = GameObject.Find("EnemySupportMeleeZone").GetComponentInChildren<displayCard>();
+                cards[5] = GameObject.Find("EnemySupportDistance").GetComponentInChildren<displayCard>();
+                for(int i=0;i<6;i++)
+                {
+                    if(cards[i]!=null)
+                    {
+                        effect.UseEffect(cards[i].card.effect,cards[i].gameObject);
+                    }
+                }
+            }
+            if(effect.wheatherUse)
+            {
+                displayCard[] cards = GameObject.Find("WeatherZone").GetComponentsInChildren<displayCard>();
+                if(cards != null)
+                {
+                    foreach(var card in cards)
+                    {
+                        effect.UseEffect(card.card.effect,card.gameObject);
+                    }
+                }
+            }
+             if(!endturn.useDecoy)
+            {
+                endturn.EndTurn();
+            }
             turns.EndTurn();
             effect = GameObject.Find("GameManager").GetComponent<effects>();
             effect.UseEffect(gameObject.GetComponent<displayCard>().card.effect,gameObject);
@@ -68,5 +101,94 @@ public class DragAndDrop : MonoBehaviour
         if(zone.card.zone == id.idZone) return true;
         else return false;
         
+    }
+    public void OnPointerClick()
+    {
+        displayCard cardDisplay = GetComponent<displayCard>();
+        TurnSystem decoy = GameObject.Find("GameManager").GetComponent<TurnSystem>();
+        //Checks if the decoy is active and if the team of the card clicked is the correct one
+        if(decoy.change && decoy.team==false)
+        {
+            if(cardDisplay.team==false && !cardDisplay.card.golden)
+            {
+                GameObject zone1 = GameObject.Find("PlayerHand");
+                cardDisplay.points = cardDisplay.card.attack;
+                cardDisplay.attackText.text = cardDisplay.points.ToString();
+                cardDisplay.boost = false;
+                transform.position = zone1.transform.position;
+                transform.SetParent(zone1.transform,false);
+                decoy.useDecoy = false;
+                decoy.EndTurn();
+            }
+        }
+        else if(decoy.useDecoy && decoy.team)
+        {
+            if(cardDisplay.team && !cardDisplay.card.golden)
+            {
+                GameObject zone1 = GameObject.Find("EnemyHand");
+                cardDisplay.points = cardDisplay.card.attack;
+                cardDisplay.attackText.text = cardDisplay.points.ToString();
+                cardDisplay.boost = false;
+                transform.position = zone1.transform.position;
+                transform.SetParent(zone1.transform,false);
+                decoy.useDecoy = false;
+                decoy.EndTurn();
+            }
+        }
+    }
+    //This method allows the player to change a maximun of 2 cards by adding the card click to the deck and drawing another one
+    public void ChangingCards()
+    {
+        draw = GameObject.Find("GameManager").GetComponent<Draw>();
+        endturn = GameObject.Find("GameManager").GetComponent<TurnSystem>();
+        displayCard cardDisplay = GetComponent<displayCard>();
+        //This checks which turn is it
+        if(endturn.isYourTurn)
+        {
+            change = GameObject.Find("Change").GetComponent<Change>();
+            GameObject hand = GameObject.Find("PlayerHand");
+            //This checks if it's changing time
+            if(change.change)
+            {
+                deck = GameObject.Find("deckManager1").GetComponent<deckManager>();
+                List<GameObject> deckCards = deck.GetCards();
+                if(cardDisplay.team == false)
+                {
+                    deckCards.Add(gameObject);
+                    draw.Draw1();
+                    Destroy(gameObject);
+                    change.counter++;
+                    if(change.counter ==2)
+                    {
+                        endturn.NoMove(hand,true);
+                        change.change = false;
+                        change.Hide();
+                    }
+                }
+            }
+        }
+        else if(!endturn.isYourTurn)
+        {
+            change = GameObject.Find("EnemyChange").GetComponent<Change>();
+            GameObject hand = GameObject.Find("EnemyHand");
+            if(change.change)
+            {
+                deck = GameObject.Find("deckManager2").GetComponent<deckManager>();
+                List<GameObject> deckCards = deck.GetCards();
+                if(cardDisplay.team)
+                {
+                    deckCards.Add(gameObject);
+                    draw.Draw2();
+                    Destroy(gameObject);
+                    change.counter++;
+                    if(change.counter == 2)
+                    {
+                        endturn.NoMove(hand,true);
+                        change.change = false;
+                        change.Hide();
+                    }
+                }
+            } 
+        }
     }
 }

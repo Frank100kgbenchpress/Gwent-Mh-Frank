@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: d6423f0c314631c40ae7d6f43bd52454, type: 3}
   id: 8
   zone: 3
-  description: The Tundra Shadow
+  description: Makes you draw a card with his speed
   golden: 0
   effect: 12
   buff: 0

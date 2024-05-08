@@ -17,7 +17,7 @@ MonoBehaviour:
   cardImage: {fileID: 21300000, guid: 968b41f8c4c96b641bc63df99aa458bc, type: 3}
   id: 13
   zone: 1
-  description: Rockie Hunter Starter Pack Be Like
+  description: You can change this card with other monster
   golden: 0
   effect: 11
   buff: 0
