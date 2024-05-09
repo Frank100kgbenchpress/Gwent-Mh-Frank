@@ -13,7 +13,7 @@ public class TurnSystem : MonoBehaviour
     public TextMeshProUGUI enemyPoints;
     public GameObject hand1;
     public GameObject hand2;
-    public PointCount playerpoint ;
+    public PointCount playerpoint;
     public bool round;
     public bool useDecoy;
     public bool team;
@@ -24,11 +24,10 @@ public class TurnSystem : MonoBehaviour
     public int counter=0;
     public int playerWin;
     public int enemyWin;
-    private RotateScreen rotateGame;
+    public WinnerScreen winnerScreen;
     
     private void Start() 
     {
-        rotateGame = FindObjectOfType<RotateScreen>();
         draw = GameObject.Find("GameManager").GetComponent<Draw>();
         for (int i = 0; i < 10; i++)
         {
@@ -59,7 +58,7 @@ public class TurnSystem : MonoBehaviour
                 change.Hide();
             }
         }
-        if(!isYourTurn)
+        else if(!isYourTurn)
         {
             if(change1.change)
             {
@@ -75,38 +74,42 @@ public class TurnSystem : MonoBehaviour
         if(counter==2)
         {
             
-             draw = GameObject.Find("GameManager").GetComponent<Draw>();
+            draw = GameObject.Find("GameManager").GetComponent<Draw>();
             for(int i=0;i<2;i++) 
             {
                 draw.Draw1();
                 draw.Draw2();
             }
-            //winner = GameObject.Find("FinalPanel").GetComponent<WinnerScreen>();
+            winnerScreen = GameObject.Find("GameManager").GetComponent<WinnerScreen>();
             int playerPoints = int.Parse(playerpoints.text);
             int enemypoints  = int.Parse(enemyPoints.text);
-            if(playerPoints > enemypoints) 
+            if(playerPoints >= enemypoints) 
             {
                 playerWin++;
                 if(playerWin ==1)
                 {
+                    winnerScreen.SetUp(true);
                     //Image roundColor = GameObject.Find("RoundC1").GetComponent<Image>();
                     //roundColor.color = Color.green; //This turns the red circules to green;
                 }
-                else if(enemyWin ==2)
+                else if(playerWin ==2)
                 {
+                    winnerScreen.Finish(true);
                     //Image roundColor = GameObject.Find("RoundC2").GetComponent<Image>();
                     //roundColor.color = Color.green;
                 }
-                else if(enemypoints >= playerPoints)
-            {
-                enemyWin++;
-                if(enemyWin ==1)
+                else if(enemypoints > playerPoints)
                 {
-                    //Image roundColor = GameObject.Find("RoundC3").GetComponent<Image>();
-                    //roundColor.color = Color.green;
-                }
+                    enemyWin++;
+                    if(enemyWin ==1)
+                    {
+                        winnerScreen.SetUp(false);
+                        //Image roundColor = GameObject.Find("RoundC3").GetComponent<Image>();
+                        //roundColor.color = Color.green;
+                    }
                 else if(enemyWin ==2)
                 {
+                    winnerScreen.Finish(false);   
                     //Image roundColor = GameObject.Find("RoundC4").GetComponent<Image>();
                     //roundColor.color = Color.green;
                 }
@@ -114,21 +117,14 @@ public class TurnSystem : MonoBehaviour
                 isYourTurn = true;
                 EndTurn();
             }
-            if(playerWin == 2)
-            {
-                //winner.FinalShow("P1");
-            }
-            else if(enemyWin == 2)
-            {
-                //winner.FinalShow("P2");
-            }
-                //winner.RoundShow("P1");
-                isYourTurn = false;
-                EndTurn();
+            
+            isYourTurn = false;
+            EndTurn();
             }
             Clean();
+            counter = 0;
         }
-        counter = 0;
+        
     }
     public void EndTurn() //This method changes turns every time is called
     {
@@ -145,14 +141,12 @@ public class TurnSystem : MonoBehaviour
             turnText.text = "Your Turn";
             HideEnemyCards(hand1,true);
             HideEnemyCards(hand2,false); 
-            rotateGame.RotateBack();
         }
         else
         {
             turnText.text = "Opponent Turn";
             HideEnemyCards(hand2,true);
             HideEnemyCards(hand1,false);
-            rotateGame.RotateCamera();
             RotateCards(hand2);
         }
     }

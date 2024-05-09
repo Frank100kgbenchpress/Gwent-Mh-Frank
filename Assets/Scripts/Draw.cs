@@ -10,8 +10,6 @@ public class Draw : MonoBehaviour
     public GameObject Hand2;
     public deckManager deck1;
     public deckManager deck2;
-   /* public TextMeshProUGUI deck1Size;
-    public TextMeshProUGUI deck2Size;*/
     void Start()
     {
         Hand1 = GameObject.Find("PlayerHand");
@@ -26,8 +24,11 @@ public class Draw : MonoBehaviour
         GameObject selectedCard = deckCards[random];
         GameObject playerCard = Instantiate(selectedCard,new Vector3(0,0,0),Quaternion.identity);
         playerCard.transform.SetParent( Hand1.transform, false);
+        if(deckCards.Count==0)
+        {
+
+        }
         deckCards.RemoveAt(random);
-        /*deck1Size.text = deck1.GetCards().Count.ToString();*/
     }
     public void Draw2()
     {
@@ -36,6 +37,10 @@ public class Draw : MonoBehaviour
         GameObject selectedCard = deckCards[random];
         GameObject playerCard = Instantiate(selectedCard,new Vector3(0,0,0),Quaternion.identity);
         playerCard.transform.SetParent( Hand2.transform, false);
+        if(deckCards.Count==0)
+        {
+            
+        }
         deckCards.RemoveAt(random);
         /*deck1Size.text = deck1.GetCards().Count.ToString();*/
     }

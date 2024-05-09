@@ -976,6 +976,7 @@ MonoBehaviour:
   effect: {fileID: 0}
   deck: {fileID: 0}
   draw: {fileID: 0}
+  change: {fileID: 0}
 --- !u!114 &-5775442788110872538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1012,6 +1013,30 @@ MonoBehaviour:
         - m_Target: {fileID: 98116880281922311}
           m_TargetAssemblyTypeName: DragAndDrop, Assembly-CSharp
           m_MethodName: EndDrag
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 98116880281922311}
+          m_TargetAssemblyTypeName: DragAndDrop, Assembly-CSharp
+          m_MethodName: OnPointerClick
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 98116880281922311}
+          m_TargetAssemblyTypeName: DragAndDrop, Assembly-CSharp
+          m_MethodName: ChangingCards
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

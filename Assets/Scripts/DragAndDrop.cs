@@ -19,7 +19,6 @@ public class DragAndDrop : MonoBehaviour
     
 
 
-    
     void Update()
     {
         if(isDraggin)
@@ -50,8 +49,11 @@ public class DragAndDrop : MonoBehaviour
         isDraggin = false;
         if(isOverDropZone && CorrectZone())
         {
-            turns = GameObject.Find("GameManager").GetComponent<TurnSystem>();
             transform.SetParent(dropZone.transform, false);
+            endturn = GameObject.Find("GameManager").GetComponent<TurnSystem>();
+            effect = GameObject.Find("GameManager").GetComponent<effects>();
+            effect.UseEffect(gameObject.GetComponent<displayCard>().card.effect,gameObject);
+             
             if(effect.effectLoop)
             {
                 displayCard[] cards = new displayCard[6];
@@ -60,7 +62,7 @@ public class DragAndDrop : MonoBehaviour
                 cards[2] = GameObject.Find("SupportAsediusZone").GetComponentInChildren<displayCard>();
                 cards[3] = GameObject.Find("EnemySupportAsediusZone").GetComponentInChildren<displayCard>();
                 cards[4] = GameObject.Find("EnemySupportMeleeZone").GetComponentInChildren<displayCard>();
-                cards[5] = GameObject.Find("EnemySupportDistance").GetComponentInChildren<displayCard>();
+                cards[5] = GameObject.Find("EnemySupportDistanceZone").GetComponentInChildren<displayCard>();
                 for(int i=0;i<6;i++)
                 {
                     if(cards[i]!=null)
@@ -80,13 +82,12 @@ public class DragAndDrop : MonoBehaviour
                     }
                 }
             }
-             if(!endturn.useDecoy)
+            if(!endturn.useDecoy)
             {
                 endturn.EndTurn();
             }
-            turns.EndTurn();
-            effect = GameObject.Find("GameManager").GetComponent<effects>();
-            effect.UseEffect(gameObject.GetComponent<displayCard>().card.effect,gameObject);
+
+           
         }
         else
         {
@@ -100,14 +101,12 @@ public class DragAndDrop : MonoBehaviour
         IDZone id = dropZone.GetComponent<IDZone>();
         if(zone.card.zone == id.idZone) return true;
         else return false;
-        
     }
     public void OnPointerClick()
     {
         displayCard cardDisplay = GetComponent<displayCard>();
         TurnSystem decoy = GameObject.Find("GameManager").GetComponent<TurnSystem>();
-        //Checks if the decoy is active and if the team of the card clicked is the correct one
-        if(decoy.change && decoy.team==false)
+        if(decoy.useDecoy && decoy.team==false)
         {
             if(cardDisplay.team==false && !cardDisplay.card.golden)
             {
@@ -136,18 +135,15 @@ public class DragAndDrop : MonoBehaviour
             }
         }
     }
-    //This method allows the player to change a maximun of 2 cards by adding the card click to the deck and drawing another one
     public void ChangingCards()
     {
         draw = GameObject.Find("GameManager").GetComponent<Draw>();
         endturn = GameObject.Find("GameManager").GetComponent<TurnSystem>();
         displayCard cardDisplay = GetComponent<displayCard>();
-        //This checks which turn is it
         if(endturn.isYourTurn)
         {
             change = GameObject.Find("Change").GetComponent<Change>();
             GameObject hand = GameObject.Find("PlayerHand");
-            //This checks if it's changing time
             if(change.change)
             {
                 deck = GameObject.Find("deckManager1").GetComponent<deckManager>();
@@ -167,7 +163,7 @@ public class DragAndDrop : MonoBehaviour
                 }
             }
         }
-        else if(!endturn.isYourTurn)
+        else if(endturn.isYourTurn==false)
         {
             change = GameObject.Find("EnemyChange").GetComponent<Change>();
             GameObject hand = GameObject.Find("EnemyHand");
