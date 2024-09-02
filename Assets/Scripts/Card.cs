@@ -4,7 +4,7 @@ using DSL;
 //estas son las propiedades de la  carta//
 public class Card : ScriptableObject
 {
-    public string Name { get; protected set; }
+    public string Name { get; set; }
     public string Description{get;set;}
     public int Attack{get;set;}
     public string CardOwner{get;set;}

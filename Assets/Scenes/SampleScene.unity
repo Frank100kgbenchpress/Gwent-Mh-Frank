@@ -1188,7 +1188,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a90b1a2fb8edc45b6701f695f89cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Card: {fileID: 7908009689857623106, guid: e25413dc78cc50940b6a88a43acda1fe, type: 3}
   Hand1: {fileID: 1050920124}
   Hand2: {fileID: 1984005071}
   deck1: {fileID: 1356169588}
@@ -1767,7 +1766,7 @@ MonoBehaviour:
   playerpoint: {fileID: 0}
   round: 0
   useDecoy: 0
-  team: 0
+  Team: 0
   draw: {fileID: 0}
   change: {fileID: 0}
   change1: {fileID: 0}
@@ -1777,6 +1776,7 @@ MonoBehaviour:
   enemyWin: 0
   camera1: {fileID: 519420028}
   camera2: {fileID: 2012425556}
+  board: {fileID: 0}
 --- !u!4 &860915463
 Transform:
   m_ObjectHideFlags: 0
@@ -1804,14 +1804,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5acb42620d2c27d4885882c0a5fa4f31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerpoints: {fileID: 1633266216}
-  enemyPoints: {fileID: 130788295}
-  meleeZone: {fileID: 4478159526291681740}
-  distanceZone: {fileID: 1276666843}
-  asediusZone: {fileID: 896293687}
-  meleeZone1: {fileID: 497720075}
-  distanceZone1: {fileID: 1712902687}
-  asediusZone1: {fileID: 1451348976}
+  PlayerPoints: {fileID: 1633266216}
+  EnemyPoints: {fileID: 130788295}
+  MeleeZone: {fileID: 4478159526291681740}
+  DistanceZone: {fileID: 1276666843}
+  SiegeZone: {fileID: 896293687}
+  MeleeZone1: {fileID: 497720075}
+  DistanceZone1: {fileID: 1712902687}
+  SiegeZone1: {fileID: 896293687}
 --- !u!114 &860915465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1848,7 +1848,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a90b1a2fb8edc45b6701f695f89cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Card: {fileID: 0}
   Hand1: {fileID: 1050920124}
   Hand2: {fileID: 1984005071}
   deck1: {fileID: 1356169588}
@@ -2792,33 +2791,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00222ecfa127abc47a1ee91f2a5ab59e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deck: []
-  hand: []
-  Card1: {fileID: 4348071813993428151, guid: 35019ca94b51cda4399d696e77fab390, type: 3}
-  Card2: {fileID: 7760436846628434042, guid: f8072fad547304243ac1f9b922ea90e8, type: 3}
-  Card3: {fileID: 7760436846628434042, guid: f8072fad547304243ac1f9b922ea90e8, type: 3}
-  Card4: {fileID: 4547381696623491731, guid: e41aef67c18b79149bff8b7756c6e83c, type: 3}
-  Card5: {fileID: 7322626885810684642, guid: 23e2245a8a868df4a9a7b5aca4cd8296, type: 3}
-  Card6: {fileID: 7322626885810684642, guid: 23e2245a8a868df4a9a7b5aca4cd8296, type: 3}
-  Card7: {fileID: 8831432082157002842, guid: ca6f6a5f669b3fc468a2773f082aa7e1, type: 3}
-  Card8: {fileID: 46655741574954790, guid: d97c80e10bd93aa46992363c77446304, type: 3}
-  Card9: {fileID: 46655741574954790, guid: d97c80e10bd93aa46992363c77446304, type: 3}
-  Card10: {fileID: 299949672070535412, guid: 26921b088bd391c4d8b3dabcdd3ff2eb, type: 3}
-  Card11: {fileID: 7363437907474171383, guid: f0cd2e89ed1120e4c98deb5a3699678e, type: 3}
-  Card12: {fileID: 7363437907474171383, guid: f0cd2e89ed1120e4c98deb5a3699678e, type: 3}
-  Card13: {fileID: 5167817826793915975, guid: 19ad72eed58e10d4392e76d531d63295, type: 3}
-  Card14: {fileID: 623111349763800393, guid: d184cc5f222f69a4ea53dea4d8d478b7, type: 3}
-  Card15: {fileID: 623111349763800393, guid: d184cc5f222f69a4ea53dea4d8d478b7, type: 3}
-  Card16: {fileID: 5167817826793915975, guid: 19ad72eed58e10d4392e76d531d63295, type: 3}
-  Card17: {fileID: 7847056525334023768, guid: 02028b273c400e544b4896043dc59e71, type: 3}
-  Card18: {fileID: 7847056525334023768, guid: 02028b273c400e544b4896043dc59e71, type: 3}
-  Card19: {fileID: 6525790140606352960, guid: 720ed5cdec3092849a3ac92a6048c6d3, type: 3}
-  Card20: {fileID: 5061005368756122419, guid: 99af13e1539f6674d98592baa237d798, type: 3}
-  Card21: {fileID: 5061005368756122419, guid: 99af13e1539f6674d98592baa237d798, type: 3}
-  Card22: {fileID: 8696946621732424280, guid: e1079b2ca91f7c0409274bd4c9a17ea1, type: 3}
-  Card23: {fileID: 8696946621732424280, guid: e1079b2ca91f7c0409274bd4c9a17ea1, type: 3}
-  Card24: {fileID: 1452786318681266994, guid: c9b4279bf0eb11d4286297989022f9b4, type: 3}
-  Card25: {fileID: 4316457746000227267, guid: 8a134a07dc7bb774b92cd7eda410b098, type: 3}
 --- !u!4 &1356169589
 Transform:
   m_ObjectHideFlags: 0
@@ -2881,7 +2853,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1403796692}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
@@ -2992,7 +2964,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a90b1a2fb8edc45b6701f695f89cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Card: {fileID: 7908009689857623106, guid: e25413dc78cc50940b6a88a43acda1fe, type: 3}
   Hand1: {fileID: 1050920124}
   Hand2: {fileID: 1984005071}
   deck1: {fileID: 1356169588}
@@ -3147,11 +3118,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1451072764}
   m_CullTransparentMesh: 1
---- !u!1 &1451348976 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7167667107030326920, guid: cbf090cceaa20ba439fa028f3a53f827, type: 3}
-  m_PrefabInstance: {fileID: 6421779881549740633}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1451348977 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3310582354894500121, guid: cbf090cceaa20ba439fa028f3a53f827, type: 3}
@@ -3470,33 +3436,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00222ecfa127abc47a1ee91f2a5ab59e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deck: []
-  hand: []
-  Card1: {fileID: 6939217438177540209, guid: a1ef0ec5202e5604d91c13fe218815d3, type: 3}
-  Card2: {fileID: 8706438596853082734, guid: 14ffaf02b1fb58748b75dfe16e82c603, type: 3}
-  Card3: {fileID: 299949672070535412, guid: 26921b088bd391c4d8b3dabcdd3ff2eb, type: 3}
-  Card4: {fileID: 4547381696623491731, guid: e41aef67c18b79149bff8b7756c6e83c, type: 3}
-  Card5: {fileID: 5167817826793915975, guid: 19ad72eed58e10d4392e76d531d63295, type: 3}
-  Card6: {fileID: 4316457746000227267, guid: 8a134a07dc7bb774b92cd7eda410b098, type: 3}
-  Card7: {fileID: 538674307566982129, guid: 7e34e941a50e49b49810a2be5d7ce80b, type: 3}
-  Card8: {fileID: 6824175532319639483, guid: dcda296c6fd438b4f9d7952f406df7ce, type: 3}
-  Card9: {fileID: 6307455486198198206, guid: 7dbe06bd66ec9ef41afcf86271bae807, type: 3}
-  Card10: {fileID: 5120901952254745393, guid: 99bfd6d44e5da1047a68e617c9239862, type: 3}
-  Card11: {fileID: 1317175101820915380, guid: 9c79da75a0c057e44889788dd5a0d653, type: 3}
-  Card12: {fileID: 6951021431602577692, guid: bd1a7599072c02547a69d93e15ed8f15, type: 3}
-  Card13: {fileID: 966286222059963522, guid: 45de759c590a0a247a7f94090f2e8522, type: 3}
-  Card14: {fileID: 6750453605409896905, guid: 7d30c5c325b07b24192604f889b6ca94, type: 3}
-  Card15: {fileID: 5963933175062185053, guid: e607f07197711db47a2b2dfe63304378, type: 3}
-  Card16: {fileID: 6336762799643319450, guid: 0f8cf5a394eb22242b155a2571368faf, type: 3}
-  Card17: {fileID: 6939217438177540209, guid: a1ef0ec5202e5604d91c13fe218815d3, type: 3}
-  Card18: {fileID: 538674307566982129, guid: 7e34e941a50e49b49810a2be5d7ce80b, type: 3}
-  Card19: {fileID: 6824175532319639483, guid: dcda296c6fd438b4f9d7952f406df7ce, type: 3}
-  Card20: {fileID: 6307455486198198206, guid: 7dbe06bd66ec9ef41afcf86271bae807, type: 3}
-  Card21: {fileID: 5120901952254745393, guid: 99bfd6d44e5da1047a68e617c9239862, type: 3}
-  Card22: {fileID: 6336762799643319450, guid: 0f8cf5a394eb22242b155a2571368faf, type: 3}
-  Card23: {fileID: 6824175532319639483, guid: dcda296c6fd438b4f9d7952f406df7ce, type: 3}
-  Card24: {fileID: 1317175101820915380, guid: 9c79da75a0c057e44889788dd5a0d653, type: 3}
-  Card25: {fileID: 5120901952254745393, guid: 99bfd6d44e5da1047a68e617c9239862, type: 3}
 --- !u!4 &1499553726
 Transform:
   m_ObjectHideFlags: 0
@@ -4988,7 +4927,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5933519672587098211, guid: e348184b132145f41a55984e2fa2e4bc, type: 3}
       propertyPath: m_Name
-      value: AsediusZone
+      value: SiegeZone
       objectReference: {fileID: 0}
     - target: {fileID: 6939204711082305598, guid: e348184b132145f41a55984e2fa2e4bc, type: 3}
       propertyPath: m_Pivot.x
@@ -5731,7 +5670,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7167667107030326920, guid: cbf090cceaa20ba439fa028f3a53f827, type: 3}
       propertyPath: m_Name
-      value: EnemyAsediusZone
+      value: EnemySiegeZone
       objectReference: {fileID: 0}
     - target: {fileID: 8255347391695425642, guid: cbf090cceaa20ba439fa028f3a53f827, type: 3}
       propertyPath: m_Size.x

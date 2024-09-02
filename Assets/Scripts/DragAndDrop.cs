@@ -11,7 +11,7 @@ public class DragAndDrop : MonoBehaviour
     public TurnSystem endturn;
     public TurnSystem turns;
     public effects effect;
-    public deckManager deck;
+    public Deck deck;
     public Draw draw;
     public Change change;
     
@@ -50,22 +50,22 @@ public class DragAndDrop : MonoBehaviour
             transform.SetParent(dropZone.transform, false);
             endturn = GameObject.Find("GameManager").GetComponent<TurnSystem>();
             effect = GameObject.Find("GameManager").GetComponent<effects>();
-            effect.UseEffect(gameObject.GetComponent<DisplayCard>().card.Effects,gameObject);
+            //effect.UseEffect(gameObject.GetComponent<DisplayCard>().card.Effects,gameObject);
             //esto es para si activo una carta despues de un aumento tambien coja puntos//
             if(effect.effectLoop)
             {
                 DisplayCard[] cards = new DisplayCard[6];
                 cards[0] = GameObject.Find("SupportMeleeZone").GetComponentInChildren<DisplayCard>();
                 cards[1] = GameObject.Find("SupportDistanceZone").GetComponentInChildren<DisplayCard>();
-                cards[2] = GameObject.Find("SupportAsediusZone").GetComponentInChildren<DisplayCard>();
-                cards[3] = GameObject.Find("EnemySupportAsediusZone").GetComponentInChildren<DisplayCard>();
+                cards[2] = GameObject.Find("SupportSiegeZone").GetComponentInChildren<DisplayCard>();
+                cards[3] = GameObject.Find("EnemySupportSiegeZone").GetComponentInChildren<DisplayCard>();
                 cards[4] = GameObject.Find("EnemySupportMeleeZone").GetComponentInChildren<DisplayCard>();
                 cards[5] = GameObject.Find("EnemySupportDistanceZone").GetComponentInChildren<DisplayCard>();
                 for(int i=0;i<6;i++)
                 {
                     if(cards[i]!=null)
                     {
-                        effect.UseEffect(cards[i].card.Effects,cards[i].gameObject);
+                        //effect.UseEffect(cards[i].card.Effects,cards[i].gameObject);
                     }
                 }
             }
@@ -77,7 +77,7 @@ public class DragAndDrop : MonoBehaviour
                 {
                     foreach(var card in cards)
                     {
-                        effect.UseEffect(card.card.Effects,card.gameObject);
+                        //effect.UseEffect(card.card.Effects,card.gameObject);
                     }
                 }
             }
@@ -154,7 +154,7 @@ public class DragAndDrop : MonoBehaviour
             GameObject hand = GameObject.Find("PlayerHand");
             if(change.change)
             {
-                deck = GameObject.Find("deckManager1").GetComponent<deckManager>();
+                deck = GameObject.Find("deckManager1").GetComponent<Deck>();
                 List<GameObject> deckCards = deck.GetCards();
                 if(cardDisplay.Owner == "Player")
                 {
@@ -177,7 +177,7 @@ public class DragAndDrop : MonoBehaviour
             GameObject hand = GameObject.Find("EnemyHand");
             if(change.change)
             {
-                deck = GameObject.Find("deckManager2").GetComponent<deckManager>();
+                deck = GameObject.Find("deckManager2").GetComponent<Deck>();
                 List<GameObject> deckCards = deck.GetCards();
                 if(cardDisplay.Owner == "Enemy")
                 {

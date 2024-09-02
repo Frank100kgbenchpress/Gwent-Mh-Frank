@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using DSL;
 //aqui es para que se muestren los datos de la carta//
 
 public class DisplayCard : MonoBehaviour

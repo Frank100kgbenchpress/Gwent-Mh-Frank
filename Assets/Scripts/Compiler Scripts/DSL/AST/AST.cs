@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace DSL
 {
@@ -231,7 +232,7 @@ namespace DSL
                     {
                         case "Hand": last = context.turnSystem.HandOfPlayer(context.turnSystem.TriggerPlayer());break;
                         case "Deck": last = context.turnSystem.DeckOfPlayer(context.turnSystem.TriggerPlayer());break;
-                        case "Graveyard": last = context.turnSystem.GraveYardOfPlayer(context.turnSystem.TriggerPlayer());break;
+                        case "Graveyard": last = context.turnSystem.GraveyardOfPlayer(context.turnSystem.TriggerPlayer());break;
                         case "Field": last = context.turnSystem.FieldOfPlayer(context.turnSystem.TriggerPlayer());break;
                         case "Board": last = context.turnSystem.Board();break;
                     }
@@ -269,7 +270,7 @@ namespace DSL
                     {
                         case "Hand": last = context.turnSystem.HandOfPlayer(context.turnSystem.TriggerPlayer());break;
                         case "Deck": last = context.turnSystem.DeckOfPlayer(context.turnSystem.TriggerPlayer());break;
-                        case "Graveyard": last = context.turnSystem.GraveYardOfPlayer(context.turnSystem.TriggerPlayer());break;
+                        case "Graveyard": last = context.turnSystem.GraveyardOfPlayer(context.turnSystem.TriggerPlayer());break;
                         case "Field": last = context.turnSystem.FieldOfPlayer(context.turnSystem.TriggerPlayer());break;
                         case "Board": last = context.turnSystem.Board();break;
                     }
@@ -326,7 +327,7 @@ namespace DSL
                     {
                         case "Hand": last = context.turnSystem.HandOfPlayer(context.turnSystem.TriggerPlayer());break;
                         case "Deck": last = context.turnSystem.DeckOfPlayer(context.turnSystem.TriggerPlayer());break;
-                        case "Graveyard": last = context.turnSystem.GraveYardOfPlayer(context.turnSystem.TriggerPlayer());break;
+                        case "Graveyard": last = context.turnSystem.GraveyardOfPlayer(context.turnSystem.TriggerPlayer());break;
                         case "Field": last = context.turnSystem.FieldOfPlayer(context.turnSystem.TriggerPlayer());break;
                         case "Board": last = context.turnSystem.Board();break;
                     }
@@ -449,15 +450,15 @@ namespace DSL
                 else return context.turnSystem.HandOfPlayer(Convert.ToInt32((Args.Arguments[0] as Expression).Evaluate(context)));
                 case "DeckOfPlayer": if(Args.Arguments[0] is Function) return context.turnSystem.DeckOfPlayer(Convert.ToInt32((Args.Arguments[0] as Function).GetValue(context,value)));
                 else return context.turnSystem.DeckOfPlayer(Convert.ToInt32((Args.Arguments[0] as Expression).Evaluate(context)));
-                case "GraveyardOfPlayer": if(Args.Arguments[0] is Function) return context.turnSystem.GraveYardOfPlayer(Convert.ToInt32((Args.Arguments[0] as Function).GetValue(context,value)));
-                else return context.turnSystem.GraveYardOfPlayer(Convert.ToInt32((Args.Arguments[0] as Expression).Evaluate(context)));
+                case "GraveyardOfPlayer": if(Args.Arguments[0] is Function) return context.turnSystem.GraveyardOfPlayer(Convert.ToInt32((Args.Arguments[0] as Function).GetValue(context,value)));
+                else return context.turnSystem.GraveyardOfPlayer(Convert.ToInt32((Args.Arguments[0] as Expression).Evaluate(context)));
                 case "FieldOfPlayer": if(Args.Arguments[0] is Function) return context.turnSystem.FieldOfPlayer(Convert.ToInt32((Args.Arguments[0] as Function).GetValue(context,value)));
                 else return context.turnSystem.FieldOfPlayer(Convert.ToInt32((Args.Arguments[0] as Expression).Evaluate(context)));
                 //case "Find": return (value as CardList).Find()
-                case "Push": (value as CardList).Push((Args.Arguments[0] as Expression).Evaluate(context) as Card);return null;
-                case "SendBottom": (value as CardList).SendBottom((Args.Arguments[0] as Expression).Evaluate(context) as Card);return null;
+                case "Push": (value as CardList).Push((Args.Arguments[0] as Expression).Evaluate(context) as GameObject);return null;
+                case "SendBottom": (value as CardList).SendBottom((Args.Arguments[0] as Expression).Evaluate(context) as GameObject);return null;
                 case "Pop": return (value as CardList).Pop();
-                case "Remove": (value as CardList).Remove((Args.Arguments[0] as Expression).Evaluate(context) as Card);return null;
+                case "Remove": (value as CardList).Remove((Args.Arguments[0] as Expression).Evaluate(context) as GameObject);return null;
                 case "Shuffle": (value as CardList).Shuffle();return null; 
                 default: return null;
             }

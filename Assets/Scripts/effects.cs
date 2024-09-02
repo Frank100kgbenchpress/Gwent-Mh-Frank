@@ -11,7 +11,7 @@ public class effects : MonoBehaviour
     public GameObject zone4;
     public GameObject zone5;
     public GameObject zone6;
-    public deckManager deck;
+    public Deck deck;
     public bool wheatherUse;
     public bool effectLoop;
     public effects effect;
@@ -20,7 +20,7 @@ public class effects : MonoBehaviour
 
     public void UseEffect(int hability,GameObject card)
     {
-        if(hability==1)
+        /*if(hability==1)
         {
             Supply(card);
         }
@@ -59,7 +59,7 @@ public class effects : MonoBehaviour
         if(hability==10)
         {
             Average(card);
-        }
+        }*/
         if(hability==11)
         {
             decoy = GameObject.Find("GameManager").GetComponent<TurnSystem>();
@@ -84,6 +84,7 @@ public class effects : MonoBehaviour
             }
         }
     }
+    /*
     void RowPowerUpp(GameObject cardPlayed)
     {
         string Owner = cardPlayed.GetComponent<DisplayCard>().Owner;
@@ -592,5 +593,5 @@ public class effects : MonoBehaviour
                 card.attackText.text = card.points.ToString();   
             }    
         }
-    }
+    }*/
 }

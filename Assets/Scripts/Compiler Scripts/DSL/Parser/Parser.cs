@@ -105,7 +105,7 @@ namespace DSL
         {  
             counter[0]++;  
             Consume(TokenType.COLON, "Expected ':' after Type");  
-            card.Type = new Type(ParseExpression());  
+            card.Type = new CardType(ParseExpression());  
             Consume(TokenType.COMMA, "Expected ',' after expression");  
         }  
         void ParseCardName(CardNode card, int[] counter)  
@@ -451,7 +451,7 @@ namespace DSL
         }
         void VariableTypeParser(Variable.Type varType,VariableComp variableComp)
         {
-            Type type = new Type(new String(Previous().Lexeme));
+            CardType type = new CardType(new String(Previous().Lexeme as string));
             varType = Variable.Type.STRING;
             variableComp.args.Arguments.Add(type);
         }
@@ -644,7 +644,7 @@ namespace DSL
             {
                 Token operators = Previous();
                 Expression right = Comparison();
-                expression = new BinaryBooleanExpression(expression,operators,right);
+                expression = new BinaryExpression(expression,operators,right);
             }
         }
         #endregion
@@ -661,7 +661,7 @@ namespace DSL
             {
                 Token operators = Previous();
                 Expression right = Term();
-                expression = new BinaryBooleanExpression(expression,operators,right);
+                expression = new BinaryExpression(expression,operators,right);
             }
         }
         #endregion
@@ -676,7 +676,7 @@ namespace DSL
         {
             Token operators = Previous();
             Expression right = Factor();
-            expression = new BinaryStringExpression(expression,operators,right);
+            expression = new BinaryExpression(expression,operators,right);
         }
         void CheckTermProperties(Expression expression)
         {
@@ -697,7 +697,7 @@ namespace DSL
             {
                 Token operators = Previous();
                 Expression right = Unary();
-                expression = new BinaryIntergerExpression(expression,operators,right);
+                expression = new BinaryExpression(expression,operators,right);
             }
         }
         #endregion
@@ -708,19 +708,19 @@ namespace DSL
             {
                 Token operators = Previous();
                 Expression right = Unary();
-                return new UnaryIntergerExpression(operators,right);
+                return new UnaryExpression(operators,right);
             }
             else if(Match(TokenType.NOT))
             {
                 Token operators = Previous();
                 Expression right = Unary();
-                return new UnaryBooleanExpression(operators,right);   
+                return new UnaryExpression(operators,right);   
             }
             else if (Check(TokenType.IDENTIFIER) && (LookAhead(TokenType.PLUS_PLUS_RIGHT)|| LookAhead(TokenType.MINUS_MINUS_RIGHT)))
             {
                 Expression left = ParseVariable();
                 Token operatorToken = Advance();
-                return new UnaryIntergerExpression(operatorToken, left);
+                return new UnaryExpression(operatorToken, left);
             }
             return Primary();
         }
@@ -728,9 +728,9 @@ namespace DSL
         #region Primary Expressions Parser
         Expression Primary()
         {
-            if(Match(TokenType.FALSE)) return new Bool(false);
-            if(Match(TokenType.TRUE)) return new Bool(true);
-            if(Match(TokenType.NUMBER)) return new Number(Convert.ToInt32(Previous().Literal));
+            if(Match(TokenType.FALSE))     return new Bool(false);
+            if(Match(TokenType.TRUE))      return new Bool(true);
+            if(Match(TokenType.NUMBER))    return new Number(Convert.ToInt32(Previous().Literal));
             if(Match(TokenType.STRING))    return new String(Previous().Lexeme.Substring(1,Previous().Lexeme.Length-2));
             if(Match(TokenType.LEFT_PAREN))
             {

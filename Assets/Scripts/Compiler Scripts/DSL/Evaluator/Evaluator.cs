@@ -1,4 +1,4 @@
-using System;
+using UnityEngine;
 using System.Collections.Generic;
 namespace DSL
 {
@@ -68,7 +68,7 @@ namespace DSL
             foreach(var card in cards)
             {
                 Context.variables[selector.Predicate.Var.Value] = card;
-                if((bool)selector.Predicate.Condition.Evaluate(Context) && card.GetComponent<DisplayCard>().type != "Oro") filtredCards.Add(card);
+                if((bool)selector.Predicate.Condition.Evaluate(Context) && card.GetComponent<DisplayCard>().Type != "Oro") filtredCards.Add(card);
                 Context.variables.Remove(selector.Predicate.Var.Value);
             }
             if(selector.Single.Value && filtredCards.Count!=0)

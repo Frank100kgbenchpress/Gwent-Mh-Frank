@@ -1,70 +1,43 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
-//para tener la cuenta de los puntos//
 
+// Class to manage point counting for players and enemies
 public class PointCount : MonoBehaviour
 {
-    public TextMeshProUGUI Playerpoints;
+    public TextMeshProUGUI PlayerPoints;
     public TextMeshProUGUI EnemyPoints;
+    
     public GameObject MeleeZone;
     public GameObject DistanceZone;
     public GameObject SiegeZone;
+    
     public GameObject MeleeZone1;
     public GameObject DistanceZone1;
     public GameObject SiegeZone1;
-    // Update is called once per frame
+
     void Update()
     {
-        CollectPoints();
-        CollectEnemyPoints();
+        CollectPoints(MeleeZone, DistanceZone, SiegeZone, false);
+        CollectPoints(MeleeZone1, DistanceZone1, SiegeZone1, true);
     }
-    public void CollectPoints()
+
+    public void CollectPoints(GameObject meleeZone, GameObject distanceZone, GameObject siegeZone, bool isPlayer)
     {
-        int meleepoints = 0;
-        int distancePoints = 0;
-        int asediusPoints = 0;
-        DisplayCard[] cards = MeleeZone.GetComponentsInChildren<DisplayCard>();
-        foreach (DisplayCard card in cards)
-        {
-            meleepoints += card.Points;
-        }
-        DisplayCard[] cards1 = DistanceZone.GetComponentsInChildren<DisplayCard>();
-        foreach(var card in cards1)
-        {
-            distancePoints += card.Points;
-        }
-        DisplayCard[] cards2 = SiegeZone.GetComponentsInChildren<DisplayCard>();
-        foreach(var card in cards2)
-        {
-            asediusPoints += card.Points;
-        }
-        int totalPoints = meleepoints + distancePoints + asediusPoints;
-        Playerpoints.text = totalPoints.ToString();        
+        int meleePoints = CollectPointsFromZone(meleeZone);
+        int distancePoints = CollectPointsFromZone(distanceZone);
+        int siegePoints = CollectPointsFromZone(siegeZone);
+        
+        int totalPoints = meleePoints + distancePoints + siegePoints;
+        UpdateScoreDisplay(totalPoints, isPlayer);
     }
-    public void CollectEnemyPoints()
+
+    int CollectPointsFromZone(GameObject zone)
     {
-        int meleepoints = 0;
-        int distancePoints = 0;
-        int asediusPoints = 0;
-        DisplayCard[] cards = MeleeZone1.GetComponentsInChildren<DisplayCard>();
-        foreach (DisplayCard card in cards)
-        {
-            meleepoints += card.Points;
-        }
-        DisplayCard[] cards1 = DistanceZone1.GetComponentsInChildren<DisplayCard>();
-        foreach(var card in cards1)
-        {
-            distancePoints += card.Points;
-        }
-        DisplayCard[] cards2 = SiegeZone1.GetComponentsInChildren<DisplayCard>();
-        foreach(var card in cards2)
-        {
-            asediusPoints += card.Points;
-        }
-        int totalPoints = meleepoints + distancePoints + asediusPoints;
-        EnemyPoints.text = totalPoints.ToString();
+        DisplayCard[] cards = zone.GetComponentsInChildren<DisplayCard>();
+        int totalPoints = 0;
+        foreach (var card in cards)    totalPoints += card.Points;
+        return totalPoints;
     }
+
+    void UpdateScoreDisplay(int totalPoints, bool isPlayer)=> (isPlayer ? PlayerPoints : EnemyPoints).text = totalPoints.ToString();
 }

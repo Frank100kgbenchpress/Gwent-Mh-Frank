@@ -38,13 +38,13 @@ namespace DSL
         Card AssingCardPRoperties(CardNode card)
         {
             Card trueCard = new Card();
-            trueCard.type = Convert.ToString(card.Type.Type.Evaluate(Context));
-            trueCard.name = Convert.ToString(card.Name.name.Evaluate(Context));
-            trueCard.faction = Convert.ToString(card.Faction.faction.Evaluate(Context));
-            trueCard.points = Convert.ToInt32(card.Power.power.Evaluate(Context));
+            trueCard.Type = Convert.ToString(card.Type.Type.Evaluate(Context));
+            trueCard.Name = Convert.ToString(card.Name.name.Evaluate(Context));
+            trueCard.Faction = Convert.ToString(card.Faction.faction.Evaluate(Context));
+            trueCard.Attack = Convert.ToInt32(card.Power.power.Evaluate(Context));
             int pos = 0;
-            foreach(var expression in card.Range.range)    trueCard.range[pos++] = expression.Evaluate(Context) as string; 
-            trueCard.effects = card.OnActivation;
+            foreach(var expression in card.Range.range)    trueCard.Range[pos++] = expression.Evaluate(Context) as string; 
+            trueCard.Effects = card.OnActivation;
             Context.cards[trueCard.name] = trueCard;
             return trueCard;
         }
@@ -224,6 +224,7 @@ namespace DSL
                 if(assignment.Left.VariableType != Variable.Type.INT && assignment.Left.VariableType != Variable.Type.STRING)    Errors.Add($"The type of the left side of the assignment '{assignment.Left}' is not equal to the right side");
             }
         }
+        #region For and While semantics
         void CheckForSemantics(ForStatement forStmt)
         {
             symbolTable.PushScope();
@@ -252,6 +253,7 @@ namespace DSL
             CheckStatementsBlockSemantics(whileStmt.Body);
             symbolTable.PopScope();
         }
+        #endregion
         void CheckVariableUsage( Variable variable)
         {
             try
@@ -276,6 +278,7 @@ namespace DSL
                 Console.WriteLine(ex.Message);
             }
         }
+        #region Variable Semantics
         Variable.Type GetExpressionType(Expression expression)
         {
             if (expression is BinaryExpression binaryExpression)
@@ -360,6 +363,21 @@ namespace DSL
             }
             variableComp.VariableType = currentType;
         }
+        Variable.Type InferExpressionType(Expression expression) 
+        {
+            switch (expression)
+            {
+                case Number _: return Variable.Type.INT;
+                case String _: return Variable.Type.STRING;
+                case Bool _: return Variable.Type.BOOL;
+                case VariableComp variableComp: return variableComp.VariableType;
+                case Variable variable: return symbolTable.LookupVariable(variable.Value);
+                case ExpressionGroup expressionGroup: return InferExpressionType(expressionGroup.Exp);
+                default: throw new ArgumentException("Unsupported expression type", nameof(expression));
+            }
+        }
+        #endregion
+        #region String , Number and Bool Semantics
         void CheckStringExpression(Expression expression)
         {
             try
@@ -527,6 +545,7 @@ namespace DSL
                 Console.WriteLine(ex.Message);
             }
         }
+        #endregion
         List<Variable> FindVariablesInExpression(Expression expression)
         {
             var variables = new List<Variable>();
@@ -540,19 +559,7 @@ namespace DSL
             else if (expression is UnaryExpression unaryExpression)    variables.AddRange(FindVariablesInExpression(unaryExpression.Right));
             return variables;
         }
-        Variable.Type InferExpressionType(Expression expression) // revisar
-        {
-            switch (expression)
-            {
-                case Number _: return Variable.Type.INT;
-                case String _: return Variable.Type.STRING;
-                case Bool _: return Variable.Type.BOOL;
-                case VariableComp variableComp: return variableComp.VariableType;
-                case Variable variable: return symbolTable.LookupVariable(variable.Value);
-                case ExpressionGroup expressionGroup: return InferExpressionType(expressionGroup.Exp);
-                default: throw new ArgumentException("Unsupported expression type", nameof(expression));
-            }
-        }
+        
         bool AreCompatibleTypes(Variable.Type leftType, Variable.Type rightType) => leftType == rightType;
     }   
 }
