@@ -1,47 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
-
-public class Draw : MonoBehaviour
+public class Draw : MonoBehaviour 
 {
-    public GameObject Card;
-    public GameObject Hand1;
-    public GameObject Hand2;
-    public deckManager deck1;
-    public deckManager deck2;
-    void Start()
+    public Hand Hand1;
+    public Hand Hand2;
+    public Deck deck1;
+    public Deck deck2;
+    public void DrawCard(int player) 
     {
-        Hand1 = GameObject.Find("PlayerHand");
-        Hand2 = GameObject.Find("EnemyHand");
-        deck1 = GameObject.Find("deckManager1").GetComponent<deckManager>();
-        deck2 = GameObject.Find("deckManager2").GetComponent<deckManager>();
-    }
-    public void Draw1()
-    {
-        List<GameObject> deckCards = deck1.GetCards();
-        int random = Random.Range(0,deckCards.Count);
-        GameObject selectedCard = deckCards[random];
-        GameObject playerCard = Instantiate(selectedCard,new Vector3(0,0,0),Quaternion.identity);
-        playerCard.transform.SetParent( Hand1.transform, false);
-        if(deckCards.Count==0)
-        {
-
-        }
-        deckCards.RemoveAt(random);
-    }
-    public void Draw2()
-    {
-        List<GameObject> deckCards = deck2.GetCards();
-        int random = Random.Range(0,deckCards.Count);
-        GameObject selectedCard = deckCards[random];
-        GameObject playerCard = Instantiate(selectedCard,new Vector3(0,0,0),Quaternion.identity);
-        playerCard.transform.SetParent( Hand2.transform, false);
-        if(deckCards.Count==0)
-        {
-            
-        }
-        deckCards.RemoveAt(random);
-        /*deck1Size.text = deck1.GetCards().Count.ToString();*/
+        if(player == 1)    Hand1.Push(deck1.Pop());
+        else    Hand2.Push(deck2.Pop());
     }
 }

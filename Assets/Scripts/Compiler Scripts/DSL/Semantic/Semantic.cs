@@ -1,0 +1,558 @@
+using System;
+using System.Collections.Generic;
+
+namespace DSL
+{
+    public class SemanticalCheck
+    {
+        Context Context;
+        SymbolTable symbolTable;
+        List<string> Errors;
+        public SemanticalCheck(Node node, Context context, List<string> errors)
+        {
+            var program = (node as Program)!;
+            symbolTable = new SymbolTable();
+            Context = context;
+            Errors = errors;
+            CheckProgramSemantics(program);
+        }
+        public void CheckProgramSemantics(Program program) 
+        {
+            foreach (var effect in program.EffectNodes)    CheckEffectSemantics(effect);
+            
+            foreach (var card in program.CardNodes)    CheckCardSemantics(card);
+        }
+        #region Card And Effect Semantics stuff
+        void CheckCardSemantics(CardNode card)
+        {
+            symbolTable.PushScope();
+            CheckTypeSemantics(card.Type);
+            CheckCardNameSemantics(card.Name);
+            CheckStringExpression(card.Faction.faction);
+            CheckNumericExpression(card.Power.power);
+            CheckRangeSemantics(card.Range.range);
+            CheckOnActivationSemantics(card.OnActivation.Elements);
+            AssingCardPRoperties(card); 
+            symbolTable.PopScope();
+        }
+        Card AssingCardPRoperties(CardNode card)
+        {
+            Card trueCard = new Card();
+            trueCard.type = Convert.ToString(card.Type.Type.Evaluate(Context));
+            trueCard.name = Convert.ToString(card.Name.name.Evaluate(Context));
+            trueCard.faction = Convert.ToString(card.Faction.faction.Evaluate(Context));
+            trueCard.points = Convert.ToInt32(card.Power.power.Evaluate(Context));
+            int pos = 0;
+            foreach(var expression in card.Range.range)    trueCard.range[pos++] = expression.Evaluate(Context) as string; 
+            trueCard.effects = card.OnActivation;
+            Context.cards[trueCard.name] = trueCard;
+            return trueCard;
+        }
+        void CheckEffectSemantics(EffectNode effect)
+        {
+            symbolTable.PushScope();
+            CheckEffectNameSemantics(effect.Name);
+            if(effect.Params != null)    CheckParamsSemantics(effect.Params);
+            CheckActionSemantics(effect.Action);
+            symbolTable.PopScope();
+            Context.effects[Convert.ToString(effect.Name.name.Evaluate(Context))!] = new EffectNode(effect.Name,effect.Params!,effect.Action);
+        }
+        void CheckTypeSemantics(CardType type)
+        {
+            CheckStringExpression(type.Type);
+            var trueType = Convert.ToString(type.Type.Evaluate(Context));
+            if(trueType!="Oro" && trueType!="Plata" && trueType!="Clima" && trueType!="Decoy" && trueType!="Aumento" && trueType!="Despeje")
+            {
+                Errors.Add($"The type : '{type}' is not a valid type.");
+            }
+        }
+        void CheckCardNameSemantics(Name name)
+        {
+            CheckStringExpression(name.name);
+            var trueName = Convert.ToString(name.name.Evaluate(Context))!;
+            Context.AddCard(trueName);
+        }
+        void CheckRangeSemantics(Expression[] expressions)
+        {
+            foreach(var expression in expressions)
+            {
+                CheckStringExpression(expression);
+                var range = Convert.ToString(expression.Evaluate(Context));
+                if(range != "Melee" && range != "Ranged" && range!= "Siege")    Errors.Add($"The range : '{expression}' is not a valid range.");
+            }
+        }
+        void CheckOnActivationSemantics(List<OnActivationElements> onActivationElements)
+        {
+            foreach(var element in onActivationElements)    CheckOAElementsSemantics(element);    
+        }
+        void CheckOAElementsSemantics(OnActivationElements oAElements)
+        {
+            symbolTable.PushScope();
+            CheckOAEffect(oAElements.OAEffect);
+            if(oAElements.Selector != null)       CheckSelectorSemantics(oAElements.Selector);
+            if(oAElements.PostActions != null)    CheckPostActionSemantics(oAElements.PostActions);  
+            symbolTable.PopScope();
+        }
+        void CheckOAEffect(OAEffect oAEffect)
+        {
+            List<Node> parammeters = Context.GetEffect(oAEffect.Name).Params.Arguments;
+            List<Assignment> assignments = oAEffect.Assingments;
+            int paramCounter = 0;
+            int assignmentCounter = 0;
+            foreach(var assignment in assignments)
+            {
+                assignment.Left.VariableType = InferExpressionType(assignment.Right);
+                foreach(var param in parammeters)
+                {
+                    if(assignment.Left.VariableType == (param as Variable)!.VariableType)
+                    {
+                        paramCounter++;
+                        assignmentCounter++;
+                    }
+                }
+            }
+            if(parammeters.Count!=paramCounter || assignments.Count!=assignmentCounter)    Errors.Add(parammeters.Count + " " + assignments.Count);
+            foreach(var assignment in oAEffect.Assingments)
+            {
+                if(assignment.Left.VariableType != GetExpressionType(assignment.Right))    Errors.Add($"The type of the left side of the assignment '{assignment.Left}' is not equal to the right side");
+            }
+        }
+        void CheckSelectorSemantics(Selector selector) => CheckPredicateSemantics(selector.Predicate);
+        void CheckPredicateSemantics(Predicate predicate)
+        {
+            if (predicate.Var.VariableType != Variable.Type.CARD)    Errors.Add($"Predicate variable must be of type CARD, but got {predicate.Var.VariableType}");
+            symbolTable.PushScope();
+            symbolTable.DefineVariable(predicate.Var.Value, Variable.Type.CARD);        
+            CheckBooleanExpression(predicate.Condition);
+            symbolTable.PopScope();
+        }
+        void CheckEffectNameSemantics(Name name)
+        {
+            CheckStringExpression(name.name);
+            string trueName = Convert.ToString(name.name.Evaluate(Context))!;
+            Context.AddEffect(trueName);
+        }
+        void CheckPostActionSemantics(List<PostAction> postActions)
+        {
+            foreach(var postAction in postActions)
+            {
+                CheckStringExpression(postAction.Type);
+                if(Context.GetEffect(Convert.ToString(postAction.Type.Evaluate(Context))!).Params != null)
+                {
+                    List<Node> parammeters = Context.GetEffect(Convert.ToString(postAction.Type.Evaluate(Context))!).Params.Arguments;
+                    List<Assignment> assignments = postAction.Assingments;
+                    int paramCounter = 0;
+                    int assignmentCounter = 0;
+                    foreach(var assignment in assignments)
+                    {
+                        foreach(var param in parammeters)
+                        {
+                            if(assignment.Left.VariableType == (param as Variable)!.VariableType)
+                            {
+                                paramCounter++;
+                                assignmentCounter++;
+                            }
+                        }
+                    }
+                    if(parammeters.Count!=paramCounter || assignments.Count!=assignmentCounter)    Errors.Add("Params form the PostAction doesn't match the effect params");
+                    
+                    foreach(var assignment in postAction.Assingments)
+                    {
+                        if(assignment.Left.VariableType != GetExpressionType(assignment.Right))    Errors.Add($"The type of the left side of the assignment '{assignment.Left}' is not equal to the right side");
+                    }
+                }
+                else
+                {
+                    List<Assignment> assignments = postAction.Assingments;
+                    foreach(var assignment in postAction.Assingments)
+                    {
+                        if(assignment.Left.VariableType != GetExpressionType(assignment.Right))    Errors.Add($"The type of the left side of the assignment '{assignment.Left}' is not equal to the right sideu");
+                    }
+                }
+            if(postAction.Selector != null)    CheckSelectorSemantics(postAction.Selector);
+            }
+        }
+        #endregion
+        void CheckParamsSemantics(Args parameters)
+        {
+            foreach (var param in parameters.Arguments)
+            {
+                var trueParam = (param as Variable)!;
+                symbolTable.DefineVariable(trueParam.Value, trueParam.VariableType);
+            }
+        }
+        void CheckActionSemantics(Action action)
+        {
+            symbolTable.PushScope();
+            symbolTable.DefineVariable(action.Targets.Value,Variable.Type.TARGETS);
+            symbolTable.DefineVariable(action.Context.Value,Variable.Type.CONTEXT);
+            CheckStatementsBlockSemantics(action.Block);
+            symbolTable.PopScope();
+        }
+        void CheckStatementsBlockSemantics(StmsBlock block)
+        {
+            foreach (var stmt in block.statements)    CheckStatementSemantics(stmt);
+        }
+        void CheckStatementSemantics(Stmt stmt)
+        {
+            switch (stmt)
+            {
+                case Assignment assignment: CheckAssignmentSemantics(assignment); break;
+                case WhileStatement whileStmt: CheckWhileSemantics(whileStmt); break;
+                case ForStatement forStmt: CheckForSemantics(forStmt); break;
+                case Function function: CheckFunctionCall(function); break;
+                case VariableComp variableComp: CheckVarCompSemantics(variableComp); break;
+                default: throw new ArgumentException("Unsupported statement type");
+            }
+        }
+        void CheckAssignmentSemantics(Assignment assignment)
+        {
+            if(assignment.Op.Type == TokenType.EQUAL)
+            {
+                if(symbolTable.ExistsVariable(assignment.Left.Value))
+                {
+                    Variable.Type type = symbolTable.LookupVariable(assignment.Left.Value);
+                    if(type != InferExpressionType(assignment.Right))    Errors.Add($"The type of the left side of the assignment '{assignment.Left}' is not equal to the right side");
+                }
+                else    symbolTable.DefineVariable(assignment.Left.Value,InferExpressionType(assignment.Right));
+            }
+            else
+            {
+                if(assignment.Left is Variable)    CheckVariableUsage(assignment.Left);
+                else    CheckVarCompSemantics((assignment.Left as VariableComp)!);
+                if(assignment.Left.VariableType != InferExpressionType(assignment.Right))    Errors.Add($"The type of the left side of the assignment '{assignment.Left}' is not equal to the right side");
+                if(assignment.Left.VariableType != Variable.Type.INT && assignment.Left.VariableType != Variable.Type.STRING)    Errors.Add($"The type of the left side of the assignment '{assignment.Left}' is not equal to the right side");
+            }
+        }
+        void CheckForSemantics(ForStatement forStmt)
+        {
+            symbolTable.PushScope();
+            symbolTable.DefineVariable(forStmt.Target.Value,Variable.Type.CARD);
+            CheckVariableUsage(forStmt.Targets);
+            CheckStatementsBlockSemantics(forStmt.Body);
+            symbolTable.PopScope();
+        }
+        void CheckWhileSemantics(WhileStatement whileStmt)
+        {
+            symbolTable.PushScope();
+            var variablesInCondition = FindVariablesInExpression(whileStmt.Condition);
+            foreach (var variable in variablesInCondition)
+            {
+                try
+                {
+                    symbolTable.LookupVariable(variable.Value);
+                }
+                
+                catch (Exception)
+                {
+                    Errors.Add($"Variable '{variable.Value}' in while condition is not declared.");
+                }
+            }
+            CheckBooleanExpression(whileStmt.Condition);
+            CheckStatementsBlockSemantics(whileStmt.Body);
+            symbolTable.PopScope();
+        }
+        void CheckVariableUsage( Variable variable)
+        {
+            try
+            {
+                var varType = symbolTable.LookupVariable(variable.Value);
+                Console.WriteLine($"Variable '{variable.Value}' is of type {varType}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        void CheckFunctionCall( Function function)
+        {
+            try
+            {
+                var returnType = symbolTable.LookupFunction(function.FunctionName);
+                Console.WriteLine($"Function '{function.FunctionName}' returns type {returnType}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        Variable.Type GetExpressionType(Expression expression)
+        {
+            if (expression is BinaryExpression binaryExpression)
+            {
+                if (GetExpressionType(binaryExpression.Left) == Variable.Type.INT && GetExpressionType(binaryExpression.Right) == Variable.Type.INT)
+                {
+                    ReturnType(expression,3);
+                }
+                else if (GetExpressionType(binaryExpression.Left) == Variable.Type.BOOL && GetExpressionType(binaryExpression.Right) == Variable.Type.BOOL)
+                {
+                    ReturnType(expression,2);
+                }
+                else
+                {
+                    ReturnType(expression,1);
+                }
+            }
+            else if (expression is UnaryExpression unaryExpression)
+            {
+                var rightType = GetExpressionType(unaryExpression.Right);
+                if (rightType == Variable.Type.INT || rightType == Variable.Type.BOOL)
+                {
+                    if (rightType == Variable.Type.INT)
+                    {
+                        ReturnType(expression,3);
+                    }
+                    else if (rightType == Variable.Type.BOOL)
+                    {
+                        ReturnType(expression,2);
+                    }
+                }
+            }
+            else if(expression is ExpressionGroup)
+            {
+                var expressionGroup = (expression as ExpressionGroup)!;
+                return GetExpressionType(expressionGroup.Exp);
+            }
+                if(expression is VariableComp)
+                {
+                    ReturnType(expression,4);
+                }
+            Variable variable = (expression as Variable)!;
+            return variable.VariableType;
+        }
+        Variable.Type ReturnType(Expression expression , int returnType)
+        {
+            if(returnType == 1)
+            {
+                CheckStringExpression(expression);
+                return Variable.Type.STRING;
+            }
+            else if(returnType == 2)
+            {
+                CheckBooleanExpression(expression);
+                return Variable.Type.BOOL;
+            }
+            else if(returnType==3)
+            {
+                CheckNumericExpression(expression);
+                return Variable.Type.INT;
+            }
+            VariableComp variableComp = (expression as VariableComp)!;
+            CheckVarCompSemantics(variableComp);
+            return variableComp.VariableType;            
+        }
+        void CheckVarCompSemantics(VariableComp variableComp)
+        {
+            Variable.Type currentType = symbolTable.LookupVariable(variableComp.Value); 
+            foreach (var arg in variableComp.args.Arguments)
+            {
+                if (arg is Function function)
+                {
+                    CheckFunctionCall(function);
+                    currentType = function.Type;
+                }
+                else if (arg is Type || arg is Name || arg is Faction || arg is PowerAsField || arg is Range || arg is Pointer)
+                {
+                    // Check if the property access is valid for the current type
+                    // You may need to define rules for what properties are accessible for each type
+                    // Update currentType based on the property type
+                }
+            }
+            variableComp.VariableType = currentType;
+        }
+        void CheckStringExpression(Expression expression)
+        {
+            try
+            {
+                if(expression is String)
+                {
+                    return;
+                }
+                else if(expression is BinaryExpression)
+                {
+                    var binaryStringExpression = (expression as BinaryExpression)!;
+                    CheckStringExpression(binaryStringExpression.Left);
+                    CheckStringExpression(binaryStringExpression.Right);
+                }
+                else if(expression is ExpressionGroup)
+                {
+                    var expressionGroup = (expression as ExpressionGroup)!;
+                    CheckStringExpression(expressionGroup.Exp);
+                }
+                else if(expression is Variable)
+                {
+                    if(expression is VariableComp)
+                    {
+                        VariableComp variableComp = (expression as VariableComp)!;
+                        CheckVarCompSemantics(variableComp);
+                        if(variableComp.VariableType != Variable.Type.STRING)    Errors.Add($"A string was expected but instead got {variableComp.VariableType}");
+                    }
+                    else
+                    {
+                        Variable variable = (expression as Variable)!;
+                        symbolTable.LookupVariable(variable.Value);
+                        if(variable.VariableType != Variable.Type.STRING)    Errors.Add($"A string was expected but instead got {variable.VariableType}");
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        void CheckNumericExpression(Expression expression)
+        {
+            try
+            {
+                if(expression is Number)
+                {
+                    return;
+                }
+                else if(expression is UnaryExpression)
+                {
+                    var unaryIntergerExpression = (expression as UnaryExpression)!;
+                    CheckNumericExpression(unaryIntergerExpression.Right);
+                }
+                else if(expression is BinaryExpression)
+                {
+                    var binaryIntergerExpression = (expression as BinaryExpression)!;
+                    CheckNumericExpression(binaryIntergerExpression.Left);
+                    CheckNumericExpression(binaryIntergerExpression.Right);
+                }
+                else if(expression is ExpressionGroup)
+                {
+                    var expressionGroup = (expression as ExpressionGroup)!;
+                    CheckNumericExpression(expressionGroup.Exp);
+                }
+                else if(expression is Variable)
+                {
+                    if(expression is VariableComp)
+                    {
+                        VariableComp variableComp = (expression as VariableComp)!;
+                        CheckVarCompSemantics(variableComp);
+                        if(variableComp.VariableType != Variable.Type.INT)
+                        {
+                            Errors.Add($"A number was expected but instead got {variableComp.VariableType}");
+                        }
+                    }
+                    else
+                    {
+                        Variable variable = (expression as Variable)!;
+                        symbolTable.LookupVariable(variable.Value);
+                        if(variable.VariableType != Variable.Type.INT)
+                        {
+                            Errors.Add($"A number was expected but instead got {variable.VariableType}");
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        void CheckBooleanExpression(Expression expression)
+        {
+            try
+            {
+                if(expression is Bool)
+                {
+                    return;
+                }
+                else if(expression is UnaryExpression)
+                {
+                    var unaryBooleanExpression = (expression as UnaryExpression)!;
+                    CheckBooleanExpression(unaryBooleanExpression.Right);
+                }
+                else if(expression is BinaryExpression)
+                {
+                    var binaryBooleanExpression = (expression as BinaryExpression)!;
+
+                    if(binaryBooleanExpression.Operators.Type == TokenType.GREATER||binaryBooleanExpression.Operators.Type == TokenType.LAMBDA||
+                    binaryBooleanExpression.Operators.Type == TokenType.LESS||binaryBooleanExpression.Operators.Type == TokenType.LESS_EQUAL)
+                    {
+                        CheckNumericExpression(binaryBooleanExpression.Left);
+                        CheckNumericExpression(binaryBooleanExpression.Right);
+                    }
+                    else if(binaryBooleanExpression.Operators.Type == TokenType.NOT_EQUAL||binaryBooleanExpression.Operators.Type == TokenType.EQUAL)
+                    {
+                        var leftType = InferExpressionType(binaryBooleanExpression.Left);
+                        var rightType = InferExpressionType(binaryBooleanExpression.Right);
+                        if(!AreCompatibleTypes(leftType, rightType))    Errors.Add($"Incompatible types in comparison: {leftType} and {rightType}");
+                        if(leftType == Variable.Type.INT)
+                        {
+                            CheckNumericExpression(binaryBooleanExpression.Left);
+                            CheckNumericExpression(binaryBooleanExpression.Right);
+                        }
+                        else if(leftType == Variable.Type.STRING)
+                        {
+                            CheckStringExpression(binaryBooleanExpression.Left);
+                            CheckStringExpression(binaryBooleanExpression.Right);
+                        }
+                        else if(leftType == Variable.Type.BOOL)
+                        {
+                            CheckBooleanExpression(binaryBooleanExpression.Left);
+                            CheckBooleanExpression(binaryBooleanExpression.Right);
+                        }
+                    }
+                }
+                else if(expression is ExpressionGroup)
+                {
+                    var expressionGroup = (expression as ExpressionGroup)!;
+                    CheckBooleanExpression(expressionGroup.Exp);
+                }
+                else if (expression is Variable variable)
+                {
+                    var varType = symbolTable.LookupVariable(variable.Value);
+                    if (varType != Variable.Type.BOOL)
+                    {
+                        Errors.Add($"Variable '{variable.Value}' is not of type BOOL");
+                    }
+                }
+                else if (expression is VariableComp variableComp)
+                {
+                    CheckVarCompSemantics(variableComp);
+                    if (variableComp.VariableType != Variable.Type.BOOL)
+                    {
+                        Errors.Add($"Expression does not evaluate to a BOOL type");
+                    }
+                }
+                else
+                {
+                    Errors.Add($"Invalid expression type for boolean context: {expression.GetType().Name}");
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        List<Variable> FindVariablesInExpression(Expression expression)
+        {
+            var variables = new List<Variable>();
+            if (expression is Variable variable)    variables.Add(variable);
+
+            else if (expression is BinaryExpression binaryExpression)
+            {
+                variables.AddRange(FindVariablesInExpression(binaryExpression.Left));
+                variables.AddRange(FindVariablesInExpression(binaryExpression.Right));
+            }
+            else if (expression is UnaryExpression unaryExpression)    variables.AddRange(FindVariablesInExpression(unaryExpression.Right));
+            return variables;
+        }
+        Variable.Type InferExpressionType(Expression expression) // revisar
+        {
+            switch (expression)
+            {
+                case Number _: return Variable.Type.INT;
+                case String _: return Variable.Type.STRING;
+                case Bool _: return Variable.Type.BOOL;
+                case VariableComp variableComp: return variableComp.VariableType;
+                case Variable variable: return symbolTable.LookupVariable(variable.Value);
+                case ExpressionGroup expressionGroup: return InferExpressionType(expressionGroup.Exp);
+                default: throw new ArgumentException("Unsupported expression type", nameof(expression));
+            }
+        }
+        bool AreCompatibleTypes(Variable.Type leftType, Variable.Type rightType) => leftType == rightType;
+    }   
+}

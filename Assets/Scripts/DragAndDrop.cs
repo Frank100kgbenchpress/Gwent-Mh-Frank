@@ -1,21 +1,19 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
+//aqui manejo todos los eventos relacionados con poner cartas//
 
 public class DragAndDrop : MonoBehaviour 
 {
-    private Vector2 startPosition;
-    private bool isDraggin = false;
-    private bool isOverDropZone = false;
-    private GameObject dropZone;
+    Vector2 startPosition;
+    bool isDraggin = false;
+    bool isOverDropZone = false;
+    GameObject dropZone;
     public TurnSystem endturn;
     public TurnSystem turns;
     public effects effect;
     public deckManager deck;
     public Draw draw;
     public Change change;
-
     
 
 
@@ -52,36 +50,38 @@ public class DragAndDrop : MonoBehaviour
             transform.SetParent(dropZone.transform, false);
             endturn = GameObject.Find("GameManager").GetComponent<TurnSystem>();
             effect = GameObject.Find("GameManager").GetComponent<effects>();
-            effect.UseEffect(gameObject.GetComponent<displayCard>().card.effect,gameObject);
-             
+            effect.UseEffect(gameObject.GetComponent<DisplayCard>().card.Effects,gameObject);
+            //esto es para si activo una carta despues de un aumento tambien coja puntos//
             if(effect.effectLoop)
             {
-                displayCard[] cards = new displayCard[6];
-                cards[0] = GameObject.Find("SupportMeleeZone").GetComponentInChildren<displayCard>();
-                cards[1] = GameObject.Find("SupportDistanceZone").GetComponentInChildren<displayCard>();
-                cards[2] = GameObject.Find("SupportAsediusZone").GetComponentInChildren<displayCard>();
-                cards[3] = GameObject.Find("EnemySupportAsediusZone").GetComponentInChildren<displayCard>();
-                cards[4] = GameObject.Find("EnemySupportMeleeZone").GetComponentInChildren<displayCard>();
-                cards[5] = GameObject.Find("EnemySupportDistanceZone").GetComponentInChildren<displayCard>();
+                DisplayCard[] cards = new DisplayCard[6];
+                cards[0] = GameObject.Find("SupportMeleeZone").GetComponentInChildren<DisplayCard>();
+                cards[1] = GameObject.Find("SupportDistanceZone").GetComponentInChildren<DisplayCard>();
+                cards[2] = GameObject.Find("SupportAsediusZone").GetComponentInChildren<DisplayCard>();
+                cards[3] = GameObject.Find("EnemySupportAsediusZone").GetComponentInChildren<DisplayCard>();
+                cards[4] = GameObject.Find("EnemySupportMeleeZone").GetComponentInChildren<DisplayCard>();
+                cards[5] = GameObject.Find("EnemySupportDistanceZone").GetComponentInChildren<DisplayCard>();
                 for(int i=0;i<6;i++)
                 {
                     if(cards[i]!=null)
                     {
-                        effect.UseEffect(cards[i].card.effect,cards[i].gameObject);
+                        effect.UseEffect(cards[i].card.Effects,cards[i].gameObject);
                     }
                 }
             }
+            //para que los climas sigan funcionando para otras cartas//
             if(effect.wheatherUse)
             {
-                displayCard[] cards = GameObject.Find("WeatherZone").GetComponentsInChildren<displayCard>();
+                DisplayCard[] cards = GameObject.Find("WeatherZone").GetComponentsInChildren<DisplayCard>();
                 if(cards != null)
                 {
                     foreach(var card in cards)
                     {
-                        effect.UseEffect(card.card.effect,card.gameObject);
+                        effect.UseEffect(card.card.Effects,card.gameObject);
                     }
                 }
             }
+            //este es para usar el decoy//
             if(!endturn.useDecoy)
             {
                 endturn.EndTurn();
@@ -95,39 +95,46 @@ public class DragAndDrop : MonoBehaviour
         }
         
     }
+    //esto es para comprobar que la carta sea puesta donde va//
     public bool CorrectZone()
     {
-        displayCard zone = gameObject.GetComponent<displayCard>();
-        IDZone id = dropZone.GetComponent<IDZone>();
-        if(zone.card.zone == id.idZone) return true;
-        else return false;
+        DisplayCard cardZone = gameObject.GetComponent<DisplayCard>();
+        ZoneConditions conditions = dropZone.GetComponent<ZoneConditions>(); 
+        string zoneName = conditions.Zone;
+        string zoneOwner = conditions.OWner.ToString();
+        foreach (var range in cardZone.card.Range)
+        {
+            if(range == zoneName && cardZone.Owner == zoneOwner) return true;
+        }
+        return false;
     }
+    //esto era para que funcione el decoy//
     public void OnPointerClick()
     {
-        displayCard cardDisplay = GetComponent<displayCard>();
+        DisplayCard cardDisplay = GetComponent<DisplayCard>();
         TurnSystem decoy = GameObject.Find("GameManager").GetComponent<TurnSystem>();
-        if(decoy.useDecoy && decoy.team==false)
+        if(decoy.useDecoy && decoy.Team==false)
         {
-            if(cardDisplay.team==false && !cardDisplay.card.golden)
+            if(cardDisplay.Owner=="Player" && cardDisplay.card.Type != "Oro")
             {
                 GameObject zone1 = GameObject.Find("PlayerHand");
-                cardDisplay.points = cardDisplay.card.attack;
-                cardDisplay.attackText.text = cardDisplay.points.ToString();
-                cardDisplay.boost = false;
+                cardDisplay.Points = cardDisplay.card.Attack;
+                cardDisplay.AttackText.text = cardDisplay.Points.ToString();
+                cardDisplay.Boost = false;
                 transform.position = zone1.transform.position;
                 transform.SetParent(zone1.transform,false);
                 decoy.useDecoy = false;
                 decoy.EndTurn();
             }
         }
-        else if(decoy.useDecoy && decoy.team)
+        else if(decoy.useDecoy && decoy.Team)
         {
-            if(cardDisplay.team && !cardDisplay.card.golden)
+            if(cardDisplay.Owner=="Enemy" && cardDisplay.card.Type !="Oro")
             {
                 GameObject zone1 = GameObject.Find("EnemyHand");
-                cardDisplay.points = cardDisplay.card.attack;
-                cardDisplay.attackText.text = cardDisplay.points.ToString();
-                cardDisplay.boost = false;
+                cardDisplay.Points = cardDisplay.card.Attack;
+                cardDisplay.AttackText.text = cardDisplay.Points.ToString();
+                cardDisplay.Boost = false;
                 transform.position = zone1.transform.position;
                 transform.SetParent(zone1.transform,false);
                 decoy.useDecoy = false;
@@ -135,11 +142,12 @@ public class DragAndDrop : MonoBehaviour
             }
         }
     }
+    //esto es para cuando quieras cambiar cartas la toques y se cambien//
     public void ChangingCards()
     {
         draw = GameObject.Find("GameManager").GetComponent<Draw>();
         endturn = GameObject.Find("GameManager").GetComponent<TurnSystem>();
-        displayCard cardDisplay = GetComponent<displayCard>();
+        DisplayCard cardDisplay = GetComponent<DisplayCard>();
         if(endturn.isYourTurn)
         {
             change = GameObject.Find("Change").GetComponent<Change>();
@@ -148,10 +156,10 @@ public class DragAndDrop : MonoBehaviour
             {
                 deck = GameObject.Find("deckManager1").GetComponent<deckManager>();
                 List<GameObject> deckCards = deck.GetCards();
-                if(cardDisplay.team == false)
+                if(cardDisplay.Owner == "Player")
                 {
                     deckCards.Add(gameObject);
-                    draw.Draw1();
+                    draw.DrawCard(1);
                     Destroy(gameObject);
                     change.counter++;
                     if(change.counter ==2)
@@ -171,10 +179,10 @@ public class DragAndDrop : MonoBehaviour
             {
                 deck = GameObject.Find("deckManager2").GetComponent<deckManager>();
                 List<GameObject> deckCards = deck.GetCards();
-                if(cardDisplay.team)
+                if(cardDisplay.Owner == "Enemy")
                 {
                     deckCards.Add(gameObject);
-                    draw.Draw2();
+                    draw.DrawCard(2);
                     Destroy(gameObject);
                     change.counter++;
                     if(change.counter == 2)
@@ -188,3 +196,4 @@ public class DragAndDrop : MonoBehaviour
         }
     }
 }
+

@@ -1,0 +1,4 @@
+d:\DSL\obj\Debug\net8.0\DSL.GeneratedMSBuildEditorConfig.editorconfig
+d:\DSL\obj\Debug\net8.0\DSL.AssemblyInfoInputs.cache
+d:\DSL\obj\Debug\net8.0\DSL.AssemblyInfo.cs
+d:\DSL\obj\Debug\net8.0\DSL.csproj.CoreCompileInputs.cache

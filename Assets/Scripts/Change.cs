@@ -8,6 +8,7 @@ public class Change : MonoBehaviour
     public TurnSystem movement;
     public GameObject hand;
     public int counter;
+    /*este es el script que controla el boton para si quieres cambiar cartas al principio*/
     public void OnClick()
     {
         movement = GameObject.Find("GameManager").GetComponent<TurnSystem>();

@@ -1,13 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using System.Drawing;
-using System.Diagnostics.Tracing;
+//aqui se manejan los turnos//
 
 public class TurnSystem : MonoBehaviour
 {
     public bool isYourTurn;
+    public TextMeshProUGUI playerRounds;
+    public TextMeshProUGUI enemyRounds; 
     public TextMeshProUGUI turnText;
     public TextMeshProUGUI playerpoints;
     public TextMeshProUGUI enemyPoints;
@@ -16,7 +15,7 @@ public class TurnSystem : MonoBehaviour
     public PointCount playerpoint;
     public bool round;
     public bool useDecoy;
-    public bool team;
+    public bool Team;
     public Draw draw;
     public Change change;
     public Change change1;
@@ -24,18 +23,26 @@ public class TurnSystem : MonoBehaviour
     public int counter=0;
     public int playerWin;
     public int enemyWin;
-    public WinnerScreen winnerScreen;
-    
-    private void Start() 
+    public GameObject camera1;
+    public GameObject camera2;
+    public Board board;
+    void Update() 
     {
+        playerRounds.text = playerWin.ToString();
+        enemyRounds.text = enemyWin.ToString();
+    }
+    void Start() 
+    {
+        playerRounds.text = playerWin.ToString();
+        enemyRounds.text = enemyWin.ToString();
         draw = GameObject.Find("GameManager").GetComponent<Draw>();
         for (int i = 0; i < 10; i++)
         {
             if(i<7)
             {
-                draw.Draw1();
+                draw.DrawCard(1);
             }
-            draw.Draw2();
+            draw.DrawCard(2);
         }
         EndTurn();
         change = GameObject.Find("Change").GetComponent<Change>();
@@ -46,7 +53,7 @@ public class TurnSystem : MonoBehaviour
         NoMove(hand1,false);
         NoMove(hand2,false);
     }   
-    public void OnClick() //This method is to manage the rounds
+    public void OnClick() //para cuando se pasa turno//
     {
        
         if(isYourTurn)
@@ -77,70 +84,55 @@ public class TurnSystem : MonoBehaviour
             draw = GameObject.Find("GameManager").GetComponent<Draw>();
             for(int i=0;i<2;i++) 
             {
-                draw.Draw1();
-                draw.Draw2();
+                draw.DrawCard(1);
+                draw.DrawCard(2);
             }
-            winnerScreen = GameObject.Find("GameManager").GetComponent<WinnerScreen>();
             int playerPoints = int.Parse(playerpoints.text);
             int enemypoints  = int.Parse(enemyPoints.text);
             if(playerPoints >= enemypoints) 
             {
                 playerWin++;
-                if(playerWin ==1)
+                if(playerWin ==2)
                 {
-                    winnerScreen.SetUp(true);
-                    //Image roundColor = GameObject.Find("RoundC1").GetComponent<Image>();
-                    //roundColor.color = Color.green; //This turns the red circules to green;
+                    Menu.WinnerScreen();
                 }
-                else if(playerWin ==2)
-                {
-                    winnerScreen.Finish(true);
-                    //Image roundColor = GameObject.Find("RoundC2").GetComponent<Image>();
-                    //roundColor.color = Color.green;
-                }
-                else if(enemypoints > playerPoints)
-                {
-                    enemyWin++;
-                    if(enemyWin ==1)
-                    {
-                        winnerScreen.SetUp(false);
-                        //Image roundColor = GameObject.Find("RoundC3").GetComponent<Image>();
-                        //roundColor.color = Color.green;
-                    }
-                else if(enemyWin ==2)
-                {
-                    winnerScreen.Finish(false);   
-                    //Image roundColor = GameObject.Find("RoundC4").GetComponent<Image>();
-                    //roundColor.color = Color.green;
-                }
-                //winner.RoundShow("P2");
+                
                 isYourTurn = true;
                 EndTurn();
             }
-            
-            isYourTurn = false;
-            EndTurn();
+            else if(enemypoints > playerPoints)
+            {
+                enemyWin++;
+                if(enemyWin ==2)
+                {
+                    Menu.WinnerScreen2();
+                }          
+                isYourTurn = false;
+                EndTurn();
             }
             Clean();
             counter = 0;
         }
         
     }
-    public void EndTurn() //This method changes turns every time is called
+    public void EndTurn() //pa terminar turno//
     {
         if(!round)
         {
             isYourTurn =! isYourTurn;
+            
         }
         UpdateTurnUI();
     }
-    private void UpdateTurnUI()
+    private void UpdateTurnUI()//enseña el texto de que cambiamos turnos//
     {
         if (isYourTurn)
         {
             turnText.text = "Your Turn";
             HideEnemyCards(hand1,true);
             HideEnemyCards(hand2,false); 
+            //camera1.SetActive(true);
+            //camera2.SetActive(false);
         }
         else
         {
@@ -148,8 +140,11 @@ public class TurnSystem : MonoBehaviour
             HideEnemyCards(hand2,true);
             HideEnemyCards(hand1,false);
             RotateCards(hand2);
+            //camera1.SetActive(false);
+            //camera2.SetActive(true);
         }
     }
+    //para cuando juegue yo esconden las cartas del otro//
     public void HideEnemyCards(GameObject hand,bool myHand)
     {
         if(myHand==true)
@@ -167,6 +162,7 @@ public class TurnSystem : MonoBehaviour
             }
         }        
     }
+    //para que las cartas no se puedan mover si toca lo de cambiar cartas//
     public void NoMove(GameObject hand,bool move)
     {
         DragAndDrop[] cards = hand.GetComponentsInChildren<DragAndDrop>();
@@ -175,9 +171,9 @@ public class TurnSystem : MonoBehaviour
             card.enabled = move;
         }
     }
-    void Clean() //This method eliminates the cards from the field
+    void Clean() //limpia el campo cuando se acaba una ronda//
     {
-        GameObject units = GameObject.Find("UnitsZones");
+        GameObject units = GameObject.Find("UnitZones");
         foreach(Transform zone in units.transform)
         {
             foreach(Transform card in zone.transform)
@@ -212,11 +208,11 @@ public class TurnSystem : MonoBehaviour
         GameObject weather = GameObject.Find("WeatherZone");
         foreach(Transform card in weather.transform)
         {
-            displayCard cardDisplay = card.gameObject.GetComponent<displayCard>();
+            DisplayCard cardDisplay = card.gameObject.GetComponent<DisplayCard>();
             Destroy(card.gameObject);
         }
     } 
-    public void RotateCards(GameObject Hand) //This method rotates the player2 cards
+    public void RotateCards(GameObject Hand) //pa rotar las cartas pal cambio de camara//
     {
         UnityEngine.Quaternion pos = transform.rotation;
         foreach(Transform card in Hand.transform)
@@ -226,4 +222,11 @@ public class TurnSystem : MonoBehaviour
             card.transform.rotation = pos;
         }
     }
+    public int TriggerPlayer()=>   isYourTurn ? 1 : 2;
+    public Hand HandOfPlayer(int player) => player == 1 ? GameObject.Find("Hand1").GetComponent<Hand>() : GameObject.Find("Hand2").GetComponent<Hand>();
+    public Deck DeckOfPlayer(int player) => player == 1 ? GameObject.Find("Deck1").GetComponent<Deck>() : GameObject.Find("Deck2").GetComponent<Deck>();
+    public Board Board()  => board;
+    public Field FieldOfPlayer(int player) => player == 1 ? GameObject.Find("UnitsZone1").GetComponent<Field>() : GameObject.Find("UnitsZone2").GetComponent<Field>();
+    public Graveyard GraveyardOfPlayer(int player) => player == 1 ? GameObject.Find("Graveyard1").GetComponent<Graveyard>() : GameObject.Find("Graveyard2").GetComponent<Graveyard>();
+    
 }

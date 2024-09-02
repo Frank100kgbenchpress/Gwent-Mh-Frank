@@ -2,11 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-public class Menu : MonoBehaviour
+//aqui manejo los cambios de escena//
+public  class Menu : MonoBehaviour
 {
-   public void PlayGame()
+   public void  PlayGame()
    {
       SceneManager.LoadSceneAsync(0);
+   }
+   public static void WinnerScreen()
+   {
+      SceneManager.LoadScene(1);
+   }
+   public static void WinnerScreen2()
+   {
+      SceneManager.LoadScene(3);
    }
    public void QuitGame()
    {
@@ -14,6 +23,6 @@ public class Menu : MonoBehaviour
    }
    public void BackToMenu()
    {
-      SceneManager.LoadSceneAsync(1);
+      SceneManager.LoadSceneAsync(2);
    }
 }

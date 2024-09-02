@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//aqui trabajo con el mazo//
 
 public class deckManager : MonoBehaviour
 {
