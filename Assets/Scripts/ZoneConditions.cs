@@ -1,4 +1,5 @@
-public class ZoneConditions 
+using UnityEngine;
+public class ZoneConditions : MonoBehaviour 
 {
     public string Zone;
     public ZoneOWner OWner;

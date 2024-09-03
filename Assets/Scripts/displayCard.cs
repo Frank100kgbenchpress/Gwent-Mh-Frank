@@ -22,7 +22,6 @@ public class DisplayCard : MonoBehaviour
     void Start()
     {
         NameText.text = card.name;
-        AttackText.text = card.Attack.ToString();
         ArtImage.sprite = card.CardImage;
         AttackOriginal = card.Attack;
         Points = card.Attack;
@@ -30,7 +29,7 @@ public class DisplayCard : MonoBehaviour
         Type = card.Type;
         Faction = card.Faction;
         Range = card.Range;
-        Owner = card.CardOwner;
+        GetOwner();
         CollectCardPoints();
     }
     void CollectCardPoints()
@@ -40,4 +39,6 @@ public class DisplayCard : MonoBehaviour
             AttackText.text = Points.ToString();
         }
     }
+    void GetOwner() => Owner = card.Type == "Clima" ? "Neutral" : card.CardOwner;
+    
 }

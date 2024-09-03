@@ -9,15 +9,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe0514f88f433fd4e94ea7029ce09e5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 29dc0c1e815642b4fa957e3fc35ef96d, type: 3}
   m_Name: Barroth
   m_EditorClassIdentifier: 
-  name: Barroth
-  attack: 0
-  cardImage: {fileID: 21300000, guid: a2c527d75d870a14783203666cb12f13, type: 3}
-  id: 12
-  zone: 4
-  description: increase melee monsters attack with 5 points
-  golden: 0
-  effect: 1
-  buff: 0
+  Name: Barroth
+  Description: Barroth usually remain beneath the mud, perhaps to shield themselves
+    from heat; they are even known to fling mud to attack. They will charge in a
+    frenzy at anything that disturbs their bogs.
+  Attack: 0
+  CardOwner: Player
+  Id: 3
+  Type: Aumento
+  Range:
+  - Melee
+  - 
+  - 
+  Prefab: {fileID: 4348071813993428151, guid: 35019ca94b51cda4399d696e77fab390, type: 3}
+  Faction: Wyverns
+  EffectText: Aumento Melee
+  CardImage: {fileID: 21300000, guid: a2c527d75d870a14783203666cb12f13, type: 3}
+  Boost: 0

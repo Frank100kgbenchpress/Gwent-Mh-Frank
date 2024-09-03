@@ -9,15 +9,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe0514f88f433fd4e94ea7029ce09e5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 29dc0c1e815642b4fa957e3fc35ef96d, type: 3}
   m_Name: Giadrome
   m_EditorClassIdentifier: 
-  name: Giadrome
-  attack: 0
-  cardImage: {fileID: 21300000, guid: 968b41f8c4c96b641bc63df99aa458bc, type: 3}
-  id: 13
-  zone: 1
-  description: You can change this card with other monster
-  golden: 0
-  effect: 11
-  buff: 0
+  Name: Giadrome
+  Description: The alpha leader of a pack of Giaprey, the Giadrome sports a beautiful
+    crest. Larger than a Giaprey, any hunter silly enough to encroach on its turf
+    will be frozen in a hail of ice.
+  Attack: 0
+  CardOwner: Player
+  Id: 4
+  Type: Decoy
+  Range:
+  - Melee
+  - Ranged
+  - Siege
+  Prefab: {fileID: 6525790140606352960, guid: 720ed5cdec3092849a3ac92a6048c6d3, type: 3}
+  Faction: Wyverns
+  EffectText: Decoy
+  CardImage: {fileID: 21300000, guid: 968b41f8c4c96b641bc63df99aa458bc, type: 3}
+  Boost: 0

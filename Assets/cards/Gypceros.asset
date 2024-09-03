@@ -9,15 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe0514f88f433fd4e94ea7029ce09e5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 29dc0c1e815642b4fa957e3fc35ef96d, type: 3}
   m_Name: Gypceros
   m_EditorClassIdentifier: 
-  name: Gypceros
-  attack: 4
-  cardImage: {fileID: 21300000, guid: 3f7cb8b33da698f46b2d480ee5a47ac8, type: 3}
-  id: 9
-  zone: 2
-  description: destroy enemy card with higth attack
-  golden: 0
-  effect: 6
-  buff: 0
+  Name: Gypceros
+  Description: 
+  Attack: 4
+  CardOwner: Player
+  Id: 6
+  Type: Plata
+  Range:
+  - Siege
+  - 
+  - 
+  Prefab: {fileID: 46655741574954790, guid: d97c80e10bd93aa46992363c77446304, type: 3}
+  Faction: Wyverns
+  EffectText: Destroy Highest
+  CardImage: {fileID: 21300000, guid: 3f7cb8b33da698f46b2d480ee5a47ac8, type: 3}
+  Boost: 0

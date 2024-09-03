@@ -6,25 +6,25 @@ public class PointCount : MonoBehaviour
 {
     public TextMeshProUGUI PlayerPoints;
     public TextMeshProUGUI EnemyPoints;
-    
+    //Player Zones
     public GameObject MeleeZone;
-    public GameObject DistanceZone;
+    public GameObject RangedZone;
     public GameObject SiegeZone;
-    
+    //Enemy Zones
     public GameObject MeleeZone1;
-    public GameObject DistanceZone1;
+    public GameObject RangedZone1;
     public GameObject SiegeZone1;
 
     void Update()
     {
-        CollectPoints(MeleeZone, DistanceZone, SiegeZone, false);
-        CollectPoints(MeleeZone1, DistanceZone1, SiegeZone1, true);
+        CollectPoints(MeleeZone, RangedZone, SiegeZone, false);
+        CollectPoints(MeleeZone1, RangedZone1, SiegeZone1, true);
     }
 
-    public void CollectPoints(GameObject meleeZone, GameObject distanceZone, GameObject siegeZone, bool isPlayer)
+    public void CollectPoints(GameObject meleeZone, GameObject rangedZone, GameObject siegeZone, bool isPlayer)
     {
         int meleePoints = CollectPointsFromZone(meleeZone);
-        int distancePoints = CollectPointsFromZone(distanceZone);
+        int distancePoints = CollectPointsFromZone(rangedZone);
         int siegePoints = CollectPointsFromZone(siegeZone);
         
         int totalPoints = meleePoints + distancePoints + siegePoints;

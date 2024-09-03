@@ -4,17 +4,17 @@ using DSL;
 //estas son las propiedades de la  carta//
 public class Card : ScriptableObject
 {
-    public string Name { get; set; }
-    public string Description{get;set;}
-    public int Attack{get;set;}
-    public string CardOwner{get;set;}
-    public int Id { get; set; }
-    public string Type { get; set; }
-    public OnActivation Effects{get;set;}
+    public string Name;
+    public string Description;
+    public int Attack;
+    public string CardOwner;
+    public int Id;
+    public string Type;
+    public OnActivation Effects;
     public string[] Range = new string [3];
-    public GameObject Prefab { get; set; }
-    public string Faction{get;set;}
-    public string EffectText{get;set;}
-    public Sprite CardImage{get;set;} 
-    public bool Boost{get;set;}
+    public GameObject Prefab;
+    public string Faction;
+    public string EffectText;
+    public Sprite CardImage; 
+    public bool Boost;
 }

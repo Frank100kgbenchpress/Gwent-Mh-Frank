@@ -9,15 +9,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe0514f88f433fd4e94ea7029ce09e5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 29dc0c1e815642b4fa957e3fc35ef96d, type: 3}
   m_Name: Barioth
   m_EditorClassIdentifier: 
-  name: Barioth
-  attack: 7
-  cardImage: {fileID: 21300000, guid: d6423f0c314631c40ae7d6f43bd52454, type: 3}
-  id: 8
-  zone: 3
-  description: Makes you draw a card with his speed
-  golden: 0
-  effect: 12
-  buff: 0
+  Name: Barioth
+  Description: Wyverns that rule the eternally frozen Tundra. Barioth use their huge
+    tusks and spiked scales to move freely atop the slippery ice; this ability makes
+    them very difficult to keep up with.
+  Attack: 7
+  CardOwner: Player
+  Id: 2
+  Type: Plata
+  Range:
+  - Ranged
+  - Siege
+  - Melee
+  Prefab: {fileID: 7322626885810684642, guid: 23e2245a8a868df4a9a7b5aca4cd8296, type: 3}
+  Faction: Wyverns
+  EffectText: 'Draw '
+  CardImage: {fileID: 21300000, guid: d6423f0c314631c40ae7d6f43bd52454, type: 3}
+  Boost: 0

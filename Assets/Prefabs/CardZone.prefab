@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5406288988126942168}
   - component: {fileID: 7357685657840269791}
   - component: {fileID: 8650756282457002635}
-  - component: {fileID: -2779455468002549278}
+  - component: {fileID: 692873746657282745}
   m_Layer: 7
   m_Name: CardZone
   m_TagString: Untagged
@@ -147,7 +147,7 @@ MonoBehaviour:
   m_Spacing: {x: 10, y: 0}
   m_Constraint: 2
   m_ConstraintCount: 1
---- !u!114 &-2779455468002549278
+--- !u!114 &692873746657282745
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -156,7 +156,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 3041262221368773494}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76ebdfd14d3af5841b5ad5d2c3f89b59, type: 3}
+  m_Script: {fileID: 11500000, guid: e142d819d196b4643979c4e75b74c85f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  idZone: 0
+  Zone: 
+  OWner: 0

@@ -56,11 +56,11 @@ public class DragAndDrop : MonoBehaviour
             {
                 DisplayCard[] cards = new DisplayCard[6];
                 cards[0] = GameObject.Find("SupportMeleeZone").GetComponentInChildren<DisplayCard>();
-                cards[1] = GameObject.Find("SupportDistanceZone").GetComponentInChildren<DisplayCard>();
+                cards[1] = GameObject.Find("SupportRangedZone").GetComponentInChildren<DisplayCard>();
                 cards[2] = GameObject.Find("SupportSiegeZone").GetComponentInChildren<DisplayCard>();
                 cards[3] = GameObject.Find("EnemySupportSiegeZone").GetComponentInChildren<DisplayCard>();
                 cards[4] = GameObject.Find("EnemySupportMeleeZone").GetComponentInChildren<DisplayCard>();
-                cards[5] = GameObject.Find("EnemySupportDistanceZone").GetComponentInChildren<DisplayCard>();
+                cards[5] = GameObject.Find("EnemySupportRangedZone").GetComponentInChildren<DisplayCard>();
                 for(int i=0;i<6;i++)
                 {
                     if(cards[i]!=null)
