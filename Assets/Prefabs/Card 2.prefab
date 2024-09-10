@@ -877,7 +877,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41fc03c964d4b9d4cadc8a14194e159e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  card: {fileID: 0}
+  card: {fileID: 11400000, guid: 402df7070f043414ea90f15b0411e2fc, type: 2}
   Owner: 
   NameText: {fileID: 5231908811257827123}
   AttackText: {fileID: 8032647417926011178}

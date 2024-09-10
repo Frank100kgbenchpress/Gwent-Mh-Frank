@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using Unity.VisualScripting;
 //aqui se manejan los turnos//
 
 public class TurnSystem : MonoBehaviour
@@ -12,7 +13,6 @@ public class TurnSystem : MonoBehaviour
     public TextMeshProUGUI enemyPoints;
     public GameObject hand1;
     public GameObject hand2;
-    public PointCount playerpoint;
     public bool round;
     public bool useDecoy;
     public bool Team;
@@ -173,43 +173,25 @@ public class TurnSystem : MonoBehaviour
     }
     void Clean() //limpia el campo cuando se acaba una ronda//
     {
-        GameObject units = GameObject.Find("UnitZones");
-        foreach(Transform zone in units.transform)
-        {
-            foreach(Transform card in zone.transform)
-            {
-                Destroy(card.gameObject);
-            }
-        }
-        GameObject units1 = GameObject.Find("EnemyUnitsZones");
-        foreach(Transform zone in units1.transform)
-        {
-            foreach(Transform card in zone.transform)
-            {
-                Destroy(card.gameObject);
-            }
-        }
-        GameObject support = GameObject.Find("SupportZone");
-        foreach(Transform zone in support.transform)
-        {
-            foreach(Transform card in zone.transform)
-            {
-                Destroy(card.gameObject);
-            }
-        }
-        GameObject support1 = GameObject.Find("EnemySupportZones");
-        foreach(Transform zone in support1.transform)
-        {
-            foreach(Transform card in zone.transform)
-            {
-                Destroy(card.gameObject);
-            }
-        }
+        CleanZone(GameObject.Find("UnitZones"));
+        CleanZone(GameObject.Find("EnemyUnitsZones"));
+        CleanZone(GameObject.Find("SupportZone"));
+        CleanZone(GameObject.Find("EnemySupportZones"));
         GameObject weather = GameObject.Find("WeatherZone");
         foreach(Transform card in weather.transform)
         {
             DisplayCard cardDisplay = card.gameObject.GetComponent<DisplayCard>();
             Destroy(card.gameObject);
+        }
+    }
+    void CleanZone(GameObject objective)
+    {
+        foreach ( Transform zone in objective.transform)
+        {
+            foreach (Transform card in zone)
+            {
+                Destroy(card.gameObject);
+            }   
         }
     } 
     public void RotateCards(GameObject Hand) //pa rotar las cartas pal cambio de camara//
@@ -223,10 +205,10 @@ public class TurnSystem : MonoBehaviour
         }
     }
     public int TriggerPlayer()=>   isYourTurn ? 1 : 2;
-    public Hand HandOfPlayer(int player) => player == 1 ? GameObject.Find("Hand1").GetComponent<Hand>() : GameObject.Find("Hand2").GetComponent<Hand>();
-    public Deck DeckOfPlayer(int player) => player == 1 ? GameObject.Find("Deck1").GetComponent<Deck>() : GameObject.Find("Deck2").GetComponent<Deck>();
+    public Hand HandOfPlayer(int player) => player == 1 ? GameObject.Find("PlayerHand").GetComponent<Hand>() : GameObject.Find("EnemyHand").GetComponent<Hand>();
+    public Deck DeckOfPlayer(int player) => player == 1 ? GameObject.Find("deckManager1").GetComponent<Deck>() : GameObject.Find("deckManager2").GetComponent<Deck>();
     public Board Board()  => board;
-    public Field FieldOfPlayer(int player) => player == 1 ? GameObject.Find("UnitsZone1").GetComponent<Field>() : GameObject.Find("UnitsZone2").GetComponent<Field>();
+    public Field FieldOfPlayer(int player) => player == 1 ? GameObject.Find("UnitsZone").GetComponent<Field>() : GameObject.Find("EnemyUnitsZone").GetComponent<Field>();
     public Graveyard GraveyardOfPlayer(int player) => player == 1 ? GameObject.Find("Graveyard1").GetComponent<Graveyard>() : GameObject.Find("Graveyard2").GetComponent<Graveyard>();
     
 }

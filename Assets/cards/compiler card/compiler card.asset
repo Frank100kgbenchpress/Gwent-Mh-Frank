@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: compiler card
   m_EditorClassIdentifier: 
   Name: 
-  Description: 
+  Description: Si llega a salir esta carta en la mano usted acaba de recibir los
+    pergaminos y conocimientos de antiguas generaciones creadoras de compiladores
+    y chat gpt
   Attack: 0
   CardOwner: 
   Id: 0

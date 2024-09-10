@@ -25,5 +25,5 @@ MonoBehaviour:
   Prefab: {fileID: 8831432082157002842, guid: ca6f6a5f669b3fc468a2773f082aa7e1, type: 3}
   Faction: 
   EffectText: 
-  CardImage: {fileID: 0}
+  CardImage: {fileID: 21300000, guid: 1c4ddf75097683a4980f26beb7bbf83e, type: 3}
   Boost: 0

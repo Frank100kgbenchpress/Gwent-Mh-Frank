@@ -104,9 +104,10 @@ public class DragAndDrop : MonoBehaviour
         string zoneOwner = conditions.OWner.ToString();
         foreach (var range in cardZone.card.Range)
         {
-            if(range == zoneName && cardZone.Owner == zoneOwner) return true;
+            if(range == zoneName && cardZone.Owner == zoneOwner && !conditions.isInspire && cardZone.card.Type != "Aumento") return true;
+            if(range == zoneName && cardZone.Owner == zoneOwner && cardZone.Type is "Aumento" && conditions.isInspire) return true; 
         }
-        if(cardZone.Owner == "Neutral" && zoneName == "Wheather") return true;
+        if(cardZone.Type is "Clima" or "Despeje"&& zoneName == "Wheather") return true;
         return false;
     }
     //esto era para que funcione el decoy//

@@ -1181,6 +1181,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Zone: Melee
+  isInspire: 0
   OWner: 1
 --- !u!1 &518617813
 GameObject:
@@ -1622,8 +1623,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a90b1a2fb8edc45b6701f695f89cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Hand1: {fileID: 1050920124}
-  Hand2: {fileID: 1984005071}
+  Hand1: {fileID: 1125666356}
+  Hand2: {fileID: 1984005072}
   deck1: {fileID: 1356169588}
   deck2: {fileID: 1499553725}
 --- !u!114 &673343581
@@ -2162,13 +2163,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scroll
       objectReference: {fileID: 0}
-    - target: {fileID: 2027163684428666093, guid: 8a92ff8d8680b6e4ead70e59f2fe2c00, type: 3}
-      propertyPath: m_AnchorMax.y
+    - target: {fileID: 1244639491101293804, guid: 8a92ff8d8680b6e4ead70e59f2fe2c00, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2027163684428666093, guid: 8a92ff8d8680b6e4ead70e59f2fe2c00, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2027163684428666093, guid: 8a92ff8d8680b6e4ead70e59f2fe2c00, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 2311049179954531976, guid: 8a92ff8d8680b6e4ead70e59f2fe2c00, type: 3}
       propertyPath: m_text
@@ -2176,35 +2181,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2397744147777145696, guid: 8a92ff8d8680b6e4ead70e59f2fe2c00, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2397744147777145696, guid: 8a92ff8d8680b6e4ead70e59f2fe2c00, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2912099915224024920, guid: 8a92ff8d8680b6e4ead70e59f2fe2c00, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2912099915224024920, guid: 8a92ff8d8680b6e4ead70e59f2fe2c00, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2912099915224024920, guid: 8a92ff8d8680b6e4ead70e59f2fe2c00, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 2912099915224024920, guid: 8a92ff8d8680b6e4ead70e59f2fe2c00, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 5831153147450970222, guid: 8a92ff8d8680b6e4ead70e59f2fe2c00, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5831153147450970222, guid: 8a92ff8d8680b6e4ead70e59f2fe2c00, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -17
       objectReference: {fileID: 0}
     - target: {fileID: 5928644470761302624, guid: 8a92ff8d8680b6e4ead70e59f2fe2c00, type: 3}
       propertyPath: m_Size
@@ -2252,11 +2257,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6708819869940702952, guid: 8a92ff8d8680b6e4ead70e59f2fe2c00, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6708819869940702952, guid: 8a92ff8d8680b6e4ead70e59f2fe2c00, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9101568657148884544, guid: 8a92ff8d8680b6e4ead70e59f2fe2c00, type: 3}
       propertyPath: m_SizeDelta.x
@@ -2473,7 +2478,6 @@ MonoBehaviour:
   enemyPoints: {fileID: 130788295}
   hand1: {fileID: 1050920124}
   hand2: {fileID: 1984005071}
-  playerpoint: {fileID: 0}
   round: 0
   useDecoy: 0
   Team: 0
@@ -2521,7 +2525,7 @@ MonoBehaviour:
   SiegeZone: {fileID: 896293687}
   MeleeZone1: {fileID: 497720075}
   RangedZone1: {fileID: 1712902687}
-  SiegeZone1: {fileID: 896293687}
+  SiegeZone1: {fileID: 6421779881549740634}
 --- !u!114 &860915465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3564,7 +3568,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   change: 0
-  movement: {fileID: 0}
+  movement: {fileID: 860915462}
   hand: {fileID: 1984005071}
   counter: 0
 --- !u!114 &1192181614
@@ -4077,8 +4081,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49a90b1a2fb8edc45b6701f695f89cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Hand1: {fileID: 1050920124}
-  Hand2: {fileID: 1984005071}
+  Hand1: {fileID: 1125666356}
+  Hand2: {fileID: 1984005072}
   deck1: {fileID: 1356169588}
   deck2: {fileID: 1499553725}
 --- !u!1 &1407648090 stripped
@@ -4195,7 +4199,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   change: 0
-  movement: {fileID: 0}
+  movement: {fileID: 860915462}
   hand: {fileID: 1050920124}
   counter: 0
 --- !u!114 &1451072767
@@ -4742,7 +4746,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 692873746657282745, guid: d417a75ab6cb58b4685bba0ef80232f8, type: 3}
       propertyPath: Zone
-      value: SSiege
+      value: Siege
+      objectReference: {fileID: 0}
+    - target: {fileID: 692873746657282745, guid: d417a75ab6cb58b4685bba0ef80232f8, type: 3}
+      propertyPath: isInspire
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1738849873809111851, guid: d417a75ab6cb58b4685bba0ef80232f8, type: 3}
       propertyPath: m_Pivot.x
@@ -5335,6 +5343,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Zone: Ranged
+  isInspire: 0
   OWner: 1
 --- !u!1 &1745019973
 GameObject:
@@ -6409,7 +6418,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e142d819d196b4643979c4e75b74c85f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Zone: SSiege
+  Zone: Siege
+  isInspire: 0
   OWner: 1
 --- !u!1001 &2846044218540009978
 PrefabInstance:
@@ -6629,7 +6639,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6528543409622343900, guid: 2de706382ab9af74c9432a246d8f6e25, type: 3}
       propertyPath: Zone
-      value: SRanged
+      value: Ranged
       objectReference: {fileID: 0}
     - target: {fileID: 8733365079836336403, guid: 2de706382ab9af74c9432a246d8f6e25, type: 3}
       propertyPath: m_Name
@@ -6906,7 +6916,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e142d819d196b4643979c4e75b74c85f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Zone: SMelee
+  Zone: Melee
+  isInspire: 0
   OWner: 1
 --- !u!1 &4478159526291681740 stripped
 GameObject:
@@ -6926,6 +6937,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Zone: Melee
+  isInspire: 0
   OWner: 0
 --- !u!1001 &6421779881549740633
 PrefabInstance:
@@ -7066,6 +7078,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Zone: Siege
+  isInspire: 0
   OWner: 1
 --- !u!1001 &7180095753647671353
 PrefabInstance:
@@ -7089,7 +7102,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4792457802003356743, guid: ac7f1c161e8182548ba14150933880da, type: 3}
       propertyPath: Zone
-      value: SMelee
+      value: Melee
+      objectReference: {fileID: 0}
+    - target: {fileID: 4792457802003356743, guid: ac7f1c161e8182548ba14150933880da, type: 3}
+      propertyPath: isInspire
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5998246346003967445, guid: ac7f1c161e8182548ba14150933880da, type: 3}
       propertyPath: m_Pivot.x
@@ -7423,7 +7440,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e142d819d196b4643979c4e75b74c85f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Zone: SRanged
+  Zone: Ranged
+  isInspire: 0
   OWner: 1
 --- !u!1001 &9042144802415583076
 PrefabInstance:
@@ -7556,6 +7574,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Zone: Wheather
+  isInspire: 0
   OWner: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

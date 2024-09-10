@@ -17,8 +17,8 @@ public class PointCount : MonoBehaviour
 
     void Update()
     {
-        CollectPoints(MeleeZone, RangedZone, SiegeZone, false);
-        CollectPoints(MeleeZone1, RangedZone1, SiegeZone1, true);
+        CollectPoints(MeleeZone, RangedZone, SiegeZone, true);
+        CollectPoints(MeleeZone1, RangedZone1, SiegeZone1, false);
     }
 
     public void CollectPoints(GameObject meleeZone, GameObject rangedZone, GameObject siegeZone, bool isPlayer)
@@ -28,6 +28,7 @@ public class PointCount : MonoBehaviour
         int siegePoints = CollectPointsFromZone(siegeZone);
         
         int totalPoints = meleePoints + distancePoints + siegePoints;
+        (isPlayer ? PlayerPoints : EnemyPoints).text = totalPoints.ToString();
         UpdateScoreDisplay(totalPoints, isPlayer);
     }
 
