@@ -9,15 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe0514f88f433fd4e94ea7029ce09e5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 29dc0c1e815642b4fa957e3fc35ef96d, type: 3}
   m_Name: Alatreon
   m_EditorClassIdentifier: 
-  name: Alatreon
-  attack: 10
-  cardImage: {fileID: 21300000, guid: 1340adb34df4ccd41b0c759b9a2ef218, type: 3}
-  id: 30
-  zone: 9
-  description: 'Four Elements, calls  a weather '
-  golden: 0
-  effect: 10
-  buff: 0
+  Name: Alatreon
+  Description: 
+  Attack: 10
+  CardOwner: Enemy
+  Id: 20
+  Type: Plata
+  Range:
+  - Melee
+  - Ranged
+  - Siege
+  Prefab: {fileID: 6307455486198198206, guid: 7dbe06bd66ec9ef41afcf86271bae807, type: 3}
+  Faction: 
+  EffectText: 
+  CardImage: {fileID: 21300000, guid: 1340adb34df4ccd41b0c759b9a2ef218, type: 3}
+  Boost: 0

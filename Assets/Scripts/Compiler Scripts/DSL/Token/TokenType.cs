@@ -86,6 +86,7 @@
         MELEE,
         RANGED,
         SIEGE,
+        OWNER,
        
         //Effect Keywords
         POINTER,

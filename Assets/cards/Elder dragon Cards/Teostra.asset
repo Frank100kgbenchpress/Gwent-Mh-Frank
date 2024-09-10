@@ -9,16 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe0514f88f433fd4e94ea7029ce09e5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 29dc0c1e815642b4fa957e3fc35ef96d, type: 3}
   m_Name: Teostra
   m_EditorClassIdentifier: 
-  name: Teostra
-  attack: 8
-  cardImage: {fileID: 21300000, guid: 4d59a98ba04a34f4e8838a44facd3642, type: 3}
-  id: 20
-  zone: 8
-  description: Inferno Emperor, if there are more like him in board multiply his
-    power
-  golden: 0
-  effect: 5
-  buff: 0
+  Name: Teostra
+  Description: 
+  Attack: 10
+  CardOwner: Enemy
+  Id: 30
+  Type: Plata
+  Range:
+  - Ranged
+  - Melee
+  - 
+  Prefab: {fileID: 538674307566982129, guid: 7e34e941a50e49b49810a2be5d7ce80b, type: 3}
+  Faction: 
+  EffectText: 
+  CardImage: {fileID: 21300000, guid: 4d59a98ba04a34f4e8838a44facd3642, type: 3}
+  Boost: 0

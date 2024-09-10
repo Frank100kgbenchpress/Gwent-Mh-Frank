@@ -4,7 +4,7 @@ using DSL;
 //estas son las propiedades de la  carta//
 public class Card : ScriptableObject
 {
-    public string Name;
+    public new string Name;
     public string Description;
     public int Attack;
     public string CardOwner;
@@ -17,4 +17,5 @@ public class Card : ScriptableObject
     public string EffectText;
     public Sprite CardImage; 
     public bool Boost;
+    public Context Context;
 }

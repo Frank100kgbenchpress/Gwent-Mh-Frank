@@ -9,15 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe0514f88f433fd4e94ea7029ce09e5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 29dc0c1e815642b4fa957e3fc35ef96d, type: 3}
   m_Name: Rathalos
   m_EditorClassIdentifier: 
-  name: Rathalos
-  attack: 8
-  cardImage: {fileID: 21300000, guid: bdd7fd89a0840a94bbddc8d051578cc3, type: 3}
-  id: 1
-  zone: 2
-  description: The king of the sky, if he sees another rathalos multiply his power
-  golden: 0
-  effect: 5
-  buff: 0
+  Name: Rathalos
+  Description: 
+  Attack: 10
+  CardOwner: Player
+  Id: 9
+  Type: Plata
+  Range:
+  - Ranged
+  - Melee
+  - Siege
+  Prefab: {fileID: 623111349763800393, guid: d184cc5f222f69a4ea53dea4d8d478b7, type: 3}
+  Faction: 
+  EffectText: 
+  CardImage: {fileID: 21300000, guid: bdd7fd89a0840a94bbddc8d051578cc3, type: 3}
+  Boost: 0

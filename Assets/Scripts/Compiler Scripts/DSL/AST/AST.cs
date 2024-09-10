@@ -18,78 +18,22 @@ namespace DSL
 
         public override object Evaluate(Context context) => Value;
 
-        public override void Print(int pos = 0) => Console.WriteLine(new string(' ', pos) + "Number: " + Value);
+        public override void Print(int pos = 0) => Debug.Log(new string(' ', pos) + "Number: " + Value);
     }
     public class String : Expression
     {
         public string Value;
         public String(string value) => Value = value;
         public override object Evaluate(Context context) => Value;
-        public override void Print(int pos = 0) => Console.WriteLine(new string(' ', pos) + "String: " + Value);
+        public override void Print(int pos = 0) => Debug.Log(new string(' ', pos) + "String: " + Value);
     }
     public class Bool : Expression
     {
         public bool Value;
         public Bool(bool value) => Value = value;
         public override object Evaluate(Context context) => Value;
-        public override void Print(int indent = 0) => Console.WriteLine(new string(' ', indent) + "Bool: " + Value);
+        public override void Print(int indent = 0) => Debug.Log(new string(' ', indent) + "Bool: " + Value);
     }
-    #endregion
-    #region Operators (binary)
-    public class BinaryOperator : Expression
-    {
-        protected Expression Left;
-        protected Token Operators;
-        protected Expression Right;
-        public BinaryOperator(Expression left,Token operators,Expression right) => (Left, Operators, Right) = (left,operators,right);
-        public override object Evaluate(Context context)  
-        {  
-            object leftValue = Left.Evaluate(context);  
-            object rightValue = Right.Evaluate(context);  
-  
-            if (leftValue is double leftDouble && rightValue is double rightDouble) return EvaluateNumericOperators(leftDouble, rightDouble);  
-  
-            if (leftValue is string leftString && rightValue is string rightString) return EvaluateStringOperators(leftString, rightString);  
-
-            throw new InvalidOperationException("Unsupported operator: " + Operators.Lexeme);  
-        }  
-
-    object EvaluateNumericOperators(double leftValue, double rightValue)  
-    {  
-        return Operators.Type switch  
-        {  
-            TokenType.PLUS => leftValue + rightValue,  
-            TokenType.MINUS => leftValue - rightValue,  
-            TokenType.MULTIPLY => leftValue * rightValue,  
-            TokenType.DIVIDE => leftValue / rightValue,  
-            TokenType.MODULUS => leftValue % rightValue,  
-            TokenType.POWER => Math.Pow(leftValue, rightValue),  
-            TokenType.GREATER => leftValue > rightValue,  
-            TokenType.GREATER_EQUAL => leftValue >= rightValue,  
-            TokenType.LESS => leftValue < rightValue,  
-            TokenType.LESS_EQUAL => leftValue <= rightValue,  
-            TokenType.NOT_EQUAL => !leftValue.Equals(rightValue),  
-            TokenType.EQUAL => leftValue.Equals(rightValue),  
-            _ => throw new InvalidOperationException("Unsupported operator: " + Operators.Lexeme)  
-        };  
-    }
-    object EvaluateStringOperators(string leftValue, string rightValue)  
-    {  
-        return Operators.Type switch  
-        {  
-            TokenType.CONCAT => leftValue + rightValue,  
-            TokenType.CONCAT_CONCAT => $"{leftValue} {rightValue}",  
-            _ => throw new InvalidOperationException("Unsupported operator: " + Operators.Lexeme)  
-        };  
-    }  
-        public override void Print(int pos = 0)
-        {
-            Console.WriteLine(new string(' ', pos) + "BinaryOperator: " + Operators.Lexeme);
-            Left.Print(pos + 2);
-            Right.Print(pos + 2);
-        }
-    }
-    
     #endregion
     #region Expressions (Unary , Groups and binary expressions)
     public class UnaryExpression : Expression
@@ -107,7 +51,7 @@ namespace DSL
             TokenType.MINUS_MINUS_RIGHT => RightChangesInt(Right,false,context),
             _ => throw new InvalidOperationException($"Unsupported operator: {Operators.Lexeme}")  
         }; 
-        int RightChangesInt(Expression right,bool plusOrMinus,Context context)
+        int RightChangesInt(Expression right,bool plusOrMinus,Context context) // is to actualizate value for operators ++ and --//
         {
             int originalValue = Convert.ToInt32(right.Evaluate(context));
             int newVal = originalValue + (plusOrMinus ? 1 : -1);
@@ -117,7 +61,7 @@ namespace DSL
         
         public override void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "UnaryExpression: " + Operators.Lexeme);
+            Debug.Log(new string(' ', pos) + "UnaryExpression: " + Operators.Lexeme);
             Right.Print(pos + 2);
         }
     }
@@ -128,7 +72,7 @@ namespace DSL
         public override object Evaluate(Context context) => Exp.Evaluate(context);
         public override void Print(int indent = 0)
         {
-            Console.WriteLine(new string(' ', indent) + "ExpressionGroup:");
+            Debug.Log(new string(' ', indent) + "ExpressionGroup:");
             Exp.Print(indent + 2);
         }
     }
@@ -174,7 +118,7 @@ namespace DSL
         }
         public override void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "BinaryOperator: " + Operators.Lexeme);
+            Debug.Log(new string(' ', pos) + "BinaryOperator: " + Operators.Lexeme);
             Left.Print(pos + 2);
             Right.Print(pos + 2);
         }
@@ -189,7 +133,7 @@ namespace DSL
 
         public enum Type
         {
-            TARGETS, CONTEXT, CARD, FIELD, INT, STRING, BOOL, VOID, NULL
+            TARGETS, CONTEXT, CARD, FIELD, INT, STRING, BOOL, VOID, NULL ,LIST, RANGE
         }
 
         public Variable(Token token) => (Token, Value, VariableType) = (token, token.Lexeme,Type.NULL);
@@ -201,11 +145,11 @@ namespace DSL
                 TokenType.BOOLEANTYPE => Type.BOOL,
                 TokenType.NUMBERTYPE => Type.INT,
                 TokenType.STRINGTYPE => Type.STRING,
-                _ => VariableType // Mantiene el tipo actual si no coincide
+                _ => VariableType // Manteins actual type if cant find coincidences//
             };
         }
         public override object Evaluate(Context context) => context.variables[Value];
-        public override void Print(int pos = 0) => Console.WriteLine(new string(' ', pos) + "Variable: " + Value + " (" + VariableType.ToString() + ")"); 
+        public override void Print(int pos = 0) => Debug.Log(new string(' ', pos) + "Variable: " + Value + " (" + VariableType.ToString() + ")"); 
     }
     public class VariableComp : Variable,Stmt
     {
@@ -213,7 +157,7 @@ namespace DSL
         public VariableComp(Token token) : base(token) => (args) = new Args();
         public override void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "VariableComp: " + Value);
+            Debug.Log(new string(' ', pos) + "VariableComp: " + Value);
             args?.Print(pos + 2);
         }
         public void Execute(Context context)
@@ -241,7 +185,7 @@ namespace DSL
         }
         public override object Evaluate(Context context)
         {
-            object last = context.variables[Value];
+            object last = Value != "context"? context.variables[Value] : null;
             foreach(var arg in args.Arguments)
             {
                 if(arg is Function)
@@ -277,15 +221,15 @@ namespace DSL
                 }
                 else
                 {
-                    Card card = last as Card;
+                    GameObject card = last as GameObject;
                     switch(arg)
                     {
-                        case CardType: last = card.Type;break;
-                        case Name: last = card.name;break;
-                        case Faction: last = card.Faction;break;
-                        case PowerAsField: last = card.Attack;break;
-                        case Range: last = card.Range;break;
-                        case Owner: last = card.CardOwner;break;
+                        case CardType: last = card.GetComponent<DisplayCard>().Type;break;
+                        case Name: last = card.GetComponent<DisplayCard>().NameText.text;break;
+                        case Faction: last = card.GetComponent<DisplayCard>().Faction;break;
+                        case PowerAsField: last = card.GetComponent<DisplayCard>().Points;break;
+                        case Range: last = card.GetComponent<DisplayCard>().Range;break;
+                        case Owner: last = card.GetComponent<DisplayCard>().card.CardOwner;break;
                     }
                 }
             }
@@ -294,17 +238,11 @@ namespace DSL
 
         public void AssignValue(Context context, object value)
         {
-            object last = null;
-            if(Value == "target")
-            {
-                last = context.variables[Value];
-            }
+            
+            object last = Value == "target" ? context.variables[Value]: null;
             foreach(var arg in args.Arguments)
             {
-                if(arg is Function)
-                {
-                    last = (arg as Function).GetValue(context,last);
-                }
+                if(arg is Function)    last = (arg as Function).GetValue(context,last);
                 else if(arg is Indexer)
                 {
                     if(last is CardList)
@@ -334,14 +272,15 @@ namespace DSL
                 }
                 else
                 {
-                    Card card = last as Card;
+                    GameObject card = last as GameObject;
                     switch(arg)
                     {
-                        case CardType: card.Type = value as string ;break;
-                        case Name: card.name = value as string ; break;
-                        case Faction: card.Faction = value as string ; break;
-                        case PowerAsField: card.Attack = Convert.ToInt32(value) ; break;
-                        case Range: last = card.Range ; break ;
+                        case CardType: card.GetComponent<DisplayCard>().Type = value as string;break;
+                        case Name: card.GetComponent<DisplayCard>().NameText.text = value as string;break;
+                        case Faction: card.GetComponent<DisplayCard>().Faction = value as string;break;
+                        case PowerAsField: card.GetComponent<DisplayCard>().Points = Convert.ToInt32(value);
+                             card.GetComponent<DisplayCard>().CollectCardPoints(); break;
+                        case Range: last = card.GetComponent<DisplayCard>().Range;break;
                     }
                 }
             }
@@ -355,7 +294,7 @@ namespace DSL
         public StmsBlock() => statements = new();
         public void Print(int indent = 0)
         {
-            Console.WriteLine(new string(' ', indent) + "StmsBlock:");
+            Debug.Log(new string(' ', indent) + "StmsBlock:");
             foreach (var stmt in statements)   stmt.Print(indent + 2);  
         }
     }
@@ -366,10 +305,10 @@ namespace DSL
         public WhileStatement(Expression condition,StmsBlock body) => (Condition,Body) = (condition,body);
         public void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "WhileStatement:");
-            Console.WriteLine(new string(' ', pos + 2) + "Condition:");
+            Debug.Log(new string(' ', pos) + "WhileStatement:");
+            Debug.Log(new string(' ', pos + 2) + "Condition:");
             Condition?.Print(pos + 2);
-            Console.WriteLine(new string(' ', pos + 2) + "Body:");
+            Debug.Log(new string(' ', pos + 2) + "Body:");
             Body?.Print(pos + 2);
         }
         public void Execute(Context context)
@@ -391,12 +330,12 @@ namespace DSL
         public ForStatement(Variable target, Variable targets, StmsBlock body) => (Target,Targets,Body) = (target,targets,body);
         public void Print(int indent = 0)
         {
-            Console.WriteLine(new string(' ', indent) + "ForStatement:");
-            Console.WriteLine(new string(' ', indent + 2) + "Target:");
+            Debug.Log(new string(' ', indent) + "ForStatement:");
+            Debug.Log(new string(' ', indent + 2) + "Target:");
             Target?.Print(indent + 2);
-            Console.WriteLine(new string(' ', indent + 2) + "Targets:");
+            Debug.Log(new string(' ', indent + 2) + "Targets:");
             Targets?.Print(indent + 2);
-            Console.WriteLine(new string(' ', indent + 2) + "Body:");
+            Debug.Log(new string(' ', indent + 2) + "Body:");
             Body?.Print(indent + 2);
         }
         public void Execute(Context context)
@@ -435,10 +374,10 @@ namespace DSL
         };
         public void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "Function:");
-            Console.WriteLine(new string(' ', pos + 2) + "FunctionName: " + FunctionName);
+            Debug.Log(new string(' ', pos) + "Function:");
+            Debug.Log(new string(' ', pos + 2) + "FunctionName: " + FunctionName);
             Args?.Print(pos + 2);
-            Console.WriteLine(new string(' ', pos + 2) + "Return Type: " + Type.ToString());
+            Debug.Log(new string(' ', pos + 2) + "Return Type: " + Type.ToString());
         }
         public void Execute(Context context)=>    throw new NotImplementedException();
         public object GetValue(Context context, object value)
@@ -454,7 +393,7 @@ namespace DSL
                 else return context.turnSystem.GraveyardOfPlayer(Convert.ToInt32((Args.Arguments[0] as Expression).Evaluate(context)));
                 case "FieldOfPlayer": if(Args.Arguments[0] is Function) return context.turnSystem.FieldOfPlayer(Convert.ToInt32((Args.Arguments[0] as Function).GetValue(context,value)));
                 else return context.turnSystem.FieldOfPlayer(Convert.ToInt32((Args.Arguments[0] as Expression).Evaluate(context)));
-                //case "Find": return (value as CardList).Find()
+                case "Find": (value as CardList).Find(Args.Arguments[0] as Predicate);return null;
                 case "Push": (value as CardList).Push((Args.Arguments[0] as Expression).Evaluate(context) as GameObject);return null;
                 case "SendBottom": (value as CardList).SendBottom((Args.Arguments[0] as Expression).Evaluate(context) as GameObject);return null;
                 case "Pop": return (value as CardList).Pop();
@@ -475,30 +414,21 @@ namespace DSL
         public Assignment(Variable left, Token op, Expression right) =>(Left,Op,Right) = (left,op,right);
         public void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "Assignment:");
+            Debug.Log(new string(' ', pos) + "Assignment:");
             Left?.Print(pos + 2);
-            Console.WriteLine(new string(' ', pos + 2) + "Op: " + Op.Lexeme);
+            Debug.Log(new string(' ', pos + 2) + "Op: " + Op.Lexeme);
             Right?.Print(pos + 2);
         }
         public void Execute(Context context)
         {
             if(Op.Type == TokenType.ASSIGN)
             {
-                if(Left is VariableComp)
-                {
-                    (Left as VariableComp).AssignValue(context,Right.Evaluate(context));
-                }
-                else
-                {
-                    context.variables[Left.Value] = Right.Evaluate(context);
-                }
+                if(Left is VariableComp)    (Left as VariableComp).AssignValue(context,Right.Evaluate(context));
+                else    context.variables[Left.Value] = Right.Evaluate(context);
             }
             else if(Op.Type == TokenType.PLUS_EQUALS)
             {
-                if(Left is VariableComp)
-                {
-                    (Left as VariableComp).AssignValue(context,Convert.ToInt32(Left.Evaluate(context))+Convert.ToInt32(Right.Evaluate(context)));
-                }
+                if(Left is VariableComp)    (Left as VariableComp).AssignValue(context,Convert.ToInt32(Left.Evaluate(context))+Convert.ToInt32(Right.Evaluate(context)));
                 else
                 {
                     int result = Convert.ToInt32(context.variables[Left.Value]);
@@ -508,10 +438,7 @@ namespace DSL
             }
             else if(Op.Type == TokenType.MINUS_EQUALS)
             {
-                if(Left is VariableComp)
-                {
-                    (Left as VariableComp).AssignValue(context,Convert.ToInt32(Left.Evaluate(context))-Convert.ToInt32(Right.Evaluate(context)));
-                }
+                if(Left is VariableComp)    (Left as VariableComp).AssignValue(context,Convert.ToInt32(Left.Evaluate(context))-Convert.ToInt32(Right.Evaluate(context)));
                 else
                 {
                     int result = Convert.ToInt32(context.variables[Left.Value]);

@@ -9,15 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe0514f88f433fd4e94ea7029ce09e5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 29dc0c1e815642b4fa957e3fc35ef96d, type: 3}
   m_Name: Yian Garuga
   m_EditorClassIdentifier: 
-  name: Yian Garuga
-  attack: 0
-  cardImage: {fileID: 21300000, guid: 1c4ddf75097683a4980f26beb7bbf83e, type: 3}
-  id: 11
-  zone: 5
-  description: benefits distance monsters with 5 points
-  golden: 0
-  effect: 1
-  buff: 0
+  Name: Yian Garuga
+  Description: 
+  Attack: 0
+  CardOwner: Player
+  Id: 13
+  Type: Aumento
+  Range:
+  - Siege
+  - 
+  - 
+  Prefab: {fileID: 8831432082157002842, guid: ca6f6a5f669b3fc468a2773f082aa7e1, type: 3}
+  Faction: 
+  EffectText: 
+  CardImage: {fileID: 0}
+  Boost: 0

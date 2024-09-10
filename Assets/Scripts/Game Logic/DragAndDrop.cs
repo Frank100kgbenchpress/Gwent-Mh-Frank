@@ -106,6 +106,7 @@ public class DragAndDrop : MonoBehaviour
         {
             if(range == zoneName && cardZone.Owner == zoneOwner) return true;
         }
+        if(cardZone.Owner == "Neutral" && zoneName == "Wheather") return true;
         return false;
     }
     //esto era para que funcione el decoy//

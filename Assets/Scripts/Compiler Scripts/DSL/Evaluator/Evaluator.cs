@@ -43,28 +43,22 @@ namespace DSL
         void EvaluatePostActions(PostAction postAction,string source)
         {
             EffectNode effect = Context.effects[(string)postAction.Type.Evaluate(Context)];
-            foreach(var assignment in postAction.Assingments)
-            {
-                Context.variables[assignment.Left.Value] = assignment.Right.Evaluate(Context); 
-            }
+            foreach(var assignment in postAction.Assingments)    Context.variables[assignment.Left.Value] = assignment.Right.Evaluate(Context); 
             if(postAction.Selector != null)
             {
                 Context.variables["targets"] = EvaluateSelector(postAction.Selector,source);
                 EvaluateAction(effect.Action);
                 Context.variables.Remove("targets");
             }
-            else
-            {
-                EvaluateAction(effect.Action);
-            }
+            else    EvaluateAction(effect.Action);
         }
         List<GameObject> EvaluateSelector(Selector selector, string source = null)
         {
             List<GameObject> cards = new();
+            cards = selector.Source == "parent" ? EvaluateSource(source) : EvaluateSource(selector.Source);
             List<GameObject> filtredCards = new();
             if(selector.Source == "parent") cards = EvaluateSource(source);
-            else cards = EvaluateSource(selector.Source);
-            
+            else cards = EvaluateSource(selector.Source);   
             foreach(var card in cards)
             {
                 Context.variables[selector.Predicate.Var.Value] = card;
@@ -76,10 +70,7 @@ namespace DSL
                 List<GameObject> result = new List<GameObject>{filtredCards[0]};
                 return result;
             }
-            else
-            {
-                return filtredCards;
-            }
+            else    return filtredCards;
         }
         List<GameObject> EvaluateSource(string source)
         {

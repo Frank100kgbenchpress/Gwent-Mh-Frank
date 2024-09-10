@@ -9,15 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe0514f88f433fd4e94ea7029ce09e5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 29dc0c1e815642b4fa957e3fc35ef96d, type: 3}
   m_Name: Chameleos
   m_EditorClassIdentifier: 
-  name: Chameleos
-  attack: 0
-  cardImage: {fileID: 21300000, guid: a9e369b6d2745284f98172b87378d6fe, type: 3}
-  id: 29
-  zone: 12
-  description: Poison Elder Dragon, supply distance monsters with 5 points
-  golden: 0
-  effect: 1
-  buff: 0
+  Name: Chameleos
+  Description: 
+  Attack: 0
+  CardOwner: Enemy
+  Id: 22
+  Type: Aumento
+  Range:
+  - Ranged
+  - 
+  - 
+  Prefab: {fileID: 6951021431602577692, guid: bd1a7599072c02547a69d93e15ed8f15, type: 3}
+  Faction: 
+  EffectText: 
+  CardImage: {fileID: 21300000, guid: a9e369b6d2745284f98172b87378d6fe, type: 3}
+  Boost: 0

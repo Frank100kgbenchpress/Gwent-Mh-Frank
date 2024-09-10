@@ -9,15 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe0514f88f433fd4e94ea7029ce09e5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 29dc0c1e815642b4fa957e3fc35ef96d, type: 3}
   m_Name: Lunastra
   m_EditorClassIdentifier: 
-  name: Lunastra
-  attack: 8
-  cardImage: {fileID: 21300000, guid: f85bf883e8eda8c4dadae57f4d71ea5f, type: 3}
-  id: 21
-  zone: 8
-  description: Inferno Queen , destroy the card with lowest attack in melee zone
-  golden: 0
-  effect: 7
-  buff: 0
+  Name: Lunastra
+  Description: 
+  Attack: 8
+  CardOwner: Enemy
+  Id: 26
+  Type: Plata
+  Range:
+  - Ranged
+  - Siege
+  - 
+  Prefab: {fileID: 6939217438177540209, guid: a1ef0ec5202e5604d91c13fe218815d3, type: 3}
+  Faction: 
+  EffectText: 
+  CardImage: {fileID: 21300000, guid: f85bf883e8eda8c4dadae57f4d71ea5f, type: 3}
+  Boost: 0

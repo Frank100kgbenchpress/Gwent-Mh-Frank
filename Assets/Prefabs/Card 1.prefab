@@ -662,7 +662,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41fc03c964d4b9d4cadc8a14194e159e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Card: {fileID: 11400000, guid: f31513a8c26f53144b7f2b0fd9d2c69c, type: 2}
-  nameText: {fileID: 5231908811257827123}
-  attackText: {fileID: 8032647417926011178}
-  artImage: {fileID: 4683293811805780032}
+  card: {fileID: 0}
+  Owner: 
+  NameText: {fileID: 5231908811257827123}
+  AttackText: {fileID: 8032647417926011178}
+  Description: {fileID: 0}
+  Type: 
+  Faction: 
+  Range:
+  - 
+  - 
+  - 
+  ArtImage: {fileID: 4683293811805780032}
+  Boost: 0
+  Points: 0
+  AttackOriginal: 0

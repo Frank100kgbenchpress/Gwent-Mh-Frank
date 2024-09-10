@@ -11,9 +11,10 @@ namespace DSL
         public Range Range {get;set;}
         public OnActivation OnActivation {get;set;}
         public CardNode(){}
+        public CardNode(CardType type,Name name,Faction faction,Power power,Range range,OnActivation onActivation) =>(Type,Name,Faction,Power,Range,OnActivation) = (type,name,faction,power,range,onActivation);
         public void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "Card:");
+            Debug.Log(new string(' ', pos) + "Card:");
             Type?.Print(pos + 2);
             Name?.Print(pos + 2);
             Faction?.Print(pos + 2);
@@ -22,14 +23,14 @@ namespace DSL
             OnActivation?.Print(pos + 2);
         }
     }   
-    #region Card Atributes (Name, Faction, Power and Range)
+    #region Card Atributes (Name, CardType, Faction, Power , Range and owner)
     public class Name : Node
     {
         public Expression name {get;set;}
         public Name (Expression expression) => name = expression;
         public void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "Name:");
+            Debug.Log(new string(' ', pos) + "Name:");
             name.Print(pos + 2);
         }
     }
@@ -39,7 +40,7 @@ namespace DSL
         public CardType (Expression expression) => Type = expression;
         public void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "Type:");
+            Debug.Log(new string(' ', pos) + "Type:");
             Type.Print(pos + 2);
         }
     }
@@ -49,7 +50,7 @@ namespace DSL
         public Faction(Expression expression) => faction = expression;
         public void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "Faction:");
+            Debug.Log(new string(' ', pos) + "Faction:");
             faction.Print(pos + 2);
         }
     }
@@ -59,7 +60,7 @@ namespace DSL
         public Power(Expression expression) => power = expression;
         public void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "Power:");
+            Debug.Log(new string(' ', pos) + "Power:");
             power.Print(pos + 2);
         }
     }
@@ -72,10 +73,9 @@ namespace DSL
     
         public void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "Range:");
+            Debug.Log(new string(' ', pos) + "Range:");
             if(range != null) foreach(var expr in range)    expr.Print(pos + 2);
-            
-            else Console.WriteLine(new string(' ', pos) + "Lexeme: " + Lexeme);
+            else Debug.Log(new string(' ', pos) + "Lexeme: " + Lexeme);
         }
     }
     public class PowerAsField : Node
@@ -88,14 +88,6 @@ namespace DSL
         public string Owner_;
         public Owner(string owner)=>    Owner_ = owner;
         public void Print(int indent = 0)=>    Debug.Log(new string(' ', indent) + "Owner: " + Owner_);
-    }
-
-    public class Indexer : Node
-    {
-        public int Index;
-        public Indexer(int index) => Index = index;
-        public void Print(int pos = 0) =>    Debug.Log(new string(' ', pos) + "Indexer: " + Index);
-        
     }
     #endregion
 }

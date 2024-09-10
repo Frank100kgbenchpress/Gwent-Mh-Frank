@@ -9,15 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe0514f88f433fd4e94ea7029ce09e5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 29dc0c1e815642b4fa957e3fc35ef96d, type: 3}
   m_Name: Shagaru Magala
   m_EditorClassIdentifier: 
-  name: Shagaru Magala
-  attack: 15
-  cardImage: {fileID: 21300000, guid: 802389ae0f2979b4691b631e414f56fe, type: 3}
-  id: 23
-  zone: 9
-  description: Golden Elder Dragon benefits his row with 5 points
-  golden: 1
-  effect: 4
-  buff: 0
+  Name: Shagaru Magala
+  Description: 
+  Attack: 15
+  CardOwner: Enemy
+  Id: 29
+  Type: Oro
+  Range:
+  - Melee
+  - Ranged
+  - Siege
+  Prefab: {fileID: 8706438596853082734, guid: 14ffaf02b1fb58748b75dfe16e82c603, type: 3}
+  Faction: 
+  EffectText: 
+  CardImage: {fileID: 21300000, guid: 802389ae0f2979b4691b631e414f56fe, type: 3}
+  Boost: 0

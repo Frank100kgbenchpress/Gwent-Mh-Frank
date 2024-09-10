@@ -9,15 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe0514f88f433fd4e94ea7029ce09e5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 29dc0c1e815642b4fa957e3fc35ef96d, type: 3}
   m_Name: Amatsu
   m_EditorClassIdentifier: 
-  name: Amatsu
-  attack: 0
-  cardImage: {fileID: 21300000, guid: fb0866e32111e94428061f0658aa4c20, type: 3}
-  id: 32
-  zone: 11
-  description: supply melee monsters with 5 points
-  golden: 0
-  effect: 1
-  buff: 0
+  Name: Amatsu
+  Description: 
+  Attack: 0
+  CardOwner: Enemy
+  Id: 21
+  Type: Aumento
+  Range:
+  - Siege
+  - 
+  - 
+  Prefab: {fileID: 5120901952254745393, guid: 99bfd6d44e5da1047a68e617c9239862, type: 3}
+  Faction: 
+  EffectText: 
+  CardImage: {fileID: 21300000, guid: fb0866e32111e94428061f0658aa4c20, type: 3}
+  Boost: 0

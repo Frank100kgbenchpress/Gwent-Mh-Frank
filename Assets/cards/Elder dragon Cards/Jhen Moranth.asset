@@ -9,15 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe0514f88f433fd4e94ea7029ce09e5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 29dc0c1e815642b4fa957e3fc35ef96d, type: 3}
   m_Name: Jhen Moranth
   m_EditorClassIdentifier: 
-  name: Jhen Moranth
-  attack: 10
-  cardImage: {fileID: 21300000, guid: c3ae1cc523c44734899bff834934ccf9, type: 3}
-  id: 27
-  zone: 9
-  description: ' Biggest Elder Dragon'
-  golden: 0
-  effect: 12
-  buff: 0
+  Name: Jhen Moranth
+  Description: 
+  Attack: 8
+  CardOwner: Enemy
+  Id: 23
+  Type: Plata
+  Range:
+  - Siege
+  - 
+  - 
+  Prefab: {fileID: 5963933175062185053, guid: e607f07197711db47a2b2dfe63304378, type: 3}
+  Faction: 
+  EffectText: 
+  CardImage: {fileID: 21300000, guid: c3ae1cc523c44734899bff834934ccf9, type: 3}
+  Boost: 0

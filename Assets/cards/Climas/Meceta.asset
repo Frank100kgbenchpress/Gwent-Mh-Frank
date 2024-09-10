@@ -9,15 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe0514f88f433fd4e94ea7029ce09e5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 29dc0c1e815642b4fa957e3fc35ef96d, type: 3}
   m_Name: Meceta
   m_EditorClassIdentifier: 
-  name: Meceta
-  attack: 0
-  cardImage: {fileID: 21300000, guid: 1347c862524a04f46841357b753559d1, type: 3}
-  id: 18
-  zone: 7
-  description: Turns Day Sunny ,cleaning the weather zone
-  golden: 0
-  effect: 3
-  buff: 0
+  Name: Meceta
+  Description: 
+  Attack: 0
+  CardOwner: 
+  Id: 0
+  Type: Despeje
+  Range:
+  - 
+  - 
+  - 
+  Prefab: {fileID: 5167817826793915975, guid: 19ad72eed58e10d4392e76d531d63295, type: 3}
+  Faction: 
+  EffectText: 
+  CardImage: {fileID: 21300000, guid: 1347c862524a04f46841357b753559d1, type: 3}
+  Boost: 0

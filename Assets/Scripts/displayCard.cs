@@ -21,7 +21,7 @@ public class DisplayCard : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        NameText.text = card.name;
+        NameText.text = card.Name;
         ArtImage.sprite = card.CardImage;
         AttackOriginal = card.Attack;
         Points = card.Attack;
@@ -32,13 +32,9 @@ public class DisplayCard : MonoBehaviour
         GetOwner();
         CollectCardPoints();
     }
-    void CollectCardPoints()
+    public void CollectCardPoints()
     {
-        if(Type == "Oro" || Type == "Plata")
-        {
-            AttackText.text = Points.ToString();
-        }
+        if(Type == "Oro" || Type == "Plata")  AttackText.text = Points.ToString();
     }
-    void GetOwner() => Owner = card.Type == "Clima" ? "Neutral" : card.CardOwner;
-    
+    void GetOwner() => Owner = card.Type == "Clima" || card.Type == "Despeje"? "Neutral" : card.CardOwner;
 }

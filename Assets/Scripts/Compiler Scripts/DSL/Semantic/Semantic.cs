@@ -27,7 +27,7 @@ namespace DSL
         {
             symbolTable.PushScope();
             CheckTypeSemantics(card.Type);
-            CheckCardNameSemantics(card.Name);
+            CheckNameSemantics(card.Name,true); // to check card name
             CheckStringExpression(card.Faction.faction);
             CheckNumericExpression(card.Power.power);
             CheckRangeSemantics(card.Range.range);
@@ -51,7 +51,7 @@ namespace DSL
         void CheckEffectSemantics(EffectNode effect)
         {
             symbolTable.PushScope();
-            CheckEffectNameSemantics(effect.Name);
+            CheckNameSemantics(effect.Name,false); // check effect name
             if(effect.Params != null)    CheckParamsSemantics(effect.Params);
             CheckActionSemantics(effect.Action);
             symbolTable.PopScope();
@@ -66,11 +66,13 @@ namespace DSL
                 Errors.Add($"The type : '{type}' is not a valid type.");
             }
         }
-        void CheckCardNameSemantics(Name name)
+        void CheckNameSemantics(Name name,bool cardOrEffect)
         {
             CheckStringExpression(name.name);
             var trueName = Convert.ToString(name.name.Evaluate(Context))!;
-            Context.AddCard(trueName);
+            if(cardOrEffect) Context.AddCard(trueName);
+            else Context.AddEffect(trueName);
+            
         }
         void CheckRangeSemantics(Expression[] expressions)
         {
@@ -126,12 +128,6 @@ namespace DSL
             CheckBooleanExpression(predicate.Condition);
             symbolTable.PopScope();
         }
-        void CheckEffectNameSemantics(Name name)
-        {
-            CheckStringExpression(name.name);
-            string trueName = Convert.ToString(name.name.Evaluate(Context))!;
-            Context.AddEffect(trueName);
-        }
         void CheckPostActionSemantics(List<PostAction> postActions)
         {
             foreach(var postAction in postActions)
@@ -172,7 +168,6 @@ namespace DSL
             if(postAction.Selector != null)    CheckSelectorSemantics(postAction.Selector);
             }
         }
-        #endregion
         void CheckParamsSemantics(Args parameters)
         {
             foreach (var param in parameters.Arguments)
@@ -189,6 +184,8 @@ namespace DSL
             CheckStatementsBlockSemantics(action.Block);
             symbolTable.PopScope();
         }
+        #endregion
+        #region Statements Semantics (satatements, statements block , for and while)
         void CheckStatementsBlockSemantics(StmsBlock block)
         {
             foreach (var stmt in block.statements)    CheckStatementSemantics(stmt);
@@ -203,25 +200,6 @@ namespace DSL
                 case Function function: CheckFunctionCall(function); break;
                 case VariableComp variableComp: CheckVarCompSemantics(variableComp); break;
                 default: throw new ArgumentException("Unsupported statement type");
-            }
-        }
-        void CheckAssignmentSemantics(Assignment assignment)
-        {
-            if(assignment.Op.Type == TokenType.EQUAL)
-            {
-                if(symbolTable.ExistsVariable(assignment.Left.Value))
-                {
-                    Variable.Type type = symbolTable.LookupVariable(assignment.Left.Value);
-                    if(type != InferExpressionType(assignment.Right))    Errors.Add($"The type of the left side of the assignment '{assignment.Left}' is not equal to the right side");
-                }
-                else    symbolTable.DefineVariable(assignment.Left.Value,InferExpressionType(assignment.Right));
-            }
-            else
-            {
-                if(assignment.Left is Variable)    CheckVariableUsage(assignment.Left);
-                else    CheckVarCompSemantics((assignment.Left as VariableComp)!);
-                if(assignment.Left.VariableType != InferExpressionType(assignment.Right))    Errors.Add($"The type of the left side of the assignment '{assignment.Left}' is not equal to the right side");
-                if(assignment.Left.VariableType != Variable.Type.INT && assignment.Left.VariableType != Variable.Type.STRING)    Errors.Add($"The type of the left side of the assignment '{assignment.Left}' is not equal to the right side");
             }
         }
         #region For and While semantics
@@ -254,30 +232,75 @@ namespace DSL
             symbolTable.PopScope();
         }
         #endregion
-        void CheckVariableUsage( Variable variable)
+        #endregion
+        #region Assignment Semantics
+        void CheckAssignmentSemantics(Assignment assignment)
         {
-            try
+            if(assignment.Op.Type == TokenType.ASSIGN)
             {
-                var varType = symbolTable.LookupVariable(variable.Value);
-                Console.WriteLine($"Variable '{variable.Value}' is of type {varType}");
+                if(symbolTable.ExistsVariable(assignment.Left.Value))
+                {
+                    Variable.Type type = Variable.Type.NULL;
+                    if(assignment.Left is VariableComp variableComp)
+                    {
+                        CheckVarCompSemantics(variableComp);
+                        type = variableComp.VariableType;
+                    }
+                    else    type = symbolTable.LookupVariable(assignment.Left.Value);
+                    if(type != InferExpressionType(assignment.Right))    Errors.Add($"The type of the left side of the assignment '{assignment.Left}' is not equal to the right side");
+                }
+                else    symbolTable.DefineVariable(assignment.Left.Value,InferExpressionType(assignment.Right));
             }
-            catch (Exception ex)
+            else
             {
-                Console.WriteLine(ex.Message);
+                if(assignment.Left is VariableComp)    CheckVarCompSemantics((assignment.Left as VariableComp)!);
+                else    CheckVariableUsage(assignment.Left);
+                if(assignment.Left.VariableType != InferExpressionType(assignment.Right))    Errors.Add($"The type of the left side of the assignment '{assignment.Left}' is not equal to the right side");
+                if(assignment.Left.VariableType != Variable.Type.INT && assignment.Left.VariableType != Variable.Type.STRING)    Errors.Add($"The type of the left side of the assignment '{assignment.Left}' is not equal to the right side");
             }
         }
+        #endregion
+        #region Game Logic Semantic stuff
         void CheckFunctionCall( Function function)
         {
-            try
+            switch(function.FunctionName)
             {
-                var returnType = symbolTable.LookupFunction(function.FunctionName);
-                Console.WriteLine($"Function '{function.FunctionName}' returns type {returnType}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
+                case "TriggerPlayer":
+                case "Shuffle":
+                case "Pop": if(function.Args.Arguments.Count !=0) Errors.Add("The function does not allow any argument");break;
+                case "Find": if(function.Args.Arguments.Count ==0) Errors.Add("Missing argument in function Find");
+                else
+                {
+                    if(function.Args.Arguments[0] is Predicate predicate)break;
+                    else  Errors.Add("The argument in function most be of Type Predicate");
+                }break;
+                case "Push":
+                case "SendBottom":
+                case "Remove": if(function.Args.Arguments.Count ==0) Errors.Add("Missing argument in function");
+                    else
+                    {
+                        if(function.Args.Arguments[0] is Variable variable)
+                        {
+                            CheckVariableUsage(variable);
+                            if(variable.VariableType == Variable.Type.CARD)break;
+                            else Errors.Add("The argument in function most be of Type Card");
+                        }
+                        else if(function.Args.Arguments[0] is Function function1 && function1.Type == Variable.Type.CARD)break;
+                        else  Errors.Add("The argument in function most be of Type Card");
+                    }break;
+                case "HandOfPlayer":
+                case "DeckOfPalyer":
+                case "FieldOfPlayer":
+                case "GraveyardOfPlayer": if(function.Args.Arguments.Count ==0) Errors.Add("Missing argument in function");
+                    else
+                    {
+                        if(function.Args.Arguments[0] is Function function1 && function1.Type == Variable.Type.INT ||
+                        function.Args.Arguments[0] is Expression expression && InferExpressionType(expression) == Variable.Type.INT)break;
+                        else Errors.Add("The argument in function most be of Type INT");
+                    }break;
             }
         }
+        #endregion
         #region Variable Semantics
         Variable.Type GetExpressionType(Expression expression)
         {
@@ -285,15 +308,15 @@ namespace DSL
             {
                 if (GetExpressionType(binaryExpression.Left) == Variable.Type.INT && GetExpressionType(binaryExpression.Right) == Variable.Type.INT)
                 {
-                    ReturnType(expression,3);
+                    ReturnType(expression,3); // return int
                 }
                 else if (GetExpressionType(binaryExpression.Left) == Variable.Type.BOOL && GetExpressionType(binaryExpression.Right) == Variable.Type.BOOL)
                 {
-                    ReturnType(expression,2);
+                    ReturnType(expression,2);   //return bool
                 }
                 else
                 {
-                    ReturnType(expression,1);
+                    ReturnType(expression,1); // return string
                 }
             }
             else if (expression is UnaryExpression unaryExpression)
@@ -303,11 +326,11 @@ namespace DSL
                 {
                     if (rightType == Variable.Type.INT)
                     {
-                        ReturnType(expression,3);
+                        ReturnType(expression,3); // return int
                     }
                     else if (rightType == Variable.Type.BOOL)
                     {
-                        ReturnType(expression,2);
+                        ReturnType(expression,2);   // return bool
                     }
                 }
             }
@@ -318,7 +341,7 @@ namespace DSL
             }
                 if(expression is VariableComp)
                 {
-                    ReturnType(expression,4);
+                    ReturnType(expression,4); // return VariableComp
                 }
             Variable variable = (expression as Variable)!;
             return variable.VariableType;
@@ -346,22 +369,87 @@ namespace DSL
         }
         void CheckVarCompSemantics(VariableComp variableComp)
         {
-            Variable.Type currentType = symbolTable.LookupVariable(variableComp.Value); 
-            foreach (var arg in variableComp.args.Arguments)
+            Variable.Type last = symbolTable.LookupVariable(variableComp.Value);
+            foreach(var arg in variableComp.args.Arguments)
             {
-                if (arg is Function function)
+                if(arg is Function function)
                 {
                     CheckFunctionCall(function);
-                    currentType = function.Type;
+                    if(last == Variable.Type.LIST || last == Variable.Type.TARGETS)
+                    {
+                        switch(function.FunctionName)
+                        {
+                            case "Find":
+                            case "Pop": last = Variable.Type.CARD;break;
+                            case "TriggerPlayer": last = Variable.Type.INT;break;
+                            case "Add":
+                            case "Remove":
+                            case "Shuffle":
+                            case "SendBottom":
+                            case "Push": last = Variable.Type.NULL;break;
+                        }
+                    }
+                    else if(last == Variable.Type.CONTEXT)
+                    {
+                        switch(function.FunctionName)
+                        {
+                            case "HandOfPlayer":
+                            case "DeckOfPlayer":
+                            case "FieldOfPlayer":
+                            case "GraveyardOfPlayer":
+                            case "Board": last = Variable.Type.LIST;break;
+                        }
+                    }
+                    else    Errors.Add("There needs to be a cardList or a context before a function");
                 }
-                else if (arg is Type || arg is Name || arg is Faction || arg is PowerAsField || arg is Range || arg is Pointer)
+                else if(arg is Pointer)
                 {
-                    // Check if the property access is valid for the current type
-                    // You may need to define rules for what properties are accessible for each type
-                    // Update currentType based on the property type
+                    if(last == Variable.Type.CONTEXT)    last = Variable.Type.LIST;
+                    else Errors.Add("There needs to be a context before a pointer");
+                }
+                else if(arg is Indexer)
+                {
+                    if(last == Variable.Type.LIST)    last = Variable.Type.CARD;
+                    else if(last == Variable.Type.RANGE)    last = Variable.Type.STRING;
+                    else    Errors.Add("There needs to be a list of cards before indexing");
+                }
+                else
+                {
+                    if(last == Variable.Type.CARD)
+                    {
+                        switch(arg)
+                        {
+                            case CardType: 
+                            case Name:
+                            case Faction: last = Variable.Type.STRING;break;
+                            case PowerAsField:
+                            case Owner: last = Variable.Type.INT;break;
+                            case Range: last = Variable.Type.RANGE;break;
+                        }
+                    }
+                    else if(last != Variable.Type.NULL)    Errors.Add("There needs to be a card before accessing the property");
+                    else
+                    {
+                        Errors.Add("Invalid property access");
+                        Errors.Add(arg.ToString());
+                    }
                 }
             }
-            variableComp.VariableType = currentType;
+        variableComp.VariableType = last;
+        }
+        #region Variable semantic utils
+        List<Variable> FindVariablesInExpression(Expression expression)
+        {
+            var variables = new List<Variable>();
+            if (expression is Variable variable)    variables.Add(variable);
+
+            else if (expression is BinaryExpression binaryExpression)
+            {
+                variables.AddRange(FindVariablesInExpression(binaryExpression.Left));
+                variables.AddRange(FindVariablesInExpression(binaryExpression.Right));
+            }
+            else if (expression is UnaryExpression unaryExpression)    variables.AddRange(FindVariablesInExpression(unaryExpression.Right));
+            return variables;
         }
         Variable.Type InferExpressionType(Expression expression) 
         {
@@ -376,16 +464,31 @@ namespace DSL
                 default: throw new ArgumentException("Unsupported expression type", nameof(expression));
             }
         }
+        bool AreCompatibleTypes(Variable.Type leftType, Variable.Type rightType) => leftType == rightType;
+        void CheckVariableUsage( Variable variable)
+        {
+            try
+            {
+                if(variable is VariableComp variableComp)    CheckVarCompSemantics(variableComp);
+                else
+                {
+                    var varType = symbolTable.LookupVariable(variable.Value);
+                    variable.VariableType = varType;
+                }
+            }
+            catch (Exception ex)
+            {
+                Errors.Add(ex.Message);
+            }
+        }
+    #endregion
         #endregion
         #region String , Number and Bool Semantics
         void CheckStringExpression(Expression expression)
         {
             try
             {
-                if(expression is String)
-                {
-                    return;
-                }
+                if(expression is String)    return;
                 else if(expression is BinaryExpression)
                 {
                     var binaryStringExpression = (expression as BinaryExpression)!;
@@ -412,20 +515,18 @@ namespace DSL
                         if(variable.VariableType != Variable.Type.STRING)    Errors.Add($"A string was expected but instead got {variable.VariableType}");
                     }
                 }
+                else   Errors.Add($"Invalid expression type for interger context: {expression.GetType().Name}");
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Errors.Add(ex.Message);
             }
         }
         void CheckNumericExpression(Expression expression)
         {
             try
             {
-                if(expression is Number)
-                {
-                    return;
-                }
+                if(expression is Number)    return;
                 else if(expression is UnaryExpression)
                 {
                     var unaryIntergerExpression = (expression as UnaryExpression)!;
@@ -448,35 +549,27 @@ namespace DSL
                     {
                         VariableComp variableComp = (expression as VariableComp)!;
                         CheckVarCompSemantics(variableComp);
-                        if(variableComp.VariableType != Variable.Type.INT)
-                        {
-                            Errors.Add($"A number was expected but instead got {variableComp.VariableType}");
-                        }
+                        if(variableComp.VariableType != Variable.Type.INT)    Errors.Add($"A number was expected but instead got {variableComp.VariableType}");
                     }
                     else
                     {
                         Variable variable = (expression as Variable)!;
                         symbolTable.LookupVariable(variable.Value);
-                        if(variable.VariableType != Variable.Type.INT)
-                        {
-                            Errors.Add($"A number was expected but instead got {variable.VariableType}");
-                        }
+                        if(variable.VariableType != Variable.Type.INT)    Errors.Add($"A number was expected but instead got {variable.VariableType}");
                     }
                 }
+                else    Errors.Add($"Invalid expression type for string context: {expression.GetType().Name}");
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Errors.Add(ex.Message);
             }
         }
         void CheckBooleanExpression(Expression expression)
         {
             try
             {
-                if(expression is Bool)
-                {
-                    return;
-                }
+                if(expression is Bool)    return;
                 else if(expression is UnaryExpression)
                 {
                     var unaryBooleanExpression = (expression as UnaryExpression)!;
@@ -486,8 +579,10 @@ namespace DSL
                 {
                     var binaryBooleanExpression = (expression as BinaryExpression)!;
 
-                    if(binaryBooleanExpression.Operators.Type == TokenType.GREATER||binaryBooleanExpression.Operators.Type == TokenType.LAMBDA||
-                    binaryBooleanExpression.Operators.Type == TokenType.LESS||binaryBooleanExpression.Operators.Type == TokenType.LESS_EQUAL)
+                    if(binaryBooleanExpression.Operators.Type == TokenType.GREATER||
+                    binaryBooleanExpression.Operators.Type == TokenType.GREATER_EQUAL||
+                    binaryBooleanExpression.Operators.Type == TokenType.LESS||
+                    binaryBooleanExpression.Operators.Type == TokenType.LESS_EQUAL)
                     {
                         CheckNumericExpression(binaryBooleanExpression.Left);
                         CheckNumericExpression(binaryBooleanExpression.Right);
@@ -522,18 +617,12 @@ namespace DSL
                 else if (expression is Variable variable)
                 {
                     var varType = symbolTable.LookupVariable(variable.Value);
-                    if (varType != Variable.Type.BOOL)
-                    {
-                        Errors.Add($"Variable '{variable.Value}' is not of type BOOL");
-                    }
+                    if (varType != Variable.Type.BOOL)    Errors.Add($"Variable '{variable.Value}' is not of type BOOL");
                 }
                 else if (expression is VariableComp variableComp)
                 {
                     CheckVarCompSemantics(variableComp);
-                    if (variableComp.VariableType != Variable.Type.BOOL)
-                    {
-                        Errors.Add($"Expression does not evaluate to a BOOL type");
-                    }
+                    if (variableComp.VariableType != Variable.Type.BOOL)    Errors.Add($"Expression does not evaluate to a BOOL type");
                 }
                 else
                 {
@@ -542,24 +631,9 @@ namespace DSL
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Errors.Add(ex.Message);
             }
         }
         #endregion
-        List<Variable> FindVariablesInExpression(Expression expression)
-        {
-            var variables = new List<Variable>();
-            if (expression is Variable variable)    variables.Add(variable);
-
-            else if (expression is BinaryExpression binaryExpression)
-            {
-                variables.AddRange(FindVariablesInExpression(binaryExpression.Left));
-                variables.AddRange(FindVariablesInExpression(binaryExpression.Right));
-            }
-            else if (expression is UnaryExpression unaryExpression)    variables.AddRange(FindVariablesInExpression(unaryExpression.Right));
-            return variables;
-        }
-        
-        bool AreCompatibleTypes(Variable.Type leftType, Variable.Type rightType) => leftType == rightType;
-    }   
+    }        
 }

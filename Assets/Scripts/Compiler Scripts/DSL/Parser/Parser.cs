@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+
 namespace DSL
 {   
     public class Parser
     {
         List<Token> Tokens{get;}    
         int Current = 0;
+        public Exception Ex;
         public Parser(List<Token> tokens) => Tokens = tokens;
         #region Parser Utils
         public bool Match(TokenType type)
@@ -29,39 +32,38 @@ namespace DSL
         public Token Previous() => Tokens[Current - 1];
         Token Consume(TokenType type, string message)
         {
-            Console.WriteLine(Peek().Type + " " + Peek().Lexeme);
+            UnityEngine.Debug.Log(Peek().Type + " " + Peek().Lexeme);
             if(Check(type)) return Advance();
-            throw new ParseException($"'{Peek().Lexeme}' in line {Peek().Line}: {message}");
+            else throw new ParseException($"'{Peek().Lexeme}' in line {Peek().Line}: {message}");
         }
         #endregion
         #region Node Parser
         public Node Parse()  
         {  
-            var program = new Program();  
+            Program program = new Program();  
 
-            while (!IsAtEnd())  
-            {  
-                if (Match(TokenType.CARD)) AddCard(program);  
-                  
-                else if (Match(TokenType.EFFECT))  AddEffect(program);   
-                
-                throw new ParseException($"'{Peek().Lexeme}' in {Peek().Line}: Card or Effect expected.");   
-            }  
+            try
+            {
+                while(!IsAtEnd())
+                {
+                    if(Match(TokenType.CARD))    AddCardOrEffect(program,true); // Parse Card //
+                    else if(Match(TokenType.EFFECT))    AddCardOrEffect(program,false); // Parse Effect //
+                    else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Card or Effect expected.");
+                }
+            }
+            catch(Exception ex)
+            {
+                Ex=ex;
+            } 
 
             return program;  
         }  
-
-        void AddCard(Program program)  
-        {  
-            Consume(TokenType.LEFT_BRACE, "Expected '{' after card");  
-            program.CardNodes.Add(ParseCard());  
-            Consume(TokenType.RIGHT_BRACE, "Expected '}' after card declaration");  
-        }  
-        void AddEffect(Program program)  
-        {  
-            Consume(TokenType.LEFT_BRACE, "Expected '{'");  
-            program.EffectNodes.Add(ParseEffect());  
-            Consume(TokenType.RIGHT_BRACE, "Expected '}' after effect declaration");  
+        void AddCardOrEffect(Program program, bool cardOfEffect)
+        {
+            Consume(TokenType.LEFT_BRACE, "Expected '{' after card");
+            if(cardOfEffect)    program.CardNodes.Add(ParseCard());   
+            else   program.CardNodes.Add(ParseCard());
+            Consume(TokenType.RIGHT_BRACE, "Expected '}' after card declaration");
         }
         #endregion  
         #region CardNode Parser
@@ -106,28 +108,28 @@ namespace DSL
             counter[0]++;  
             Consume(TokenType.COLON, "Expected ':' after Type");  
             card.Type = new CardType(ParseExpression());  
-            Consume(TokenType.COMMA, "Expected ',' after expression");  
+            if(!Check(TokenType.RIGHT_BRACE))Consume(TokenType.COMMA,"Expected ',' after expression");  
         }  
         void ParseCardName(CardNode card, int[] counter)  
         {  
             counter[1]++;  
             Consume(TokenType.COLON, "Expected ':' after Name");  
             card.Name = new Name(ParseExpression());  
-            Consume(TokenType.COMMA, "Expected ',' after expression");  
+            if(!Check(TokenType.RIGHT_BRACE))Consume(TokenType.COMMA,"Expected ',' after expression");  
         }  
         void ParseFaction(CardNode card, int[] counter)  
         {  
             counter[2]++;  
             Consume(TokenType.COLON, "Expected ':' after Faction");  
             card.Faction = new Faction(ParseExpression());  
-            Consume(TokenType.COMMA, "Expected ',' after expression");  
+            if(!Check(TokenType.RIGHT_BRACE))Consume(TokenType.COMMA,"Expected ',' after expression");  
         }  
         void ParsePower(CardNode card, int[] counter)  
         {  
             counter[3]++;  
             Consume(TokenType.COLON, "Expected ':' after Power");  
             card.Power = new Power(ParseExpression());  
-            Consume(TokenType.COMMA, "Expected ',' after expression");  
+            if(!Check(TokenType.RIGHT_BRACE))Consume(TokenType.COMMA,"Expected ',' after expression");  
         }  
         void ParseRange(CardNode card, int[] counter)  
         {  
@@ -144,7 +146,7 @@ namespace DSL
             }  
 
             Consume(TokenType.RIGHT_BRACKET, "Expected ']'");  
-            Consume(TokenType.COMMA, "Expected ',' after Range");  
+            if(!Check(TokenType.RIGHT_BRACE))Consume(TokenType.COMMA,"Expected ',' after expression");  
             card.Range = new Range(expressions.ToArray());  
         }
         void ParseCardOnActivation(CardNode card , int[]counter)
@@ -177,7 +179,7 @@ namespace DSL
             counter[0]+=1;
             Consume(TokenType.COLON,"Expected ':' after Name");
             effect.Name = new Name(ParseExpression());
-            Consume(TokenType.COMMA,"Expected ',' after expression");
+            if(!Check(TokenType.RIGHT_BRACE))Consume(TokenType.COMMA,"Expected ',' after expression");
         }
         void ParseEffectParams(EffectNode effect , int[] counter)
         {
@@ -206,7 +208,11 @@ namespace DSL
             Consume(TokenType.COLON,"Expected ':' after OnActivation");
             Consume(TokenType.LEFT_BRACKET,"Expected '['");
             OnActivation onActivation = new OnActivation();
-            while(!Check(TokenType.RIGHT_BRACKET) && !IsAtEnd())    onActivation.Elements.Add(ParseOAE());
+            while(!Check(TokenType.RIGHT_BRACKET) && !IsAtEnd())
+            {
+                onActivation.Elements.Add(ParseOAE());
+                if(!Check(TokenType.RIGHT_BRACKET) && !IsAtEnd()) Consume(TokenType.COMMA,"Expected ,");
+            }
             Consume(TokenType.RIGHT_BRACKET,"Expected ']'");
             return onActivation;
         }
@@ -216,7 +222,8 @@ namespace DSL
             OAEffect onActivationEffect = null!;
             Selector selector = null!;
             List<PostAction> postActions = new();
-            ParseOnActivationElements(onActivationEffect,selector,postActions); // has incluided consume Right Brace Token "}"
+            ParseOnActivationElements(onActivationEffect,selector,postActions); 
+            Consume(TokenType.RIGHT_BRACE,"Expected '}' after OnActivation declaration");
             return new OnActivationElements(onActivationEffect,selector,postActions);
         }
         void ParseOnActivationElements(OAEffect onActivationEffect,Selector selector , List<PostAction> postActions)
@@ -230,6 +237,7 @@ namespace DSL
                         Consume(TokenType.COLON,"Expected ':'");
                         onActivationEffect = ParseOAEffect();
                     }
+                    else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Only one OAEffect per Bracks");
                 }
                 else if(Match(TokenType.SELECTOR))
                 {
@@ -251,7 +259,6 @@ namespace DSL
                 }
                 else    throw new ParseException($"'{Peek().Lexeme}' in {Peek().Line}: Invalid OnActivation field.");
             }
-            Consume(TokenType.RIGHT_BRACE,"Expected '}' after OnActivation declaration");
         }
         #endregion
         #region On Activation Effect Parser
@@ -262,7 +269,7 @@ namespace DSL
             CheckOnActivationProperties(name,assignments);
             return new OAEffect(name,assignments);
         }
-        void ParseIdentifier(List<Assignment> assignments, bool checkRightBrace)
+        void ParseIdentifier(List<Assignment> assignments)
         {
             Variable variable = ParseVariable();
             Token token = Peek();
@@ -270,7 +277,7 @@ namespace DSL
             Expression expression = ParseExpression();
             Assignment assignment = new Assignment(variable, token, expression);
             assignments.Add(assignment);
-            if (!checkRightBrace || !Check(TokenType.RIGHT_BRACE))  Consume(TokenType.COMMA, "Expected ','");
+            if (!Check(TokenType.RIGHT_BRACE))  Consume(TokenType.COMMA, "Expected ','");
         }
         void ParseOnActivationName(string name)
         {
@@ -282,10 +289,10 @@ namespace DSL
             if(Check(TokenType.STRING))
             {
                 name = Advance().Lexeme.Substring(1,Previous().Lexeme.Length-2);
-                Consume(TokenType.COMMA,"Expected ','");
-                while(!Check(TokenType.SELECTOR))
+                if(!Check(TokenType.RIGHT_BRACE))Consume(TokenType.COMMA,"Expected ','");
+                while(!Check(TokenType.SELECTOR) && !Check(TokenType.RIGHT_BRACE))
                 {
-                    if(Check(TokenType.IDENTIFIER))    ParseIdentifier(assignments,false);  
+                    if(Check(TokenType.IDENTIFIER))    ParseIdentifier(assignments);  
                     else  throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Invalid OAEffect field");
                 }
             }
@@ -307,7 +314,7 @@ namespace DSL
                             else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Duplicate");
                         }
                     }
-                    else if(Check(TokenType.IDENTIFIER))    ParseIdentifier(assignments,true); 
+                    else if(Check(TokenType.IDENTIFIER))    ParseIdentifier(assignments); 
                     else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Invalid OAEffect field");
                 }
                 Consume(TokenType.RIGHT_BRACE,"Expected '}'");
@@ -345,7 +352,7 @@ namespace DSL
                     Consume(TokenType.COLON,"Expected ':'");
                     if(source == null)
                     {
-                        if(CheckSelectorSource())    source = Advance().Lexeme;
+                        if(CheckSelectorSource())    source = Advance().Literal as string;
                         else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Invalid Source");
                     }
                     else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Source duplicate");
@@ -369,7 +376,7 @@ namespace DSL
         {
             Consume(TokenType.COLON,"Expected ':'");
             if(predicate == null)    predicate = ParsePredicate();
-            else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Predicate dsuplicate");
+            else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Predicate duplicate");
             if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
         }
         #endregion
@@ -402,7 +409,7 @@ namespace DSL
             {
                 if(Match(TokenType.TYPE))    ParsePostActionType(expression);
                 else if(Match(TokenType.SELECTOR)) ParsePostActionSelector(selector);
-                else if(Check(TokenType.IDENTIFIER))    ParseIdentifier(assignments,true); //ParseIdentifier Method Was created in On Activation Parser Region ;)
+                else if(Check(TokenType.IDENTIFIER))    ParseIdentifier(assignments); //ParseIdentifier Method Was created in On Activation Parser Region ;)
                 else throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Invalid PostAction field");    
             }
             Consume(TokenType.RIGHT_BRACE,"Expected '}'");
@@ -445,25 +452,25 @@ namespace DSL
         }
         void VariableFunctionParser(Variable.Type varType,VariableComp variableComp)
         {
-            Function function = ParseFunction(Previous().Lexeme);
+            Function function = ParseFunction(Previous().Literal as string);
             varType = function.Type;
             variableComp.args.Arguments.Add(function);
         }
         void VariableTypeParser(Variable.Type varType,VariableComp variableComp)
         {
-            CardType type = new CardType(new String(Previous().Lexeme as string));
+            CardType type = new CardType(new String(Previous().Literal as string));
             varType = Variable.Type.STRING;
             variableComp.args.Arguments.Add(type);
         }
         void VariableNameParser(Variable.Type varType,VariableComp variableComp)
         {
-            Name name = new Name(new String(Previous().Lexeme));
+            Name name = new Name(new String(Previous().Literal as string));
             varType = Variable.Type.STRING;
             variableComp.args.Arguments.Add(name);
         }
         void VariableFactionParser(Variable.Type varType,VariableComp variableComp)
         {
-            Faction faction = new Faction(new String(Previous().Lexeme));
+            Faction faction = new Faction(new String(Previous().Literal as string));
             varType = Variable.Type.STRING;
             variableComp.args.Arguments.Add(faction);
         }
@@ -475,15 +482,26 @@ namespace DSL
         }
         void VariableRangeParser(Variable.Type varType , VariableComp variableComp)
         {
-            Range range = new Range(Previous().Lexeme);
+            Range range = new Range(Previous().Literal as string);
             varType = Variable.Type.STRING;
             variableComp.args.Arguments.Add(range);
         }
         void VariablePointerParser(Variable.Type varType , VariableComp variableComp)
         {
-            Pointer pointer = new Pointer(Previous().Lexeme);
-            varType = Variable.Type.STRING; //volver a comentarlo
+            Pointer pointer = new Pointer(Previous().Literal as string);
             variableComp.args.Arguments.Add(pointer);
+            if(Match(TokenType.LEFT_BRACKET))
+            {
+                Indexer indexer = new Indexer(Convert.ToInt32(Advance().Literal));
+                Consume(TokenType.RIGHT_BRACKET,"Expected ']'");
+                variableComp.args.Arguments.Add(indexer);
+            }
+        }
+        void VariableOwnerParser(Variable.Type varType, VariableComp variableComp)
+        {
+            Owner owner = new Owner(Previous().Literal as string);
+            varType = Variable.Type.STRING;
+            variableComp.args.Arguments.Add(owner);
         }
         void VariableParser(Variable variable)
         {
@@ -502,6 +520,7 @@ namespace DSL
                         else if(Match(TokenType.POWER)) VariablePOwerParser(varType,variableComp);
                         else if(Match(TokenType.RANGE)) VariableRangeParser(varType,variableComp);
                         else if(Match(TokenType.POINTER)) VariablePointerParser(varType,variableComp);
+                        else if(Match(TokenType.OWNER))  VariableOwnerParser(varType,variableComp);
                         else throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Invalid variable");
                     }
                 }
@@ -592,10 +611,17 @@ namespace DSL
             while(!Check(TokenType.RIGHT_PAREN) && !IsAtEnd())
             {
                 if(Check(TokenType.IDENTIFIER))    args.Arguments.Add(ParseVariable());
+                else if(Match(TokenType.LAMBDA))    LambdaFunction(args);
                 else if(Check(TokenType.FUNCTION))    args.Arguments.Add(ParseFunction(Advance().Lexeme));
                 else    args.Arguments.Add(ParseExpression());
                 if(!Check(TokenType.RIGHT_PAREN)) Consume(TokenType.COMMA,"Expected ','");
             }
+        }
+        void LambdaFunction(Args args)
+        {
+            Predicate predicate = new Predicate(args.Arguments[args.Arguments.Count-1] as Variable,ParseExpression());
+            args.Arguments.RemoveAt(args.Arguments.Count-1);
+            args.Arguments.Add(predicate);
         }
         #endregion
         #region Get Argument Parmeters
@@ -605,7 +631,6 @@ namespace DSL
             Args variables = new Args();
             CheckParams(variables);
             Consume(TokenType.RIGHT_BRACE,"Expected '}' after Params declaration");
-            Consume(TokenType.COMMA,"Expected ','");
             return variables;
         }
         void CheckParams(Args variables)
@@ -716,10 +741,12 @@ namespace DSL
                 Expression right = Unary();
                 return new UnaryExpression(operators,right);   
             }
-            else if (Check(TokenType.IDENTIFIER) && (LookAhead(TokenType.PLUS_PLUS_RIGHT)|| LookAhead(TokenType.MINUS_MINUS_RIGHT)))
+            else if (Check(TokenType.IDENTIFIER) && (LookAhead(TokenType.PLUS_PLUS_LEFT)|| LookAhead(TokenType.MINUS_MINUS_LEFT)))
             {
                 Expression left = ParseVariable();
                 Token operatorToken = Advance();
+                if(LookAhead(TokenType.PLUS_PLUS_LEFT))   operatorToken.Type = TokenType.PLUS_PLUS_RIGHT;
+                if(LookAhead(TokenType.MINUS_MINUS_LEFT)) operatorToken.Type = TokenType.MINUS_MINUS_RIGHT;
                 return new UnaryExpression(operatorToken, left);
             }
             return Primary();
@@ -739,7 +766,7 @@ namespace DSL
                 return new ExpressionGroup(expression);
             }
             if(Check(TokenType.IDENTIFIER))    return ParseVariable();
-            return new Bool(false); //*
+            return new Bool(false); 
             throw new System.Exception($"'{Peek().Lexeme}' in line {Peek().Line}: Unexpected token.");
         }
         #endregion

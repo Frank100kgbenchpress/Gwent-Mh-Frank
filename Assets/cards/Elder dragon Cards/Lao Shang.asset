@@ -9,16 +9,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe0514f88f433fd4e94ea7029ce09e5a, type: 3}
+  m_Script: {fileID: 11500000, guid: 29dc0c1e815642b4fa957e3fc35ef96d, type: 3}
   m_Name: Lao Shang
   m_EditorClassIdentifier: 
-  name: Lao Shan Lung
-  attack: 10
-  cardImage: {fileID: 21300000, guid: a41fc906bc62b9742b0dde435c0cdadf, type: 3}
-  id: 28
-  zone: 8
-  description: Second Biggest Elder Dragon when it comes destroy the row with lowest
-    cards
-  golden: 0
-  effect: 8
-  buff: 0
+  Name: Lao Shan
+  Description: 
+  Attack: 10
+  CardOwner: Enemy
+  Id: 25
+  Type: Plata
+  Range:
+  - Melee
+  - 
+  - 
+  Prefab: {fileID: 1317175101820915380, guid: 9c79da75a0c057e44889788dd5a0d653, type: 3}
+  Faction: 
+  EffectText: 
+  CardImage: {fileID: 21300000, guid: a41fc906bc62b9742b0dde435c0cdadf, type: 3}
+  Boost: 0

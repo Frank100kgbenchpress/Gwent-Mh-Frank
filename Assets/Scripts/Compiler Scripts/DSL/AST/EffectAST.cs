@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using System.Diagnostics;
 namespace DSL
 {
     public class EffectNode : Node
@@ -12,7 +12,7 @@ namespace DSL
         public EffectNode(Name name,Args param,Action action) => (Name,Params,Action) = (name,param,action);
         public void Print(int indent = 0)
         {
-            Console.WriteLine(new string(' ', indent) + "Effect:");
+            UnityEngine.Debug.Log(new string(' ', indent) + "Effect:");
             Name?.Print(indent + 2);
             Params?.Print(indent + 2);
             Action?.Print(indent + 2);
@@ -24,7 +24,7 @@ namespace DSL
         public OnActivation() => Elements = new();   
         public void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "OnActivation:");
+            UnityEngine.Debug.Log(new string(' ', pos) + "OnActivation:");
             foreach (var element in Elements)    element.Print(pos + 2);
         }
     }
@@ -36,21 +36,21 @@ namespace DSL
         public OnActivationElements(OAEffect oaEffect, Selector selector, List<PostAction> pA) => (OAEffect, Selector , PostActions) = (oaEffect,selector,pA);
         public void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "OnActivationElements:");
+            UnityEngine.Debug.Log(new string(' ', pos) + "OnActivationElements:");
             OAEffect?.Print(pos + 2);
             Selector?.Print(pos + 2);
             foreach (var postAction in PostActions)    postAction?.Print(pos+2);   
         }
     }
-    public class OAEffect : Node
+    public class OAEffect : Node //On Activation Effect Branch
     {
         public string Name {get; set;}
         public List<Assignment> Assingments {get; set;}
         public OAEffect(string name, List<Assignment> assingments) => (Name,Assingments) = (name, assingments);
         public void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "OAEffect:");
-            Console.WriteLine(new string(' ', pos + 2) + "Name: " + Name);
+            UnityEngine.Debug.Log(new string(' ', pos) + "OAEffect:");
+            UnityEngine.Debug.Log(new string(' ', pos + 2) + "Name: " + Name);
             foreach (var assignment in Assingments)    assignment.Print(pos + 2);
         }
     }
@@ -62,8 +62,8 @@ namespace DSL
         public Selector(string source,Single single,Predicate predicate) => (Source, Single, Predicate) = (source, single, predicate);
         public void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "Selector:");
-            Console.WriteLine(new string(' ', pos + 2) + "Source: " + Source);
+            UnityEngine.Debug.Log(new string(' ', pos) + "Selector:");
+            UnityEngine.Debug.Log(new string(' ', pos + 2) + "Source: " + Source);
             Single?.Print(pos + 2);
             Predicate?.Print(pos + 2);
         }
@@ -79,7 +79,7 @@ namespace DSL
                 else Value = false;
             }
         }
-        public void Print(int pos = 0) =>    Console.WriteLine(new string(' ', pos) + "Single: " + Value);
+        public void Print(int pos = 0) =>    UnityEngine.Debug.Log(new string(' ', pos) + "Single: " + Value);
     }
     public class Predicate : Node
     {
@@ -88,7 +88,7 @@ namespace DSL
         public Predicate(Variable var,Expression condition) => (Var,Condition) = (var, condition);
         public void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "Predicate:");
+            UnityEngine.Debug.Log(new string(' ', pos) + "Predicate:");
             Var?.Print(pos + 2);
             Condition?.Print(pos + 2);
         }
@@ -101,7 +101,7 @@ namespace DSL
         public PostAction(Expression type,Selector selector) => (Type , Selector,Assingments) = (type,selector,new());
         public void Print(int pos = 0)
         {
-            Console.WriteLine(new string(' ', pos) + "PostAction:");
+            UnityEngine.Debug.Log(new string(' ', pos) + "PostAction:");
             Type?.Print(pos + 2);
             Selector?.Print(pos + 2);
         }
@@ -114,10 +114,17 @@ namespace DSL
         public Action(Variable targets,Variable context,StmsBlock block) => (Targets, Context, Block) = (targets,context , block);
         public void Print(int indent = 0)
         {
-            Console.WriteLine(new string(' ', indent) + "Action:");
+            UnityEngine.Debug.Log(new string(' ', indent) + "Action:");
             Targets?.Print(indent + 2);
             Context?.Print(indent + 2);
             Block?.Print(indent + 2);
         }
+    }
+    public class Indexer : Node
+    {
+        public int Index;
+        public Indexer(int index) => Index = index;
+        public void Print(int pos = 0) =>    UnityEngine.Debug.Log(new string(' ', pos) + "Indexer: " + Index);
+        
     }
 }

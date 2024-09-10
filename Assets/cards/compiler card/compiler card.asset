@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 29dc0c1e815642b4fa957e3fc35ef96d, type: 3}
-  m_Name: Yamatsu Kami
+  m_Name: compiler card
   m_EditorClassIdentifier: 
-  Name: YamatsuKami
+  Name: 
   Description: 
-  Attack: 8
-  CardOwner: Enemy
-  Id: 31
-  Type: Plata
+  Attack: 0
+  CardOwner: 
+  Id: 0
+  Type: 
   Range:
-  - Melee
   - 
   - 
-  Prefab: {fileID: 6824175532319639483, guid: dcda296c6fd438b4f9d7952f406df7ce, type: 3}
+  - 
+  Prefab: {fileID: 7908009689857623106, guid: 2c17136812ae13d40bec1f7cf6d2552e, type: 3}
   Faction: 
   EffectText: 
-  CardImage: {fileID: 21300000, guid: 3849a4af8d3e9cb428612613b0d0b896, type: 3}
+  CardImage: {fileID: 21300000, guid: 15e46bfbb0d8666419035a8476738304, type: 3}
   Boost: 0

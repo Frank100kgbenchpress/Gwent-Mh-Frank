@@ -4,8 +4,8 @@ using UnityEngine.SceneManagement;
 public  class Menu : MonoBehaviour
 {
    public void  PlayGame() =>   SceneManager.LoadSceneAsync(0); 
-   public static void WinnerScreen() =>   SceneManager.LoadScene(1);
+   public static void WinnerScreen() =>   SceneManager.LoadScene(2);
    public static void WinnerScreen2() =>   SceneManager.LoadScene(3);
    public void QuitGame() =>   Application.Quit();
-   public void BackToMenu() =>   SceneManager.LoadSceneAsync(2);
+   public void BackToMenu() =>   SceneManager.LoadSceneAsync(1);
 }
