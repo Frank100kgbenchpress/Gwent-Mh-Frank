@@ -18,40 +18,29 @@ public class effects : MonoBehaviour
     public TurnSystem decoy;
     public Draw draw;
 
-    public void UseEffect(int hability,GameObject card)
+    public void UseEffect(string effectName,GameObject card)
     {
-        /*if(hability==1)
+        if(effectName == "Fila") RowPowerUpp(card,false);
+        if(effectName == "Aumento") RowPowerUpp(card,true);
+        if(effectName == "ClimaMelee") Weather("Melee");
+        if(effectName == "ClimaRanged") Weather("Ranged");
+        if(effectName == "CllimaSiege") Weather("Siege");
+        if(effectName == "Multiply") Multiply(card);
+        if(effectName == "Draw")
         {
-            Supply(card);
+            draw = GameObject.Find("GameManager").GetComponent<Draw>();
+            DisplayCard display = card.GetComponent<DisplayCard>();
+            draw.DrawCard(display.Owner == "Player" ? 1 : 2);
         }
-        if(hability==2)
-        {
-            Weather(card,"Melee"); // tengo que poner uno para cada uno 
-        }
-        if(hability==3)
-        {
-            Clean(card);
-        }
-        if(hability==4)
-        {
-            RowPowerUpp(card);
-        }
-        if(hability==5)
-        {
-            Multiply(card);
-        }
-        if(hability==6)
-        {
-            DestroyHightAttack();
-        }
-        if(hability==7)
-        {
-            Lowest(card);
-        }
-        if(hability==8)
-        {
-            CleanRow(card);
-        }
+        if(effectName == "DestroyH") DestroyHightAttack();
+        if(effectName == "Despeje") CleanWeather(card);
+        if(effectName == "Lowest") Lowest(card);
+        if(effectName == "CleanRow") CleanRow();
+        Debug.Log(effectName);
+        if(effectName == "Call") CallWeather(card);
+        /*
+        
+        
         if(hability==9)
         {
             CallWeather(card);
@@ -59,7 +48,7 @@ public class effects : MonoBehaviour
         if(hability==10)
         {
             Average(card);
-        }*/
+        }
         if(hability==11)
         {
             decoy = GameObject.Find("GameManager").GetComponent<TurnSystem>();
@@ -70,53 +59,32 @@ public class effects : MonoBehaviour
             }
             decoy.Team = true;
         }
-        if(hability==12)
-        {
-            draw = GameObject.Find("GameManager").GetComponent<Draw>();
-            DisplayCard display = card.GetComponent<DisplayCard>();
-            if(display.Owner == "Player")
-            {
-                draw.DrawCard(1);
-            }
-            else
-            {
-                draw.DrawCard(2);
-            }
-        }
+        */
     }
-    /*
-    void RowPowerUpp(GameObject cardPlayed)
+    //efecto de subir puntos el booleano es por si es una carta aumento ya que el efecto debe ser fijo por toda la ronda y en una carta normal es solo para las que estaban
+    void RowPowerUpp(GameObject cardPlayed, bool loop)
     {
         string Owner = cardPlayed.GetComponent<DisplayCard>().Owner;
-        string[] CardRange = cardPlayed.GetComponent<DisplayCard>().Range;
-        if(Owner == "Player")
-        {
-            foreach (var range in CardRange)
-            {
-                if(range == "Melee") zone1 = GameObject.Find("MeleeZone");
-                if(range == "Range") zone1 = GameObject.Find("DistanceZone");
-                if(range == "Siege") zone1 = GameObject.Find("SiegeZone");
-            }
-        }
-        if(Owner == "Enemy")
-        {
-            foreach (var range in CardRange)
-            {
-                if(range == "Melee") zone1 = GameObject.Find("EnemyMeleeZone");
-                if(range == "Range") zone1 = GameObject.Find("EnemyDistanceZone");
-                if(range == "Siege") zone1 = GameObject.Find("EnemySiegeZone");
-            }
-        }
+        string placedZone = cardPlayed.GetComponent<DragAndDrop>().PlacedZone;
+        zone1 = GameObject.Find((Owner == "Player") ? placedZone + "Zone" : "Enemy" + placedZone + "Zone");
         DisplayCard[] cards = zone1.GetComponentsInChildren<DisplayCard>();
         AddAttack(cards,5);
+        if(loop)effectLoop = true;
     }
-    void Weather(GameObject cardPlayed, string zone)
+    void AddAttack(DisplayCard[] cards,int ammount)
     {
-        string weather = cardPlayed.GetComponent<DisplayCard>().card.Type ="Clima";
-        if(zone=="Distance")
+        foreach (var card in cards.Where(c => c.Type == "Plata"))
         {
-            zone1 = GameObject.Find("DistanceZone");
-            zone2 = GameObject.Find("EnemyDistanceZone");
+            card.Points += ammount;
+            card.AttackText.text = card.Points.ToString();
+        }
+    }
+    void Weather(string zone)
+    {
+        if(zone=="Ranged")
+        {
+            zone1 = GameObject.Find("RangedZone");
+            zone2 = GameObject.Find("EnemyRangedZone");
         }
         if(zone=="Melee")
         {
@@ -126,7 +94,7 @@ public class effects : MonoBehaviour
         if(zone=="Siege")
         {
             zone1 = GameObject.Find("SiegeZone");
-            zone2 = GameObject.Find("SiegeZone");
+            zone2 = GameObject.Find("EnemySiegeZone");
         }
         DisplayCard[] cards = zone1.GetComponentsInChildren<DisplayCard>();
         AttackToOneToWheatherEffect(cards);
@@ -142,6 +110,7 @@ public class effects : MonoBehaviour
             card.AttackText.text = card.Points.ToString();
         }
     }
+    // en este no use la logica del string con la posicion porque una carta puede tener ese efecto y tener varias posiciones para colocarse
     void Multiply(GameObject cardPlayed)
     {
         string[] Range = cardPlayed.GetComponent<DisplayCard>().Range;
@@ -157,9 +126,9 @@ public class effects : MonoBehaviour
                     zone1 = GameObject.Find("MeleeZone");
                     CheckCardIDForMultiplyEffect(id,counter);
                 }
-                if(range=="Distance")
+                if(range=="Ranged")
                 {
-                    zone1 = GameObject.Find("DistanceZone");
+                    zone1 = GameObject.Find("RangedZone");
                     CheckCardIDForMultiplyEffect(id,counter);
                 }
                 if(range=="Siege")
@@ -175,9 +144,9 @@ public class effects : MonoBehaviour
                     zone1 = GameObject.Find("EnemyMeleeZone");
                     CheckCardIDForMultiplyEffect(id,counter);
                 }
-                if(range=="Distance")
+                if(range=="Ranged")
                 {
-                    zone1 = GameObject.Find("EnemyDistanceZone");
+                    zone1 = GameObject.Find("EnemyRangedZone");
                     CheckCardIDForMultiplyEffect(id,counter);
                 }
                 if(range=="Siege")
@@ -192,354 +161,178 @@ public class effects : MonoBehaviour
         void CheckCardIDForMultiplyEffect(int id,int counter)
         {
             DisplayCard[] cards = zone1.GetComponentsInChildren<DisplayCard>();
-            foreach(var card in cards)
+            counter = cards.Count(card => card.card.Id == id);
+            foreach(var card in cards.Where(c => c.card.Id == id))
             {
-                if(id==card.card.Id)    counter++;
+                card.Points *= counter;
+                card.AttackText.text = card.Points.ToString();
             }
-            foreach(var card in cards)
-            {
-                if(id==card.card.Id)
-                {
-                    card.Points *= counter;
-                    card.AttackText.text = card.Points.ToString();
-                }
-            }
-    }
-    void Clean(GameObject cardPlayed)
+        }
+    void CleanWeather(GameObject cardPlayed)
     {
         zone1 = GameObject.Find("WeatherZone");
-        bool[] check = new bool[3];
         foreach(Transform card in zone1.transform)
         {
-            if(card.gameObject.GetComponent<DisplayCard>().card.name=="Tundra Zone")
+            DisplayCard displayCard = card.gameObject.GetComponent<DisplayCard>();
+            switch(displayCard.card.EffectText)
             {
-                check[0] = true;
-                Destroy(card.gameObject);
+                case "ClimaSiege":
+                    RevertWeatherEffect("Siege");
+                    break;
+                case "ClimaMelee":
+                    RevertWeatherEffect("Melee");
+                    break;
+                case "ClimaRanged":
+                    RevertWeatherEffect("Ranged");
+                    break;
             }
-            if(card.gameObject.GetComponent<DisplayCard>().card.name=="Volcan Zone")
-            {
-                check[1] = true; 
-                Destroy(card.gameObject);
-            }
-            if(card.gameObject.GetComponent<DisplayCard>().card.name=="Jungle Zone")
-            {
-                check[2] = true;
-                Destroy(card.gameObject);
-            }
+            Destroy(card.gameObject);
         }
-        if(check[0])
-        {
-            zone2 = GameObject.Find("AsediusZone");
-            zone3 = GameObject.Find("EnemyAsediusZone");
-            DisplayCard[] asedius = zone2.GetComponentsInChildren<DisplayCard>();
-            foreach(var card in asedius)
-            {
-                card.Points = card.AttackOriginal;
-                card.AttackText.text = card.Points.ToString();
-                card.card.Boost = false;
-            }
-            DisplayCard[] enemyAsedius = zone2.GetComponentsInChildren<DisplayCard>();
-            foreach(var card in enemyAsedius)
-            {
-                card.Points = card.AttackOriginal;
-                card.AttackText.text = card.Points.ToString();
-                card.card.Boost = false;
-            }
-        }
-        if(check[1])
-        {
-            zone2 = GameObject.Find("MeleeZone");
-            zone3 = GameObject.Find("EnemyMeleeZone");
-            DisplayCard[] melee = zone2.GetComponentsInChildren<DisplayCard>();
-            foreach(var card in melee)
-            {
-                card.Points = card.AttackOriginal;
-                card.AttackText.text = card.Points.ToString();
-                card.card.Boost = false;
-            }
-            DisplayCard[] enemyMelee = zone2.GetComponentsInChildren<DisplayCard>();
-            foreach(var card in enemyMelee)
-            {
-                card.Points = card.AttackOriginal;
-                card.AttackText.text = card.Points.ToString();
-                card.card.Boost = false;
-            }
-        }
-        if(check[2])
-        {
-            zone2 = GameObject.Find("DistanceZone");
-            zone3 = GameObject.Find("EnemyDistanceZone");
-            DisplayCard[] distance = zone2.GetComponentsInChildren<DisplayCard>();
-            foreach(var card in distance)
-            {
-                card.Points = card.AttackOriginal;
-                card.AttackText.text = card.Points.ToString();
-                card.card.Boost = false;
-            }
-            DisplayCard[] enemyDistance = zone2.GetComponentsInChildren<DisplayCard>();
-            foreach(var card in enemyDistance)
-            {
-                card.Points = card.AttackOriginal;
-                card.AttackText.text = card.Points.ToString();
-                card.card.Boost = false;
-            }
-        }
-    Destroy(cardPlayed);
-    wheatherUse = false;
+        Destroy(cardPlayed);
+        wheatherUse = false;
     }
-    void Supply(GameObject cardPlayed)
+
+    void RevertWeatherEffect(string zoneType)
     {
-        string[] Range = cardPlayed.GetComponent<DisplayCard>().Range;
-        string owner = cardPlayed.GetComponent<DisplayCard>().Owner;
-        if(owner=="Player")
-        {
-            if(Range[0]=="Melee")    zone1 = GameObject.Find("MeleeZone");
-            if(Range[0]=="Distance") zone1 = GameObject.Find("DistanceZone");
-            if(Range[0]=="Siege")    zone1 = GameObject.Find("SiegeZone");
-        }
-        if(owner=="Enemy")
-        {
-            if(Range[0]=="Melee")    zone1 = GameObject.Find("EnemyMeleeZone");
-            if(Range[0]=="Distance") zone1 = GameObject.Find("EnemyDistanceZone");
-            if(Range[0]=="Siege")    zone1 = GameObject.Find("EnemySiegeZone");
-        }
-        DisplayCard[] cards = zone1.GetComponentsInChildren<DisplayCard>();
-        AddAttack(cards,5);
-        effectLoop = true;
+        zone2 = GameObject.Find(zoneType + "Zone");
+        zone3 = GameObject.Find("Enemy" + zoneType + "Zone");
+        RevertCardsInZone(zone2);
+        RevertCardsInZone(zone3);
     }
-    void AddAttack(DisplayCard[] cards,int ammount)
+
+    void RevertCardsInZone(GameObject zone)
     {
-        foreach (var card in cards.Where(c => c.Type == "Plata"))
+        DisplayCard[] cards = zone.GetComponentsInChildren<DisplayCard>();
+        foreach(var card in cards)
         {
-            card.Points += ammount;
+            card.Points = card.AttackOriginal;
             card.AttackText.text = card.Points.ToString();
+            card.card.Boost = false;
         }
     }
     void DestroyHightAttack()
     {
-        int max = int.MinValue;
-        int maxenemy = int.MinValue;
-        GameObject destroy = null;
-        GameObject destroyE = null;
-        zone1 = GameObject.Find("UnitZones");
-        foreach (var zone in zone1.transform)
-        {
-            DisplayCard[] cards = zone1.GetComponentsInChildren<DisplayCard>();
-            foreach (var card in cards)
-            {
-                if(card.card.golden)
-                {
-                    continue;
-                }   
-                if(card.points > max)
-                {
-                    max = card.points;
-                    destroy = card.gameObject;
-                }
-            }  
-        }
-        zone2 = GameObject.Find("EnemyUnitsZones");
-        foreach (var zone in zone2.transform)
-        {
-            DisplayCard[] cards = zone2.GetComponentsInChildren<DisplayCard>();
-            foreach (var card in cards)
-            {
-                if(card.card.golden)
-                {
-                    continue;
-                }   
-                if(card.points > max)
-                {
-                    max = card.points;
-                    destroyE = card.gameObject;
-                }
-            }  
-        }
-        if(max>maxenemy)
-        {
-            Destroy(destroy);
-        }
-        else
-        {
-            Destroy(destroyE);
-        }
+        int maxPlayer = FindHighestAttack(GameObject.Find("UnitZones"), out GameObject destroyPlayer);
+        int maxEnemy = FindHighestAttack(GameObject.Find("EnemyUnitsZones"), out GameObject destroyEnemy);
+        Destroy(maxPlayer > maxEnemy ? destroyPlayer : destroyEnemy);
     }
+
+        int FindHighestAttack(GameObject zoneGroup, out GameObject highestCard)
+        {
+            int max = int.MinValue;
+            highestCard = null;
+
+            foreach (Transform zone in zoneGroup.transform)
+            {
+                DisplayCard[] cards = zone.GetComponentsInChildren<DisplayCard>();
+                foreach (var card in cards.Where(c => c.Type == "Plata"))
+                {
+                    if (card.Points > max)
+                    {
+                        max = card.Points;
+                        highestCard = card.gameObject;
+                    }
+                }
+            }
+
+            return max;
+        }
     void Lowest(GameObject cardPlayed)
     {
         int min = int.MaxValue;
         GameObject destroy = null;
-        if(cardPlayed.GetComponent<DisplayCard>().Team)
-        {
-            zone1 = GameObject.Find("UnitZones");
-        }
-        else
-        {
-            zone1 = GameObject.Find("EnemyUnitsZones");
-        }
+        zone1 = cardPlayed.GetComponent<DisplayCard>().Owner == "Enemy" ? GameObject.Find("UnitZones") : GameObject.Find("EnemyUnitsZones");
         foreach (var Transform in zone1.transform)
         {
             DisplayCard[] cards = zone1.GetComponentsInChildren<DisplayCard>();
-            foreach (var card in cards)
+            foreach (var card in cards.Where(c => c.Type == "Plata"))
             {
-                if(card.card.golden)
+                if(card.Points<min)
                 {
-                    continue;
-                }
-                if(card.points<min)
-                {
-                    min = card.points;
+                    min = card.Points;
                     destroy = card.gameObject;
-                }   
+                }
             }
-            if(destroy != null)
-            {
-                DisplayCard show = destroy.GetComponent<DisplayCard>();
-                Destroy(destroy);
-            }
+            if(destroy != null)    Destroy(destroy);
         }
     }
-    void CleanRow(GameObject cardPlayed)
+    void CleanRow()
     {
-        int melee = 0;
-        int enemyMelee = 0;
-        int distance = 0;
-        int enemyDistance = 0;
-        int asedius = 0;
-        int enemyAsedius = 0;
         zone1 = GameObject.Find("MeleeZone");
         zone2 = GameObject.Find("EnemyMeleeZone");
-        zone3 = GameObject.Find("DistanceZone");
-        zone4 = GameObject.Find("EnemyDistanceZone");
-        zone5 = GameObject.Find("AsediusZone");
-        zone6 = GameObject.Find("EnemyAsediusZone");
-        foreach (var Transform in zone1.transform)
-        {
-            melee++;   
-        }
-         foreach (var Transform in zone2.transform)
-        {
-            enemyMelee++;   
-        }
-         foreach (var Transform in zone3.transform)
-        {
-            distance++;   
-        }
-         foreach (var Transform in zone4.transform)
-        {
-            enemyDistance++;   
-        }
-         foreach (var Transform in zone5.transform)
-        {
-            asedius++;   
-        }
-         foreach (var Transform in zone6.transform)
-        {
-            enemyAsedius++;   
-        }
+        zone3 = GameObject.Find("RangedZone");
+        zone4 = GameObject.Find("EnemyRangedZone");
+        zone5 = GameObject.Find("SiegeZone");
+        zone6 = GameObject.Find("EnemyRangedZone");
+
+        int melee = RowCounter(zone1);
+        int enemyMelee = RowCounter(zone2);
+        int ranged = RowCounter(zone3);
+        int enemyRanged = RowCounter(zone4);
+        int siege = RowCounter(zone5);
+        int enemySiege = RowCounter(zone6);
+        
         if(melee==0) melee = int.MaxValue;
         if(enemyMelee==0) enemyMelee = int.MaxValue;
-        if(distance==0) distance = int.MaxValue;
-        if(enemyDistance==0) enemyDistance = int.MaxValue;
-        if(asedius==0) asedius = int.MaxValue;
-        if(enemyAsedius==0) enemyAsedius = int.MaxValue;
-        int[] units = {melee,enemyMelee,distance,enemyDistance,asedius,enemyAsedius};
+        if(ranged==0) ranged = int.MaxValue;
+        if(enemyRanged==0) enemyRanged = int.MaxValue;
+        if(siege==0) siege = int.MaxValue;
+        if(enemySiege==0) enemySiege = int.MaxValue;
+
+        int[] units = {melee,enemyMelee,ranged,enemyRanged,siege,enemySiege};
         int aux  = int.MaxValue;
         for (int i = 0; i < units.Length; i++)
         {
             if(units[i] < aux) aux = units[i];
         }
-        if(melee == aux)
+        if(melee == aux)    Clean(zone1);
+        else if(enemyMelee == aux)    Clean(zone2);
+        else if(ranged == aux)    Clean(zone3);
+        else if(enemyRanged == aux)    Clean(zone4);
+        else if(siege == aux)    Clean(zone5);
+        else if(enemySiege == aux)    Clean(zone6);
+    }
+    int RowCounter(GameObject zone)
+    {
+        int counter = 0;
+        foreach (var Transform in zone.transform)    counter++;   
+        return counter;
+    }
+    void Clean(GameObject zone)
+    {
+        DisplayCard[] cards = zone.GetComponentsInChildren<DisplayCard>();
+        foreach (var card in cards.Where(c => c.Type == "Plata"))
         {
-            DisplayCard[] cards = zone1.GetComponentsInChildren<DisplayCard>();
-            foreach (var card in cards)
-            {
-                if(card.card.golden) continue;  
-                Destroy(card.gameObject);    
-            }
-        }
-        else if(enemyMelee == aux)
-        {
-            DisplayCard[] cards = zone2.GetComponentsInChildren<DisplayCard>();
-            foreach (var card in cards)
-            {
-                if(card.Type =="Oro") continue;  
-                Destroy(card.gameObject);    
-            }
-        }
-        else if(distance == aux)
-        {
-            DisplayCard[] cards = zone3.GetComponentsInChildren<DisplayCard>();
-            foreach (var card in cards)
-            {
-                if(card.Type =="Oro") continue;  
-                Destroy(card.gameObject);    
-            }
-        }
-        else if(enemyDistance == aux)
-        {
-            DisplayCard[] cards = zone4.GetComponentsInChildren<DisplayCard>();
-            foreach (var card in cards)
-            {
-                if(card.card.golden) continue;  
-                Destroy(card.gameObject);    
-            }
-        }
-        else if(asedius == aux)
-        {
-            DisplayCard[] cards = zone5.GetComponentsInChildren<DisplayCard>();
-            foreach (var card in cards)
-            {
-                if(card.card.golden) continue;  
-                Destroy(card.gameObject);    
-            }
-        }
-        else if(enemyAsedius == aux)
-        {
-            DisplayCard[] cards = zone6.GetComponentsInChildren<DisplayCard>();
-            foreach (var card in cards)
-            {
-                if(card.card.golden) continue;  
-                Destroy(card.gameObject);    
-            }
+            Destroy(card.gameObject);
         }
     }
     void CallWeather(GameObject cardPlayed)
     {
         DisplayCard cardUse = cardPlayed.GetComponent<DisplayCard>();
         zone1 = GameObject.Find("WeatherZone");
-        if(cardUse.Team==false)
+        
+        string deckName = cardUse.Owner == "Player" ? "deckManager1" : "deckManager2";
+        Debug.Log(deckName);
+        CallWeatherFromDeck(deckName);
+    }
+
+    void CallWeatherFromDeck(string deckName)
+    {
+        deck = GameObject.Find(deckName).GetComponent<Deck>();
+        List<GameObject> cardsD = deck.GetCards();
+        for (int i = 0; i < cardsD.Count; i++)
         {
-            deck = GameObject.Find("deckManager1").GetComponent<deckManager>();
-            List<GameObject> cardsD = deck.GetCards();
-            for (int i = 0; i < cardsD.Count; i++)
+            DisplayCard cardDisplay = cardsD[i].GetComponent<DisplayCard>();
+            if(cardDisplay.Type == "Clima")
             {
-                if(cardsD[i].GetComponent<DisplayCard>().name == "Tundra"|| cardsD[i].GetComponent<DisplayCard>().name == "Volcan"|| cardsD[i].GetComponent<DisplayCard>().name == "Jungle")
-                {
-                    GameObject currentCard = Instantiate(cardsD[i], new Vector3(0,0,0),Quaternion.identity);
-                    currentCard.transform.SetParent(zone1.transform, false);
-                    cardsD.RemoveAt(i);
-                    effect = GameObject.Find("GameManager").GetComponent<effects>();
-                    effect.UseEffect(currentCard.GetComponent<DisplayCard>().card.effect,currentCard);
-                    break;
-                }   
-            }
-        }
-        else
-        {
-            deck = GameObject.Find("deckManager2").GetComponent<deckManager>();
-            List<GameObject> cardsD = deck.GetCards();
-            for (int i = 0; i < cardsD.Count; i++)
-            {
-                if(cardsD[i].GetComponent<DisplayCard>().name == "Tundra"||cardsD[i].GetComponent<DisplayCard>().name == "Volcan"||cardsD[i].GetComponent<DisplayCard>().name == "Jungle")
-                {
-                    GameObject currentCard = Instantiate(cardsD[i], new Vector3(0,0,0),Quaternion.identity);
-                    currentCard.transform.SetParent(zone1.transform, false);
-                    cardsD.RemoveAt(i);
-                    effect = GameObject.Find("GameManager").GetComponent<effects>();
-                    effect.UseEffect(currentCard.GetComponent<DisplayCard>().card.effect,currentCard);
-                    break;
-                }   
-            }
+                Debug.Log("cojone");
+                GameObject currentCard = Instantiate(cardsD[i], new Vector3(0,0,0), Quaternion.identity);
+                currentCard.transform.SetParent(zone1.transform, false);
+                cardsD.RemoveAt(i);
+                effect = GameObject.Find("GameManager").GetComponent<effects>();
+                effect.UseEffect(cardDisplay.card.EffectText, currentCard);
+                break;
+            }   
         }
     }
     void Average(GameObject cardPlayed)
@@ -550,48 +343,40 @@ public class effects : MonoBehaviour
         foreach (var Transform in zone1.transform)
         {
             DisplayCard[] cards = zone1.GetComponentsInChildren<DisplayCard>();
-            foreach (var card in cards)
+            foreach (var card in cards.Where(c => c.Type == "Plata"))
             {
-                if(card.card.golden) continue;
-                
-                sum += card.points;
-                div++;   
-            }   
+                sum += card.Points;
+                div++;
+            }
         }
         zone2 = GameObject.Find("EnemyUnitsZones");
         foreach (var Transform in zone2.transform)
         {
             DisplayCard[] cards = zone2.GetComponentsInChildren<DisplayCard>();
-            foreach (var card in cards)
+            foreach (var card in cards.Where(c => c.Type == "Plata"))
             {
-                if(card.card.golden) continue;
-                
-                sum += card.points;
-                div++;   
-            }   
+                sum += card.Points;
+                div++;
+            }
         }
         sum /= div;
         foreach (var Transform in zone1.transform)
         {
             DisplayCard [] cards = zone1.GetComponentsInChildren<DisplayCard>();
-            foreach (var card in cards)
+            foreach (var card in cards.Where(c => c.Type == "Plata"))
             {
-                if(card.card.golden) continue;
-                
-                card.points = sum;
-                card.attackText.text = card.points.ToString();   
+                card.Points = sum;
+                card.AttackText.text = card.Points.ToString();
             }    
         }
         foreach (var Transform in zone2.transform)
         {
             DisplayCard [] cards = zone2.GetComponentsInChildren<DisplayCard>();
-            foreach (var card in cards)
+            foreach (var card in cards.Where(c => c.Type == "Plata"))
             {
-                if(card.card.golden) continue;
-                
-                card.points = sum;
-                card.attackText.text = card.points.ToString();   
-            }    
+                card.Points = sum;
+                card.AttackText.text = card.Points.ToString();
+            }  
         }
-    }*/
+    }
 }

@@ -24,6 +24,6 @@ MonoBehaviour:
   - 
   Prefab: {fileID: 5167817826793915975, guid: 19ad72eed58e10d4392e76d531d63295, type: 3}
   Faction: 
-  EffectText: 
+  EffectText: Despeje
   CardImage: {fileID: 21300000, guid: 1347c862524a04f46841357b753559d1, type: 3}
   Boost: 0

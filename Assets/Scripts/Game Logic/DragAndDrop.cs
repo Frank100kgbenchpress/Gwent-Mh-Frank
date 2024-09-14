@@ -14,7 +14,7 @@ public class DragAndDrop : MonoBehaviour
     public Deck deck;
     public Draw draw;
     public Change change;
-    
+    public string PlacedZone;
 
 
     void Update()
@@ -50,7 +50,7 @@ public class DragAndDrop : MonoBehaviour
             transform.SetParent(dropZone.transform, false);
             endturn = GameObject.Find("GameManager").GetComponent<TurnSystem>();
             effect = GameObject.Find("GameManager").GetComponent<effects>();
-            //effect.UseEffect(gameObject.GetComponent<DisplayCard>().card.Effects,gameObject);
+            effect.UseEffect(gameObject.GetComponent<DisplayCard>().card.EffectText,gameObject);
             //esto es para si activo una carta despues de un aumento tambien coja puntos//
             if(effect.effectLoop)
             {
@@ -65,7 +65,7 @@ public class DragAndDrop : MonoBehaviour
                 {
                     if(cards[i]!=null)
                     {
-                        //effect.UseEffect(cards[i].card.Effects,cards[i].gameObject);
+                        effect.UseEffect(cards[i].card.EffectText,cards[i].gameObject);
                     }
                 }
             }
@@ -77,7 +77,7 @@ public class DragAndDrop : MonoBehaviour
                 {
                     foreach(var card in cards)
                     {
-                        //effect.UseEffect(card.card.Effects,card.gameObject);
+                        effect.UseEffect(card.card.EffectText,card.gameObject);
                     }
                 }
             }
@@ -104,8 +104,16 @@ public class DragAndDrop : MonoBehaviour
         string zoneOwner = conditions.OWner.ToString();
         foreach (var range in cardZone.card.Range)
         {
-            if(range == zoneName && cardZone.Owner == zoneOwner && !conditions.isInspire && cardZone.card.Type != "Aumento") return true;
-            if(range == zoneName && cardZone.Owner == zoneOwner && cardZone.Type is "Aumento" && conditions.isInspire) return true; 
+            if(range == zoneName && cardZone.Owner == zoneOwner && !conditions.isInspire && cardZone.card.Type != "Aumento")
+            {
+                PlacedZone = zoneName;
+                return true;
+            } 
+            if(range == zoneName && cardZone.Owner == zoneOwner && cardZone.Type is "Aumento" && conditions.isInspire)
+            {
+                PlacedZone = zoneName;
+                return true;
+            }  
         }
         if(cardZone.Type is "Clima" or "Despeje"&& zoneName == "Wheather") return true;
         return false;

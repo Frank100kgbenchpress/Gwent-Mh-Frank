@@ -15,7 +15,7 @@ public class Compiler : MonoBehaviour
     public void Compile(TMP_Text myTextMeshPro)
     {
         string input = myTextMeshPro.text;
-        List<string> errors = new List<string>();
+        List<string> errors = new();
         Lexer lexer = new Lexer(input,errors);
         List<Token> tokens = lexer.ScanTokens();
         errors.RemoveAt(errors.Count-1);
@@ -35,12 +35,15 @@ public class Compiler : MonoBehaviour
         Context context = new Context();
         context.turnSystem = GameObject.Find("GameManager").GetComponent<TurnSystem>();
         SemanticalCheck semanticalCheck = new SemanticalCheck(node,context,errors);
+        Debug.Log("boniato");
         if(errors.Count != 0)
         {
             string joinedText = string.Join("\n", errors);
+            Debug.Log(joinedText+"tortilla");
             PrintErrors(joinedText);
             return;
         }
+        Debug.Log("chancleta");
         foreach(CardNode card in (node as Program).CardNodes)
         {
             SpawnCard(card,context);
@@ -81,6 +84,7 @@ public class Compiler : MonoBehaviour
         card.Prefab = prefab;
         card.CardOwner = "Player";
         card.EffectText = "a";
+        card.Id = 50;
         GameObject gameObject = Instantiate(prefab);
         gameObject.GetComponent<DisplayCard>().card = card;
         hand.Push(gameObject);

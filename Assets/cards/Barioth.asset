@@ -21,11 +21,11 @@ MonoBehaviour:
   Id: 2
   Type: Plata
   Range:
+  - Melee
   - Ranged
   - Siege
-  - Melee
   Prefab: {fileID: 7322626885810684642, guid: 23e2245a8a868df4a9a7b5aca4cd8296, type: 3}
   Faction: Wyverns
-  EffectText: 'Draw '
+  EffectText: Draw
   CardImage: {fileID: 21300000, guid: d6423f0c314631c40ae7d6f43bd52454, type: 3}
   Boost: 0

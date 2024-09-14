@@ -180,7 +180,6 @@ public class TurnSystem : MonoBehaviour
         GameObject weather = GameObject.Find("WeatherZone");
         foreach(Transform card in weather.transform)
         {
-            DisplayCard cardDisplay = card.gameObject.GetComponent<DisplayCard>();
             Destroy(card.gameObject);
         }
     }

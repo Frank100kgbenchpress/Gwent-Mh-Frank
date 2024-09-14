@@ -10,8 +10,8 @@ public class Deck : CardList
         {
             Cards.Add(card);
         }
-    }
-    void Start()    => Shuffle();      
+        Shuffle();
+    }        
     public override void Push(GameObject card) => Cards.Add(card);
     public override void SendBottom(GameObject card) => Cards.Insert(0,card);
     public override GameObject Pop()

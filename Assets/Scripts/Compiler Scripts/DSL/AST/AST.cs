@@ -210,14 +210,7 @@ namespace DSL
                 else if(arg is Pointer)
                 {
                     Pointer pointer = arg as Pointer;
-                    switch(pointer.Pointer_)
-                    {
-                        case "Hand": last = context.turnSystem.HandOfPlayer(context.turnSystem.TriggerPlayer());break;
-                        case "Deck": last = context.turnSystem.DeckOfPlayer(context.turnSystem.TriggerPlayer());break;
-                        case "Graveyard": last = context.turnSystem.GraveyardOfPlayer(context.turnSystem.TriggerPlayer());break;
-                        case "Field": last = context.turnSystem.FieldOfPlayer(context.turnSystem.TriggerPlayer());break;
-                        case "Board": last = context.turnSystem.Board();break;
-                    }
+                    CheckPointer(pointer,last,context);
                 }
                 else
                 {
@@ -261,14 +254,7 @@ namespace DSL
                 else if(arg is Pointer)
                 {
                     Pointer pointer = arg as Pointer;
-                    switch(pointer.Pointer_)
-                    {
-                        case "Hand": last = context.turnSystem.HandOfPlayer(context.turnSystem.TriggerPlayer());break;
-                        case "Deck": last = context.turnSystem.DeckOfPlayer(context.turnSystem.TriggerPlayer());break;
-                        case "Graveyard": last = context.turnSystem.GraveyardOfPlayer(context.turnSystem.TriggerPlayer());break;
-                        case "Field": last = context.turnSystem.FieldOfPlayer(context.turnSystem.TriggerPlayer());break;
-                        case "Board": last = context.turnSystem.Board();break;
-                    }
+                    CheckPointer(pointer,last,context);
                 }
                 else
                 {
@@ -285,9 +271,20 @@ namespace DSL
                 }
             }
         }
+        void CheckPointer(Pointer pointer,object last,Context context)
+        {
+            switch(pointer.Pointer_)
+            {
+                case "Hand": last = context.turnSystem.HandOfPlayer(context.turnSystem.TriggerPlayer());break;
+                case "Deck": last = context.turnSystem.DeckOfPlayer(context.turnSystem.TriggerPlayer());break;
+                case "Graveyard": last = context.turnSystem.GraveyardOfPlayer(context.turnSystem.TriggerPlayer());break;
+                case "Field": last = context.turnSystem.FieldOfPlayer(context.turnSystem.TriggerPlayer());break;
+                case "Board": last = context.turnSystem.Board();break;
+            }
+        }
     }
     #endregion
-    #region Stmt Blocks , while , for and function 
+    #region Stmt Blocks , while , for , function and Assignment
     public class StmsBlock : Node
     {
         public List<Stmt> statements;
@@ -403,8 +400,6 @@ namespace DSL
             }
         }
     }
-
-    #endregion
     #region Assignement
     public class Assignment : Stmt
     {
@@ -449,4 +444,7 @@ namespace DSL
         }
     }
     #endregion
+
+    #endregion
+    
 }

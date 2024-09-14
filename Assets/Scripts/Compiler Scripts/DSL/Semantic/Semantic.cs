@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace DSL
 {
@@ -31,6 +32,7 @@ namespace DSL
             CheckStringExpression(card.Faction.faction);
             CheckNumericExpression(card.Power.power);
             CheckRangeSemantics(card.Range.range);
+            UnityEngine.Debug.Log(card.OnActivation.Elements+" chivichana");
             CheckOnActivationSemantics(card.OnActivation.Elements);
             AssingCardPRoperties(card); 
             symbolTable.PopScope();
@@ -56,6 +58,8 @@ namespace DSL
             CheckActionSemantics(effect.Action);
             symbolTable.PopScope();
             Context.effects[Convert.ToString(effect.Name.name.Evaluate(Context))!] = new EffectNode(effect.Name,effect.Params!,effect.Action);
+            UnityEngine.Debug.Log(Context.effects[Convert.ToString(effect.Name.name.Evaluate(Context))!]+ "Chivirico");
+            UnityEngine.Debug.Log(Convert.ToString(effect.Name.name.Evaluate(Context))!);
         }
         void CheckTypeSemantics(CardType type)
         {
@@ -85,38 +89,55 @@ namespace DSL
         }
         void CheckOnActivationSemantics(List<OnActivationElements> onActivationElements)
         {
-            foreach(var element in onActivationElements)    CheckOAElementsSemantics(element);    
+            foreach(var element in onActivationElements)
+            {
+                UnityEngine.Debug.Log(element + "chirimoya");
+            CheckOAElementsSemantics(element);    
+            }
         }
         void CheckOAElementsSemantics(OnActivationElements oAElements)
         {
             symbolTable.PushScope();
+            UnityEngine.Debug.Log(oAElements.OAEffect + "cojone");
+            UnityEngine.Debug.Log(oAElements.Selector+"salbutamol");
             CheckOAEffect(oAElements.OAEffect);
+            
             if(oAElements.Selector != null)       CheckSelectorSemantics(oAElements.Selector);
             if(oAElements.PostActions != null)    CheckPostActionSemantics(oAElements.PostActions);  
             symbolTable.PopScope();
         }
         void CheckOAEffect(OAEffect oAEffect)
         {
-            List<Node> parammeters = Context.GetEffect(oAEffect.Name).Params.Arguments;
-            List<Assignment> assignments = oAEffect.Assingments;
-            int paramCounter = 0;
-            int assignmentCounter = 0;
-            foreach(var assignment in assignments)
+            UnityEngine.Debug.Log(oAEffect);
+            if(Context.GetEffect(oAEffect.Name).Params != null)
             {
-                assignment.Left.VariableType = InferExpressionType(assignment.Right);
-                foreach(var param in parammeters)
+                List<Node> parammeters = Context.GetEffect(oAEffect.Name).Params.Arguments;
+                List<Assignment> assignments = oAEffect.Assingments;
+                int paramCounter = 0;
+                int assignmentCounter = 0;
+                foreach(var assignment in assignments)
                 {
-                    if(assignment.Left.VariableType == (param as Variable)!.VariableType)
+                    assignment.Left.VariableType = InferExpressionType(assignment.Right);
+                    foreach(var param in parammeters)
                     {
-                        paramCounter++;
-                        assignmentCounter++;
+                        if(assignment.Left.VariableType == (param as Variable)!.VariableType)
+                        {
+                            paramCounter++;
+                            assignmentCounter++;
+                        }
                     }
                 }
+                if(parammeters.Count!=paramCounter || assignments.Count!=assignmentCounter)
+                {
+                    Errors.Add(parammeters.Count + " " + assignments.Count);
+                }
             }
-            if(parammeters.Count!=paramCounter || assignments.Count!=assignmentCounter)    Errors.Add(parammeters.Count + " " + assignments.Count);
             foreach(var assignment in oAEffect.Assingments)
             {
-                if(assignment.Left.VariableType != GetExpressionType(assignment.Right))    Errors.Add($"The type of the left side of the assignment '{assignment.Left}' is not equal to the right side");
+                if(assignment.Left.VariableType != GetExpressionType(assignment.Right))
+                {
+                    Errors.Add($"The type of the left side of the assignment '{assignment.Left}' is not equal to the right sidei");
+                }
             }
         }
         void CheckSelectorSemantics(Selector selector) => CheckPredicateSemantics(selector.Predicate);

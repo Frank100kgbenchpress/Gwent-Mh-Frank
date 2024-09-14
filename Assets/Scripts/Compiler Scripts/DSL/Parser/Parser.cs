@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+//arreglar posaction 
 namespace DSL
 {   
     public class Parser
@@ -32,7 +32,6 @@ namespace DSL
         public Token Previous() => Tokens[Current - 1];
         Token Consume(TokenType type, string message)
         {
-            UnityEngine.Debug.Log(Peek().Type + " " + Peek().Lexeme);
             if(Check(type)) return Advance();
             else throw new ParseException($"'{Peek().Lexeme}' in line {Peek().Line}: {message}");
         }
@@ -53,7 +52,7 @@ namespace DSL
             }
             catch(Exception ex)
             {
-                Ex=ex;
+                UnityEngine.Debug.Log(Ex=ex);
             } 
 
             return program;  
@@ -62,7 +61,7 @@ namespace DSL
         {
             Consume(TokenType.LEFT_BRACE, "Expected '{' after card");
             if(cardOfEffect)    program.CardNodes.Add(ParseCard());   
-            else   program.CardNodes.Add(ParseCard());
+            else   program.EffectNodes.Add(ParseEffect());
             Consume(TokenType.RIGHT_BRACE, "Expected '}' after card declaration");
         }
         #endregion  
@@ -222,11 +221,12 @@ namespace DSL
             OAEffect onActivationEffect = null!;
             Selector selector = null!;
             List<PostAction> postActions = new();
-            ParseOnActivationElements(onActivationEffect,selector,postActions); 
+            OnActivationElements oa = ParseOnActivationElements(onActivationEffect,selector,postActions); 
+            UnityEngine.Debug.Log(oa);
             Consume(TokenType.RIGHT_BRACE,"Expected '}' after OnActivation declaration");
-            return new OnActivationElements(onActivationEffect,selector,postActions);
+            return oa;
         }
-        void ParseOnActivationElements(OAEffect onActivationEffect,Selector selector , List<PostAction> postActions)
+        OnActivationElements ParseOnActivationElements(OAEffect onActivationEffect,Selector selector , List<PostAction> postActions)
         {
             while(!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
             {
@@ -236,6 +236,9 @@ namespace DSL
                     {
                         Consume(TokenType.COLON,"Expected ':'");
                         onActivationEffect = ParseOAEffect();
+                        UnityEngine.Debug.Log(onActivationEffect + "bomboclat");
+                        UnityEngine.Debug.Log(onActivationEffect.Name + "bomboclat");
+                        UnityEngine.Debug.Log(onActivationEffect.Assingments + "bomboclat");
                     }
                     else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Only one OAEffect per Bracks");
                 }
@@ -245,6 +248,7 @@ namespace DSL
                     {
                         Consume(TokenType.COLON,"Expected ':'");
                         selector = ParseSelector();
+                        UnityEngine.Debug.Log(selector.Source + " "+ selector.Single + " " + selector.Predicate);
                         if(selector.Source == null) throw new ParseException($"'{Peek().Lexeme}' in {Peek().Line}: Missing field");
                     }
                     else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Only one Selector per OAEffect");
@@ -259,33 +263,14 @@ namespace DSL
                 }
                 else    throw new ParseException($"'{Peek().Lexeme}' in {Peek().Line}: Invalid OnActivation field.");
             }
+            return new OnActivationElements(onActivationEffect,selector,postActions);
         }
         #endregion
         #region On Activation Effect Parser
         OAEffect ParseOAEffect()
         {
-            string name = null!;
+            /*string name = null!;
             List<Assignment> assignments = new();
-            CheckOnActivationProperties(name,assignments);
-            return new OAEffect(name,assignments);
-        }
-        void ParseIdentifier(List<Assignment> assignments)
-        {
-            Variable variable = ParseVariable();
-            Token token = Peek();
-            Consume(TokenType.COLON, "Expected ':'");
-            Expression expression = ParseExpression();
-            Assignment assignment = new Assignment(variable, token, expression);
-            assignments.Add(assignment);
-            if (!Check(TokenType.RIGHT_BRACE))  Consume(TokenType.COMMA, "Expected ','");
-        }
-        void ParseOnActivationName(string name)
-        {
-            name = Advance().Lexeme.Substring(1,Previous().Lexeme.Length-2);
-            if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
-        }
-        void CheckOnActivationProperties(string name,List<Assignment>assignments)
-        {
             if(Check(TokenType.STRING))
             {
                 name = Advance().Lexeme.Substring(1,Previous().Lexeme.Length-2);
@@ -305,12 +290,20 @@ namespace DSL
                     {
                         if(Match(TokenType.COLON))
                         {
-                            if(name == null)    ParseOnActivationName(name!);
+                            if(name == null)
+                            {
+                                name = Advance().Lexeme.Substring(1,Previous().Lexeme.Length-2);
+                                if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
+                            }    
                             else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Duplicate");
                         }
                         else
                         {
-                            if(name == null)    ParseOnActivationName(name!);
+                            if(name == null)
+                            {
+                                name = Advance().Lexeme.Substring(1,Previous().Lexeme.Length-2);
+                                if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
+                            }    
                             else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Duplicate");
                         }
                     }
@@ -320,6 +313,93 @@ namespace DSL
                 Consume(TokenType.RIGHT_BRACE,"Expected '}'");
             }
             if(name == null) throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: No name");
+            return new OAEffect(name,assignments);*/
+            string name = null!;
+        List<Assignment> assignments = new List<Assignment>();
+        if(Check(TokenType.STRING))
+        {
+            name = Advance().Lexeme.Substring(1,Previous().Lexeme.Length-2);
+            if(!Check(TokenType.RIGHT_BRACE))Consume(TokenType.COMMA,"Expected ','");
+            while(!Check(TokenType.SELECTOR) && !Check(TokenType.RIGHT_BRACE))
+            {
+                if(Check(TokenType.IDENTIFIER))
+                {
+                    Variable variable = ParseVariable();
+                    Token token = Peek();
+                    Consume(TokenType.COLON,"Expected ':'");
+                    Expression expression = ParseExpression();
+                    Assignment assignment = new Assignment(variable,token,expression);
+                    assignments.Add(assignment);
+                    if(!Check(TokenType.RIGHT_BRACE))Consume(TokenType.COMMA,"Expected ','");
+                }   
+                else
+                {
+                    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Invalid OAEffect field");
+                }
+            }
+        }
+        else
+        {
+            Consume(TokenType.LEFT_BRACE,"Expected '{'");
+            while(!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
+            {
+                if(Match(TokenType.NAME))
+                {
+                    if(Match(TokenType.COLON))
+                    {
+                        if(name == null)
+                        {
+                            name = Advance().Lexeme.Substring(1,Previous().Lexeme.Length-2);
+                            if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
+                        }
+                        else
+                        {
+                            throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Duplicate");
+                        }
+                    }
+                    else
+                    {
+                        if(name == null)
+                        {
+                            name = Advance().Lexeme.Substring(1,Previous().Lexeme.Length-2);
+                            if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
+                        }
+                        else
+                        {
+                            throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Duplicate");
+                        }
+                    }
+                }
+                else if(Check(TokenType.IDENTIFIER))
+                {
+                    Variable variable = ParseVariable();
+                    Token token = Peek();
+                    Consume(TokenType.COLON,"Expected ':'");
+                    Expression expression = ParseExpression();
+                    Assignment assignment = new Assignment(variable,token,expression);
+                    assignments.Add(assignment);
+                    if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
+                }
+                else
+                {
+                    throw new Exception($"'{Peek().Lexeme}' {Peek().Type} in {Peek().Line}: Invalid OAEffect field");
+                }
+            }
+            Consume(TokenType.RIGHT_BRACE,"Expected '}'");
+            //Consume(TokenType.COMMA,"Expected ','");
+        }
+        if(name == null) throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: No name");
+        return new OAEffect(name,assignments);
+        }
+        void ParseIdentifier(List<Assignment> assignments)
+        {
+            Variable variable = ParseVariable();
+            Token token = Peek();
+            Consume(TokenType.COLON, "Expected ':'");
+            Expression expression = ParseExpression();
+            Assignment assignment = new Assignment(variable, token, expression);
+            assignments.Add(assignment);
+            if (!Check(TokenType.RIGHT_BRACE))  Consume(TokenType.COMMA, "Expected ','");
         }
         #endregion
         #region Selector Parser
@@ -329,22 +409,6 @@ namespace DSL
             string source = null!;
             Single single = null!;
             Predicate predicate = null!;
-            ParserSelectorProperties(source,single,predicate);
-            return new Selector(source,single,predicate);
-        }
-        bool CheckSelectorSource()
-        {
-            return    Convert.ToString(Peek().Literal) == "deck"
-                    ||Convert.ToString(Peek().Literal) == "otherDeck"
-                    ||Convert.ToString(Peek().Literal) == "hand"
-                    ||Convert.ToString(Peek().Literal) == "otherHand"
-                    ||Convert.ToString(Peek().Literal) == "field"
-                    ||Convert.ToString(Peek().Literal) == "otherField"
-                    ||Convert.ToString(Peek().Literal) == "parent"
-                    ||Convert.ToString(Peek().Literal) == "board";
-        }  
-        void ParserSelectorProperties(string source,Single single,Predicate predicate)
-        {
             while(!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
             {
                 if(Match(TokenType.SOURCE))
@@ -358,26 +422,46 @@ namespace DSL
                     else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Source duplicate");
                     if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
                 }
-                else if(Match(TokenType.SINGLE))    ParseSingle(single);
-                else if(Match(TokenType.PREDICATE))    CallPredicatePArse(predicate);           
+                else if(Match(TokenType.SINGLE))
+                {
+                    single = ParseSingle(single);
+                    if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
+                }    
+                else if(Match(TokenType.PREDICATE))
+                {
+                    predicate = CallPredicatePArse(predicate);
+                    if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
+                }               
                 else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Invalid Selector field");
             }
             Consume(TokenType.RIGHT_BRACE,"Expected '}' after Selector declaration");
             if(single == null || predicate == null) throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Missing field");
+            return new Selector(source,single,predicate);
         }
-        void ParseSingle(Single single)
+        bool CheckSelectorSource()
+        {
+            return    Convert.ToString(Peek().Literal) == "deck"
+                    ||Convert.ToString(Peek().Literal) == "otherDeck"
+                    ||Convert.ToString(Peek().Literal) == "hand"
+                    ||Convert.ToString(Peek().Literal) == "otherHand"
+                    ||Convert.ToString(Peek().Literal) == "field"
+                    ||Convert.ToString(Peek().Literal) == "otherField"
+                    ||Convert.ToString(Peek().Literal) == "parent"
+                    ||Convert.ToString(Peek().Literal) == "board";
+        }  
+        
+        Single ParseSingle(Single single)
         {
             Consume(TokenType.COLON,"Expected ':'");
-            if(single == null)    single = new Single(Advance());
+            if(single == null)    return new Single(Advance());
             else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Single duplicate");
-            if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
         }
-        void CallPredicatePArse(Predicate predicate)
+        Predicate CallPredicatePArse(Predicate predicate)
         {
             Consume(TokenType.COLON,"Expected ':'");
-            if(predicate == null)    predicate = ParsePredicate();
+            if(predicate == null)   return ParsePredicate();
             else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Predicate duplicate");
-            if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
+            
         }
         #endregion
         #region Post Action Parser
@@ -614,7 +698,7 @@ namespace DSL
                 else if(Match(TokenType.LAMBDA))    LambdaFunction(args);
                 else if(Check(TokenType.FUNCTION))    args.Arguments.Add(ParseFunction(Advance().Lexeme));
                 else    args.Arguments.Add(ParseExpression());
-                if(!Check(TokenType.RIGHT_PAREN)) Consume(TokenType.COMMA,"Expected ','");
+                if(!Check(TokenType.RIGHT_PAREN) && !Check(TokenType.LAMBDA)) Consume(TokenType.COMMA,"Expected ','");
             }
         }
         void LambdaFunction(Args args)
@@ -629,12 +713,6 @@ namespace DSL
         {
             Consume(TokenType.LEFT_BRACE,"Expected '{' after Params");
             Args variables = new Args();
-            CheckParams(variables);
-            Consume(TokenType.RIGHT_BRACE,"Expected '}' after Params declaration");
-            return variables;
-        }
-        void CheckParams(Args variables)
-        {
             while(!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
             {
                 var variable = ParseVariable();
@@ -647,6 +725,8 @@ namespace DSL
                 }
                 else    throw new Exception("Expected type after parameter name");
             }
+            Consume(TokenType.RIGHT_BRACE,"Expected '}' after Params declaration");
+            return variables;
         }
         #endregion
         #region Parse Expressions
