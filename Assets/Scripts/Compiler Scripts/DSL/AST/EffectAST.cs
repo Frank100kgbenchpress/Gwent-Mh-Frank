@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 namespace DSL
 {
     public class EffectNode : Node

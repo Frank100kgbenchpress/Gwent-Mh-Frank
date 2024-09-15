@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-//arreglar posaction 
 namespace DSL
 {   
     public class Parser
@@ -69,12 +68,11 @@ namespace DSL
         CardNode ParseCard()
         {
             CardNode card = new CardNode();
-            int[] counter = new int[6];
-            ParseCardProperties(card,counter);  
+            int[] counter = ParseCardProperties(card, new int[6]);  
             CheckCardPropertyErrors(counter); 
             return card;
         }
-        void ParseCardProperties(CardNode card , int[] counter)
+        int[] ParseCardProperties(CardNode card, int[] counter)
         {
             while (!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())  
             {  
@@ -86,6 +84,7 @@ namespace DSL
                 else if (Match(TokenType.ONACTIVATION))      ParseCardOnActivation(card, counter);  
                 else      throw new ParseException($"'{Peek().Lexeme}' in {Peek().Line}: Invalid Card property.");        
             }
+            return counter;
         }
         void CheckCardPropertyErrors(int[] counter)
         {
@@ -135,7 +134,7 @@ namespace DSL
             counter[4]++;  
             Consume(TokenType.COLON, "Expected ':' after Range");  
             Consume(TokenType.LEFT_BRACKET, "Expected '['");  
-            List<Expression> expressions = new List<Expression>();  
+            List<Expression> expressions = new();  
             
             for (int i = 0; i < 3; i++)  
             {  
@@ -158,37 +157,37 @@ namespace DSL
         EffectNode ParseEffect()
         {
             EffectNode effect = new EffectNode();
-            int[] counter = new int[3];
-            ParseEffectProperties(effect,counter);
+            int []counter = ParseEffectProperties(effect, new int[3]);
             CheckEffectPropertiesError(counter);
             return effect;
         }
-        void ParseEffectProperties(EffectNode effect , int[] counter)
+        int[] ParseEffectProperties(EffectNode effect, int[] counter)
         {
             while(!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
             {
-                if(Match(TokenType.NAME)) ParseEffectName(effect,counter);
-                else if(Match(TokenType.PARAMS)) ParseEffectParams(effect,counter);
-                else if(Match(TokenType.ACTION)) ParseEffectAction(effect,counter);
+                if(Match(TokenType.NAME)) ParseEffectName(effect, counter);
+                else if(Match(TokenType.PARAMS)) ParseEffectParams(effect, counter);
+                else if(Match(TokenType.ACTION)) ParseEffectAction(effect, counter);
                 else    throw new ParseException($"'{Peek().Lexeme}' in {Peek().Line}: Invalid Effect property.");
             }
+            return counter;
         }
         void ParseEffectName(EffectNode effect , int[] counter)
         {
-            counter[0]+=1;
+            counter[0]++;
             Consume(TokenType.COLON,"Expected ':' after Name");
             effect.Name = new Name(ParseExpression());
             if(!Check(TokenType.RIGHT_BRACE))Consume(TokenType.COMMA,"Expected ',' after expression");
         }
         void ParseEffectParams(EffectNode effect , int[] counter)
         {
-            counter[1]+=1;
+            counter[1]++;
             Consume(TokenType.COLON,"Expected ':' after Params");
             effect.Params = GetParams();
         }
         void ParseEffectAction(EffectNode effect , int[] counter)
         {
-            counter[2]+=1;
+            counter[2]++;
             Consume(TokenType.COLON,"Expected ':' after Action");
             effect.Action = ParseAction();
         }
@@ -222,7 +221,6 @@ namespace DSL
             Selector selector = null!;
             List<PostAction> postActions = new();
             OnActivationElements oa = ParseOnActivationElements(onActivationEffect,selector,postActions); 
-            UnityEngine.Debug.Log(oa);
             Consume(TokenType.RIGHT_BRACE,"Expected '}' after OnActivation declaration");
             return oa;
         }
@@ -236,9 +234,6 @@ namespace DSL
                     {
                         Consume(TokenType.COLON,"Expected ':'");
                         onActivationEffect = ParseOAEffect();
-                        UnityEngine.Debug.Log(onActivationEffect + "bomboclat");
-                        UnityEngine.Debug.Log(onActivationEffect.Name + "bomboclat");
-                        UnityEngine.Debug.Log(onActivationEffect.Assingments + "bomboclat");
                     }
                     else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Only one OAEffect per Bracks");
                 }
@@ -248,18 +243,15 @@ namespace DSL
                     {
                         Consume(TokenType.COLON,"Expected ':'");
                         selector = ParseSelector();
-                        UnityEngine.Debug.Log(selector.Source + " "+ selector.Single + " " + selector.Predicate);
                         if(selector.Source == null) throw new ParseException($"'{Peek().Lexeme}' in {Peek().Line}: Missing field");
                     }
                     else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Only one Selector per OAEffect");
                 }
                 else if(Match(TokenType.POSTACTION))
                 {
-                    if(postActions == null)
-                    {
-                        Consume(TokenType.COLON,"Expected ':'");
-                        postActions.Add(ParsePostAction());
-                    }
+                    
+                    Consume(TokenType.COLON,"Expected ':'");
+                    postActions.Add(ParsePostAction());
                 }
                 else    throw new ParseException($"'{Peek().Lexeme}' in {Peek().Line}: Invalid OnActivation field.");
             }
@@ -269,16 +261,16 @@ namespace DSL
         #region On Activation Effect Parser
         OAEffect ParseOAEffect()
         {
-            /*string name = null!;
+            string name = null!;
             List<Assignment> assignments = new();
             if(Check(TokenType.STRING))
             {
-                name = Advance().Lexeme.Substring(1,Previous().Lexeme.Length-2);
+                name =ParseOAEffectName();
                 if(!Check(TokenType.RIGHT_BRACE))Consume(TokenType.COMMA,"Expected ','");
                 while(!Check(TokenType.SELECTOR) && !Check(TokenType.RIGHT_BRACE))
                 {
-                    if(Check(TokenType.IDENTIFIER))    ParseIdentifier(assignments);  
-                    else  throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Invalid OAEffect field");
+                    if(Check(TokenType.IDENTIFIER))    ParseIdentifier(assignments);
+                    else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Invalid OAEffect field");
                 }
             }
             else
@@ -292,104 +284,37 @@ namespace DSL
                         {
                             if(name == null)
                             {
-                                name = Advance().Lexeme.Substring(1,Previous().Lexeme.Length-2);
+                                name = ParseOAEffectName();
                                 if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
-                            }    
-                            else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Duplicate");
+                            }
+                            else
+                            {
+                                throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Duplicate");
+                            }
                         }
                         else
                         {
                             if(name == null)
                             {
-                                name = Advance().Lexeme.Substring(1,Previous().Lexeme.Length-2);
+                                name = ParseOAEffectName();
                                 if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
-                            }    
-                            else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Duplicate");
+                            }
+                            else
+                            {
+                                throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Duplicate");
+                            }
                         }
                     }
-                    else if(Check(TokenType.IDENTIFIER))    ParseIdentifier(assignments); 
-                    else    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Invalid OAEffect field");
+                    else if(Check(TokenType.IDENTIFIER))    ParseIdentifier(assignments);
+                    else
+                    {
+                        throw new Exception($"'{Peek().Lexeme}' {Peek().Type} in {Peek().Line}: Invalid OAEffect field");
+                    }
                 }
                 Consume(TokenType.RIGHT_BRACE,"Expected '}'");
             }
             if(name == null) throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: No name");
-            return new OAEffect(name,assignments);*/
-            string name = null!;
-        List<Assignment> assignments = new List<Assignment>();
-        if(Check(TokenType.STRING))
-        {
-            name = Advance().Lexeme.Substring(1,Previous().Lexeme.Length-2);
-            if(!Check(TokenType.RIGHT_BRACE))Consume(TokenType.COMMA,"Expected ','");
-            while(!Check(TokenType.SELECTOR) && !Check(TokenType.RIGHT_BRACE))
-            {
-                if(Check(TokenType.IDENTIFIER))
-                {
-                    Variable variable = ParseVariable();
-                    Token token = Peek();
-                    Consume(TokenType.COLON,"Expected ':'");
-                    Expression expression = ParseExpression();
-                    Assignment assignment = new Assignment(variable,token,expression);
-                    assignments.Add(assignment);
-                    if(!Check(TokenType.RIGHT_BRACE))Consume(TokenType.COMMA,"Expected ','");
-                }   
-                else
-                {
-                    throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Invalid OAEffect field");
-                }
-            }
-        }
-        else
-        {
-            Consume(TokenType.LEFT_BRACE,"Expected '{'");
-            while(!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
-            {
-                if(Match(TokenType.NAME))
-                {
-                    if(Match(TokenType.COLON))
-                    {
-                        if(name == null)
-                        {
-                            name = Advance().Lexeme.Substring(1,Previous().Lexeme.Length-2);
-                            if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
-                        }
-                        else
-                        {
-                            throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Duplicate");
-                        }
-                    }
-                    else
-                    {
-                        if(name == null)
-                        {
-                            name = Advance().Lexeme.Substring(1,Previous().Lexeme.Length-2);
-                            if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
-                        }
-                        else
-                        {
-                            throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Duplicate");
-                        }
-                    }
-                }
-                else if(Check(TokenType.IDENTIFIER))
-                {
-                    Variable variable = ParseVariable();
-                    Token token = Peek();
-                    Consume(TokenType.COLON,"Expected ':'");
-                    Expression expression = ParseExpression();
-                    Assignment assignment = new Assignment(variable,token,expression);
-                    assignments.Add(assignment);
-                    if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
-                }
-                else
-                {
-                    throw new Exception($"'{Peek().Lexeme}' {Peek().Type} in {Peek().Line}: Invalid OAEffect field");
-                }
-            }
-            Consume(TokenType.RIGHT_BRACE,"Expected '}'");
-            //Consume(TokenType.COMMA,"Expected ','");
-        }
-        if(name == null) throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: No name");
-        return new OAEffect(name,assignments);
+            return new OAEffect(name,assignments);
         }
         void ParseIdentifier(List<Assignment> assignments)
         {
@@ -401,6 +326,7 @@ namespace DSL
             assignments.Add(assignment);
             if (!Check(TokenType.RIGHT_BRACE))  Consume(TokenType.COMMA, "Expected ','");
         }
+        string ParseOAEffectName()    =>  Advance().Lexeme.Substring(1,Previous().Lexeme.Length-2);
         #endregion
         #region Selector Parser
         Selector ParseSelector()
@@ -474,13 +400,13 @@ namespace DSL
             ParsePostActionElements(expression,selector,assignments);
             return new PostAction(expression,selector);
         }
-        void ParsePostActionType(Expression expression)
+        void ParsePostActionType(ref Expression expression)
         {
             Consume(TokenType.COLON,"Expected ':'");
             expression = ParseExpression();
             if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
         }
-        void ParsePostActionSelector(Selector selector)
+        void ParsePostActionSelector(ref Selector selector)
         {
             Consume(TokenType.COLON,"Expected ':'");
             selector = ParseSelector();
@@ -491,8 +417,8 @@ namespace DSL
         {
             while(!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
             {
-                if(Match(TokenType.TYPE))    ParsePostActionType(expression);
-                else if(Match(TokenType.SELECTOR)) ParsePostActionSelector(selector);
+                if(Match(TokenType.TYPE))    ParsePostActionType(ref expression);
+                else if(Match(TokenType.SELECTOR)) ParsePostActionSelector(ref selector);
                 else if(Check(TokenType.IDENTIFIER))    ParseIdentifier(assignments); //ParseIdentifier Method Was created in On Activation Parser Region ;)
                 else throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Invalid PostAction field");    
             }
@@ -531,46 +457,51 @@ namespace DSL
         Variable ParseVariable()
         {
             Variable variable = new Variable(Advance());
-            VariableParser(variable); 
-            return variable;
+            return VariableParser(variable);
         }
-        void VariableFunctionParser(Variable.Type varType,VariableComp variableComp)
+        void VariableFunctionParser(ref Variable.Type varType,VariableComp variableComp)
         {
             Function function = ParseFunction(Previous().Literal as string);
             varType = function.Type;
             variableComp.args.Arguments.Add(function);
         }
-        void VariableTypeParser(Variable.Type varType,VariableComp variableComp)
+        void VariableTypeParser(ref Variable.Type varType,VariableComp variableComp)
         {
             CardType type = new CardType(new String(Previous().Literal as string));
             varType = Variable.Type.STRING;
             variableComp.args.Arguments.Add(type);
         }
-        void VariableNameParser(Variable.Type varType,VariableComp variableComp)
+        void VariableNameParser(ref Variable.Type varType,VariableComp variableComp)
         {
             Name name = new Name(new String(Previous().Literal as string));
             varType = Variable.Type.STRING;
             variableComp.args.Arguments.Add(name);
         }
-        void VariableFactionParser(Variable.Type varType,VariableComp variableComp)
+        void VariableFactionParser(ref Variable.Type varType,VariableComp variableComp)
         {
             Faction faction = new Faction(new String(Previous().Literal as string));
             varType = Variable.Type.STRING;
             variableComp.args.Arguments.Add(faction);
         }
-        void VariablePOwerParser(Variable.Type varType,VariableComp variableComp)
+        void VariablePOwerParser(ref Variable.Type varType,VariableComp variableComp)
         {
             PowerAsField power = new PowerAsField();
             varType = Variable.Type.INT;
             variableComp.args.Arguments.Add(power);
         }
-        void VariableRangeParser(Variable.Type varType , VariableComp variableComp)
+        void VariableRangeParser(ref Variable.Type varType , VariableComp variableComp)
         {
             Range range = new Range(Previous().Literal as string);
             varType = Variable.Type.STRING;
             variableComp.args.Arguments.Add(range);
+            if(Match(TokenType.LEFT_BRACKET))
+            {
+                Indexer indexer = new Indexer(Convert.ToInt32(Advance().Literal));
+                Consume(TokenType.RIGHT_BRACKET,"Expected ']'");
+                variableComp.args.Arguments.Add(indexer);
+            }
         }
-        void VariablePointerParser(Variable.Type varType , VariableComp variableComp)
+        void VariablePointerParser(VariableComp variableComp)
         {
             Pointer pointer = new Pointer(Previous().Literal as string);
             variableComp.args.Arguments.Add(pointer);
@@ -581,13 +512,13 @@ namespace DSL
                 variableComp.args.Arguments.Add(indexer);
             }
         }
-        void VariableOwnerParser(Variable.Type varType, VariableComp variableComp)
+        void VariableOwnerParser(ref Variable.Type varType, VariableComp variableComp)
         {
             Owner owner = new Owner(Previous().Literal as string);
             varType = Variable.Type.STRING;
             variableComp.args.Arguments.Add(owner);
         }
-        void VariableParser(Variable variable)
+        Variable VariableParser(Variable variable)
         {
             if(Check(TokenType.DOT))
             {
@@ -595,22 +526,23 @@ namespace DSL
                 Variable.Type varType = Variable.Type.NULL;
                 while(Match(TokenType.DOT) && !IsAtEnd())
                 {
-                    if(Match(TokenType.FUNCTION)) VariableFunctionParser(varType,variableComp);    
+                    if(Match(TokenType.FUNCTION)) VariableFunctionParser(ref varType,variableComp);    
                     else
                     {
-                        if (Match(TokenType.TYPE)) VariableTypeParser(varType,variableComp);
-                        else if(Match(TokenType.NAME)) VariableNameParser(varType,variableComp);
-                        else if(Match(TokenType.FACTION)) VariableFactionParser(varType,variableComp);
-                        else if(Match(TokenType.POWER)) VariablePOwerParser(varType,variableComp);
-                        else if(Match(TokenType.RANGE)) VariableRangeParser(varType,variableComp);
-                        else if(Match(TokenType.POINTER)) VariablePointerParser(varType,variableComp);
-                        else if(Match(TokenType.OWNER))  VariableOwnerParser(varType,variableComp);
+                        if (Match(TokenType.TYPE)) VariableTypeParser(ref varType,variableComp);
+                        else if(Match(TokenType.NAME)) VariableNameParser(ref varType,variableComp);
+                        else if(Match(TokenType.FACTION)) VariableFactionParser(ref varType,variableComp);
+                        else if(Match(TokenType.POWER)) VariablePOwerParser(ref varType,variableComp);
+                        else if(Match(TokenType.RANGE)) VariableRangeParser(ref varType,variableComp);
+                        else if(Match(TokenType.POINTER)) VariablePointerParser(variableComp);
+                        else if(Match(TokenType.OWNER))  VariableOwnerParser(ref varType,variableComp);
                         else throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Invalid variable");
                     }
                 }
                 variable = variableComp;
                 variable.VariableType = varType;
             }
+            return variable;
         }
         #endregion
         #region Statements Parser ( block , statement ,for and while)
@@ -835,8 +767,8 @@ namespace DSL
         #region Primary Expressions Parser
         Expression Primary()
         {
-            if(Match(TokenType.FALSE))     return new Bool(false);
-            if(Match(TokenType.TRUE))      return new Bool(true);
+            if(Match(TokenType.BOOLEAN)&& Peek().Lexeme == "false")     return new Bool(false);
+            if(Match(TokenType.BOOLEAN)&& Peek().Lexeme == "true")      return new Bool(true);
             if(Match(TokenType.NUMBER))    return new Number(Convert.ToInt32(Previous().Literal));
             if(Match(TokenType.STRING))    return new String(Previous().Lexeme.Substring(1,Previous().Lexeme.Length-2));
             if(Match(TokenType.LEFT_PAREN))

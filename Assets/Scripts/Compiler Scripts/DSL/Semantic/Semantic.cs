@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using UnityEngine;
 namespace DSL
 {
     public class SemanticalCheck
@@ -26,20 +26,20 @@ namespace DSL
         #region Card And Effect Semantics stuff
         void CheckCardSemantics(CardNode card)
         {
+            UnityEngine.Debug.Log("Checking card semantics");
             symbolTable.PushScope();
             CheckTypeSemantics(card.Type);
             CheckNameSemantics(card.Name,true); // to check card name
             CheckStringExpression(card.Faction.faction);
             CheckNumericExpression(card.Power.power);
             CheckRangeSemantics(card.Range.range);
-            UnityEngine.Debug.Log(card.OnActivation.Elements+" chivichana");
             CheckOnActivationSemantics(card.OnActivation.Elements);
             AssingCardPRoperties(card); 
             symbolTable.PopScope();
         }
         Card AssingCardPRoperties(CardNode card)
         {
-            Card trueCard = new Card();
+            Card trueCard = ScriptableObject.CreateInstance<Card>();
             trueCard.Type = Convert.ToString(card.Type.Type.Evaluate(Context));
             trueCard.Name = Convert.ToString(card.Name.name.Evaluate(Context));
             trueCard.Faction = Convert.ToString(card.Faction.faction.Evaluate(Context));
@@ -52,14 +52,13 @@ namespace DSL
         }
         void CheckEffectSemantics(EffectNode effect)
         {
+            UnityEngine.Debug.Log("AssingCardPRoperties");
             symbolTable.PushScope();
             CheckNameSemantics(effect.Name,false); // check effect name
             if(effect.Params != null)    CheckParamsSemantics(effect.Params);
             CheckActionSemantics(effect.Action);
             symbolTable.PopScope();
             Context.effects[Convert.ToString(effect.Name.name.Evaluate(Context))!] = new EffectNode(effect.Name,effect.Params!,effect.Action);
-            UnityEngine.Debug.Log(Context.effects[Convert.ToString(effect.Name.name.Evaluate(Context))!]+ "Chivirico");
-            UnityEngine.Debug.Log(Convert.ToString(effect.Name.name.Evaluate(Context))!);
         }
         void CheckTypeSemantics(CardType type)
         {
@@ -89,17 +88,11 @@ namespace DSL
         }
         void CheckOnActivationSemantics(List<OnActivationElements> onActivationElements)
         {
-            foreach(var element in onActivationElements)
-            {
-                UnityEngine.Debug.Log(element + "chirimoya");
-            CheckOAElementsSemantics(element);    
-            }
+            foreach(var element in onActivationElements)CheckOAElementsSemantics(element);    
         }
         void CheckOAElementsSemantics(OnActivationElements oAElements)
         {
             symbolTable.PushScope();
-            UnityEngine.Debug.Log(oAElements.OAEffect + "cojone");
-            UnityEngine.Debug.Log(oAElements.Selector+"salbutamol");
             CheckOAEffect(oAElements.OAEffect);
             
             if(oAElements.Selector != null)       CheckSelectorSemantics(oAElements.Selector);
@@ -108,7 +101,6 @@ namespace DSL
         }
         void CheckOAEffect(OAEffect oAEffect)
         {
-            UnityEngine.Debug.Log(oAEffect);
             if(Context.GetEffect(oAEffect.Name).Params != null)
             {
                 List<Node> parammeters = Context.GetEffect(oAEffect.Name).Params.Arguments;
@@ -154,6 +146,12 @@ namespace DSL
             foreach(var postAction in postActions)
             {
                 CheckStringExpression(postAction.Type);
+                UnityEngine.Debug.Log("ulakalaka");
+                UnityEngine.Debug.Log(Convert.ToString(postAction.Type.Evaluate(Context)));
+                UnityEngine.Debug.Log(Context.GetEffect(Convert.ToString(postAction.Type.Evaluate(Context))!).Params);
+                UnityEngine.Debug.Log(Context.GetEffect(Convert.ToString(postAction.Type.Evaluate(Context))!));
+                
+                
                 if(Context.GetEffect(Convert.ToString(postAction.Type.Evaluate(Context))!).Params != null)
                 {
                     List<Node> parammeters = Context.GetEffect(Convert.ToString(postAction.Type.Evaluate(Context))!).Params.Arguments;
@@ -292,7 +290,7 @@ namespace DSL
                 case "Find": if(function.Args.Arguments.Count ==0) Errors.Add("Missing argument in function Find");
                 else
                 {
-                    if(function.Args.Arguments[0] is Predicate predicate)break;
+                    if(function.Args.Arguments[0] is Predicate )break;
                     else  Errors.Add("The argument in function most be of Type Predicate");
                 }break;
                 case "Push":
@@ -325,33 +323,37 @@ namespace DSL
         #region Variable Semantics
         Variable.Type GetExpressionType(Expression expression)
         {
+            if(expression is String) return ReturnType(expression,1);
+            if(expression is Number) return ReturnType(expression,3);
+            if(expression is Bool) return ReturnType(expression,2);
+
             if (expression is BinaryExpression binaryExpression)
             {
-                if (GetExpressionType(binaryExpression.Left) == Variable.Type.INT && GetExpressionType(binaryExpression.Right) == Variable.Type.INT)
+                if (InferExpressionType(binaryExpression.Left) == Variable.Type.INT && InferExpressionType(binaryExpression.Right) == Variable.Type.INT)
                 {
-                    ReturnType(expression,3); // return int
+                    return ReturnType(expression,3); // return int
                 }
-                else if (GetExpressionType(binaryExpression.Left) == Variable.Type.BOOL && GetExpressionType(binaryExpression.Right) == Variable.Type.BOOL)
+                else if (InferExpressionType(binaryExpression.Left) == Variable.Type.BOOL && InferExpressionType(binaryExpression.Right) == Variable.Type.BOOL)
                 {
-                    ReturnType(expression,2);   //return bool
+                    return ReturnType(expression,2);   //return bool
                 }
                 else
                 {
-                    ReturnType(expression,1); // return string
+                    return ReturnType(expression,1); // return string
                 }
             }
             else if (expression is UnaryExpression unaryExpression)
             {
-                var rightType = GetExpressionType(unaryExpression.Right);
+                var rightType = InferExpressionType(unaryExpression.Right);
                 if (rightType == Variable.Type.INT || rightType == Variable.Type.BOOL)
                 {
                     if (rightType == Variable.Type.INT)
                     {
-                        ReturnType(expression,3); // return int
+                        return ReturnType(expression,3); // return int
                     }
                     else if (rightType == Variable.Type.BOOL)
                     {
-                        ReturnType(expression,2);   // return bool
+                        return ReturnType(expression,2);   // return bool
                     }
                 }
             }
@@ -360,12 +362,21 @@ namespace DSL
                 var expressionGroup = (expression as ExpressionGroup)!;
                 return GetExpressionType(expressionGroup.Exp);
             }
+            else
+            {
                 if(expression is VariableComp)
                 {
-                    ReturnType(expression,4); // return VariableComp
+                    return ReturnType(expression,4); // return VariableComp
                 }
-            Variable variable = (expression as Variable)!;
-            return variable.VariableType;
+                else
+                {
+                    UnityEngine.Debug.Log((expression as Variable).Value);
+                    Variable variable = (expression as Variable)!;
+                    return variable.VariableType;
+                }
+            }
+            return Variable.Type.NULL;    
+        
         }
         Variable.Type ReturnType(Expression expression , int returnType)
         {
@@ -479,10 +490,10 @@ namespace DSL
                 case Number _: return Variable.Type.INT;
                 case String _: return Variable.Type.STRING;
                 case Bool _: return Variable.Type.BOOL;
-                case VariableComp variableComp: return variableComp.VariableType;
+                case VariableComp variableComp: CheckVarCompSemantics(variableComp);
+                    return variableComp.VariableType;
                 case Variable variable: return symbolTable.LookupVariable(variable.Value);
-                case ExpressionGroup expressionGroup: return InferExpressionType(expressionGroup.Exp);
-                default: throw new ArgumentException("Unsupported expression type", nameof(expression));
+                default: return InferExpressionType((expression as ExpressionGroup).Exp);
             }
         }
         bool AreCompatibleTypes(Variable.Type leftType, Variable.Type rightType) => leftType == rightType;

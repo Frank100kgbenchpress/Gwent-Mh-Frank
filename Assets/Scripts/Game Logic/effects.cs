@@ -36,20 +36,10 @@ public class effects : MonoBehaviour
         if(effectName == "Despeje") CleanWeather(card);
         if(effectName == "Lowest") Lowest(card);
         if(effectName == "CleanRow") CleanRow();
-        Debug.Log(effectName);
         if(effectName == "Call") CallWeather(card);
-        /*
+        if(effectName == "Average") Average();
         
-        
-        if(hability==9)
-        {
-            CallWeather(card);
-        }
-        if(hability==10)
-        {
-            Average(card);
-        }
-        if(hability==11)
+        if(effectName == "Decoy")
         {
             decoy = GameObject.Find("GameManager").GetComponent<TurnSystem>();
             decoy.useDecoy = true;
@@ -59,7 +49,7 @@ public class effects : MonoBehaviour
             }
             decoy.Team = true;
         }
-        */
+        
     }
     //efecto de subir puntos el booleano es por si es una carta aumento ya que el efecto debe ser fijo por toda la ronda y en una carta normal es solo para las que estaban
     void RowPowerUpp(GameObject cardPlayed, bool loop)
@@ -315,7 +305,7 @@ public class effects : MonoBehaviour
         Debug.Log(deckName);
         CallWeatherFromDeck(deckName);
     }
-
+    // accedo a la carta del display card porque como las asignaciones las hago en start llegan null al efecto
     void CallWeatherFromDeck(string deckName)
     {
         deck = GameObject.Find(deckName).GetComponent<Deck>();
@@ -323,9 +313,8 @@ public class effects : MonoBehaviour
         for (int i = 0; i < cardsD.Count; i++)
         {
             DisplayCard cardDisplay = cardsD[i].GetComponent<DisplayCard>();
-            if(cardDisplay.Type == "Clima")
+            if(cardDisplay.card.Type == "Clima")
             {
-                Debug.Log("cojone");
                 GameObject currentCard = Instantiate(cardsD[i], new Vector3(0,0,0), Quaternion.identity);
                 currentCard.transform.SetParent(zone1.transform, false);
                 cardsD.RemoveAt(i);
@@ -335,48 +324,43 @@ public class effects : MonoBehaviour
             }   
         }
     }
-    void Average(GameObject cardPlayed)
+    void Average()
+    {
+        
+        int totalSum = CalculateZoneSum(GameObject.Find("UnitZones") ,out int playerCount);
+        totalSum += CalculateZoneSum(GameObject.Find("EnemyUnitsZones"), out int enemyCount);
+        int totalCount = playerCount + enemyCount;
+
+        int average = totalSum / totalCount;
+
+        ApplyAverageToZone(GameObject.Find("UnitZones"), average);
+        ApplyAverageToZone(GameObject.Find("EnemyUnitsZones"), average);
+    }
+    int CalculateZoneSum(GameObject zoneGroup, out int cardCount)
     {
         int sum = 0;
-        int div = 0;
-        zone1 = GameObject.Find("UnitZones");
-        foreach (var Transform in zone1.transform)
+        cardCount = 0;
+        foreach (Transform zone in zoneGroup.transform)
         {
-            DisplayCard[] cards = zone1.GetComponentsInChildren<DisplayCard>();
+            DisplayCard[] cards = zone.GetComponentsInChildren<DisplayCard>();
             foreach (var card in cards.Where(c => c.Type == "Plata"))
             {
                 sum += card.Points;
-                div++;
+                cardCount++;
             }
         }
-        zone2 = GameObject.Find("EnemyUnitsZones");
-        foreach (var Transform in zone2.transform)
+        return sum;
+    }
+    void ApplyAverageToZone(GameObject zoneGroup, int average)
+    {
+        foreach (Transform zone in zoneGroup.transform)
         {
-            DisplayCard[] cards = zone2.GetComponentsInChildren<DisplayCard>();
+            DisplayCard[] cards = zone.GetComponentsInChildren<DisplayCard>();
             foreach (var card in cards.Where(c => c.Type == "Plata"))
             {
-                sum += card.Points;
-                div++;
+                card.Points = average;
+                card.AttackText.text = card.Points.ToString();
             }
-        }
-        sum /= div;
-        foreach (var Transform in zone1.transform)
-        {
-            DisplayCard [] cards = zone1.GetComponentsInChildren<DisplayCard>();
-            foreach (var card in cards.Where(c => c.Type == "Plata"))
-            {
-                card.Points = sum;
-                card.AttackText.text = card.Points.ToString();
-            }    
-        }
-        foreach (var Transform in zone2.transform)
-        {
-            DisplayCard [] cards = zone2.GetComponentsInChildren<DisplayCard>();
-            foreach (var card in cards.Where(c => c.Type == "Plata"))
-            {
-                card.Points = sum;
-                card.AttackText.text = card.Points.ToString();
-            }  
         }
     }
 }

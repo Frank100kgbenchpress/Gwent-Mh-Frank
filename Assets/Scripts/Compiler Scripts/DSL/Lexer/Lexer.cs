@@ -23,8 +23,8 @@ namespace DSL
             keywords.Add("while", new Token(TokenType.WHILE,"while","while",0,0));
             keywords.Add("for", new Token(TokenType.FOR,"for","for",0,0));
             keywords.Add("in", new Token(TokenType.IN,"in","in",0,0));
-            keywords.Add("true", new Token(TokenType.TRUE,"true","true",0,0));
-            keywords.Add("false", new Token(TokenType.FALSE,"false","false",0,0));
+            keywords.Add("true", new Token(TokenType.BOOLEAN,"true","true",0,0));
+            keywords.Add("false", new Token(TokenType.BOOLEAN,"false","false",0,0));
             // card keywords//
             keywords.Add("Owner", new Token(TokenType.OWNER, "Owner", "Owner", 0, 0));
             keywords.Add("card", new Token(TokenType.CARD, "card", "card", 0, 0));
@@ -46,15 +46,16 @@ namespace DSL
             keywords.Add("Source", new Token(TokenType.SOURCE, "Source", "Source", 0, 0));
             //effect pointers //
             keywords.Add("Deck",new Token(TokenType.POINTER,"Deck","Deck",0,0));
-            keywords.Add("TriggerPlayer", new Token(TokenType.POINTER, "TriggerPlayer", "TriggerPlayer", 0, 0));
             keywords.Add("Board", new Token(TokenType.POINTER, "Board", "Board", 0, 0));
-            keywords.Add("HandOfPlayer", new Token(TokenType.POINTER, "HandOfPlayer", "HandOfPlayer", 0, 0));
-            keywords.Add("DeckOfPlayer", new Token(TokenType.POINTER, "DeckOfPlayer", "DeckOfPlayer", 0, 0));
-            keywords.Add("FieldOfPlayer", new Token(TokenType.POINTER, "FieldOfPlayer", "FieldOfPlayer", 0, 0));
-            keywords.Add("GraveyardOfPlayer", new Token(TokenType.POINTER, "GraveyardOfPlayer", "GraveyardOfPlayer", 0, 0));
             keywords.Add("Hand", new Token(TokenType.POINTER, "Hand", "Hand", 0, 0));
             keywords.Add("Graveyard", new Token(TokenType.POINTER, "Graveyard", "Graveyard", 0, 0));
             keywords.Add("Field", new Token(TokenType.POINTER, "Field", "Field", 0, 0));
+            //effect functions
+            keywords.Add("TriggerPlayer", new Token(TokenType.FUNCTION, "TriggerPlayer", "TriggerPlayer", 0, 0));
+            keywords.Add("HandOfPlayer", new Token(TokenType.FUNCTION, "HandOfPlayer", "HandOfPlayer", 0, 0));
+            keywords.Add("DeckOfPlayer", new Token(TokenType.FUNCTION, "DeckOfPlayer", "DeckOfPlayer", 0, 0));
+            keywords.Add("FieldOfPlayer", new Token(TokenType.FUNCTION, "FieldOfPlayer", "FieldOfPlayer", 0, 0));
+            keywords.Add("GraveyardOfPlayer", new Token(TokenType.FUNCTION, "GraveyardOfPlayer", "GraveyardOfPlayer", 0, 0));
             //effect pointer actions
             keywords.Add("Find", new Token(TokenType.FUNCTION, "Find", "Find", 0, 0));
             keywords.Add("Push", new Token(TokenType.FUNCTION, "Push", "Push", 0, 0));

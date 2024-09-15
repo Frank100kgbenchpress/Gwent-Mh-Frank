@@ -30,22 +30,24 @@ public class Compiler : MonoBehaviour
         if(parser.Ex != null)
         {
             PrintErrors(parser.Ex.ToString());
+            Debug.Log(parser.Ex.ToString() + "pancontimba");
             return;
         }
         Context context = new Context();
         context.turnSystem = GameObject.Find("GameManager").GetComponent<TurnSystem>();
         SemanticalCheck semanticalCheck = new SemanticalCheck(node,context,errors);
-        Debug.Log("boniato");
+        errors.RemoveAt(errors.Count-1);
         if(errors.Count != 0)
         {
             string joinedText = string.Join("\n", errors);
-            Debug.Log(joinedText+"tortilla");
             PrintErrors(joinedText);
+            Debug.Log(myTextMeshPro.text+"timba");
             return;
         }
-        Debug.Log("chancleta");
+        Debug.Log("pirip");
         foreach(CardNode card in (node as Program).CardNodes)
         {
+            Debug.Log("azucar");
             SpawnCard(card,context);
         }
     }
@@ -69,6 +71,7 @@ public class Compiler : MonoBehaviour
 
     void SpawnCard(CardNode cardnode, Context context)
     {
+        Debug.Log("wiiki");
         Card card = new Card();
         card.name = cardnode.Name.name.Evaluate(new Context()).ToString();
         card.Type = cardnode.Type.Type.Evaluate(new Context()).ToString();

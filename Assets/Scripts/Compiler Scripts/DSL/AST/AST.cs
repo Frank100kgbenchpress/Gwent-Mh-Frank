@@ -32,7 +32,7 @@ namespace DSL
         public bool Value;
         public Bool(bool value) => Value = value;
         public override object Evaluate(Context context) => Value;
-        public override void Print(int indent = 0) => Debug.Log(new string(' ', indent) + "Bool: " + Value);
+        public override void Print(int pos = 0) => Debug.Log(new string(' ', pos) + "Bool: " + Value);
     }
     #endregion
     #region Expressions (Unary , Groups and binary expressions)
@@ -111,10 +111,20 @@ namespace DSL
                 {
                     case TokenType.CONCAT : return leftValue.ToString() + rightValue.ToString();
                     case TokenType.CONCAT_CONCAT : return leftValue.ToString() + " " + rightValue.ToString();
+                    case TokenType.EQUAL: return leftValue.Equals(rightValue);
+                    case TokenType.NOT_EQUAL: return !leftValue.Equals(rightValue);
                     default: throw new InvalidOperationException("Unsupported operator: " + Operators.Lexeme);
                 }
             }
-            else throw new InvalidOperationException("Unsupported operator: " + Operators.Lexeme);
+            else
+            {
+                switch (Operators.Type)
+                {
+                    case TokenType.EQUAL: return leftValue.Equals(rightValue);
+                    case TokenType.NOT_EQUAL: return !leftValue.Equals(rightValue);
+                    default: throw new InvalidOperationException("Unsupported operator: " + Operators.Lexeme);
+                }
+            }
         }
         public override void Print(int pos = 0)
         {
@@ -196,7 +206,7 @@ namespace DSL
                 {
                     if(last is CardList)
                     {
-                        List<GameObject> cards = (last as CardList).Cards;
+                        List<GameObject> cards = (last as CardList).GetCards();
                         Indexer indexer = arg as Indexer;
                         last = cards[indexer.Index];
                     }
@@ -210,7 +220,7 @@ namespace DSL
                 else if(arg is Pointer)
                 {
                     Pointer pointer = arg as Pointer;
-                    CheckPointer(pointer,last,context);
+                    last = CheckPointer(pointer,context);
                 }
                 else
                 {
@@ -232,7 +242,7 @@ namespace DSL
         public void AssignValue(Context context, object value)
         {
             
-            object last = Value == "target" ? context.variables[Value]: null;
+            object last = Value != null ? context.variables[Value]: null;
             foreach(var arg in args.Arguments)
             {
                 if(arg is Function)    last = (arg as Function).GetValue(context,last);
@@ -254,7 +264,7 @@ namespace DSL
                 else if(arg is Pointer)
                 {
                     Pointer pointer = arg as Pointer;
-                    CheckPointer(pointer,last,context);
+                    last = CheckPointer(pointer,context);
                 }
                 else
                 {
@@ -271,16 +281,17 @@ namespace DSL
                 }
             }
         }
-        void CheckPointer(Pointer pointer,object last,Context context)
+        object CheckPointer(Pointer pointer,Context context)
         {
             switch(pointer.Pointer_)
             {
-                case "Hand": last = context.turnSystem.HandOfPlayer(context.turnSystem.TriggerPlayer());break;
-                case "Deck": last = context.turnSystem.DeckOfPlayer(context.turnSystem.TriggerPlayer());break;
-                case "Graveyard": last = context.turnSystem.GraveyardOfPlayer(context.turnSystem.TriggerPlayer());break;
-                case "Field": last = context.turnSystem.FieldOfPlayer(context.turnSystem.TriggerPlayer());break;
-                case "Board": last = context.turnSystem.Board();break;
+                case "Hand": return context.turnSystem.HandOfPlayer(context.turnSystem.TriggerPlayer());
+                case "Deck": return  context.turnSystem.DeckOfPlayer(context.turnSystem.TriggerPlayer());
+                case "Graveyard": return  context.turnSystem.GraveyardOfPlayer(context.turnSystem.TriggerPlayer());
+                case "Field": return  context.turnSystem.FieldOfPlayer(context.turnSystem.TriggerPlayer());
+                case "Board": return context.turnSystem.Board();
             }
+            return null;
         }
     }
     #endregion
@@ -289,10 +300,10 @@ namespace DSL
     {
         public List<Stmt> statements;
         public StmsBlock() => statements = new();
-        public void Print(int indent = 0)
+        public void Print(int pos = 0)
         {
-            Debug.Log(new string(' ', indent) + "StmsBlock:");
-            foreach (var stmt in statements)   stmt.Print(indent + 2);  
+            Debug.Log(new string(' ', pos) + "StmsBlock:");
+            foreach (var stmt in statements)   stmt.Print(pos + 2);  
         }
     }
     public class WhileStatement : Stmt
@@ -337,7 +348,7 @@ namespace DSL
         }
         public void Execute(Context context)
         {
-            foreach(Card target in context.variables["targets"] as List<Card>)
+            foreach(GameObject target in context.variables["targets"] as List<GameObject>)
             {
                 context.variables["target"] = target;
                 foreach(var stmt in Body.statements)
@@ -352,7 +363,7 @@ namespace DSL
     {
         public string FunctionName { get; }
         public Args Args { get; }
-        public Variable.Type Type { get; private set; } = Variable.Type.NULL;
+        public Variable.Type Type = Variable.Type.NULL;
         public Function(string functionName, Args args) => (FunctionName,Args,Type) = (functionName,args,DetermineReturnType(functionName));
         Variable.Type DetermineReturnType(string functionName) => functionName switch
         {

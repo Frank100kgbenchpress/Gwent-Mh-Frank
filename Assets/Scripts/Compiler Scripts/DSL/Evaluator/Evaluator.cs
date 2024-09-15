@@ -54,11 +54,8 @@ namespace DSL
         }
         List<GameObject> EvaluateSelector(Selector selector, string source = null)
         {
-            List<GameObject> cards = new();
-            cards = selector.Source == "parent" ? EvaluateSource(source) : EvaluateSource(selector.Source);
-            List<GameObject> filtredCards = new();
-            if(selector.Source == "parent") cards = EvaluateSource(source);
-            else cards = EvaluateSource(selector.Source);   
+            List<GameObject>cards = selector.Source == "parent" ? EvaluateSource(source) : EvaluateSource(selector.Source);
+            List<GameObject> filtredCards = new();   
             foreach(var card in cards)
             {
                 Context.variables[selector.Predicate.Var.Value] = card;

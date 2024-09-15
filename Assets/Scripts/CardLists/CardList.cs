@@ -4,7 +4,7 @@ using DSL;
 
 public abstract class CardList : MonoBehaviour
 {
-    public Context Context{get;set;}
+    public Context Context;
     public List<GameObject> Cards = new();
     public abstract List<GameObject> GetCards();
     public virtual List<GameObject> Find(Predicate predicate)

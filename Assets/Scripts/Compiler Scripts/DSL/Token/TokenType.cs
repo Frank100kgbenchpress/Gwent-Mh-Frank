@@ -8,15 +8,12 @@
          // Keywords
         LET,            // Represents the "let" keyword
         IN,             // Represents the "in" keyword
-        IF,             // Represents the "if" keyword
         ELSE,           // Represents the "else" keyword
         FUNCTION,       // Represents the "function" keyword
         CARD,           //Represents the "Card" keyword
         EFFECT,         //Represents the "Effect" keyword
         WHILE,
         FOR,
-        TRUE,
-        FALSE,
 
         // Variables
         IDENTIFIER,     // Represents an identifier (variable name)
@@ -83,19 +80,11 @@
         PREDICATE,
         POSTACTION,
         SOURCE,
-        MELEE,
-        RANGED,
-        SIEGE,
         OWNER,
        
         //Effect Keywords
         POINTER,
         ONACTIVATIONEFFECT,
-        METHOD,
-
-        //Unknown code//
-        UNKNOWN,
-
 
         // End of File
         EOF             // Represents the end of file marker
