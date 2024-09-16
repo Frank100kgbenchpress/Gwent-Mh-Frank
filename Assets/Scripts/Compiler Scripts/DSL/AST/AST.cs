@@ -373,6 +373,7 @@ namespace DSL
         {
             foreach(GameObject target in context.variables["targets"] as List<GameObject>)
             {
+                Debug.Log("washipupa");
                 context.variables["target"] = target;
                 foreach(var stmt in Body.statements)
                 {

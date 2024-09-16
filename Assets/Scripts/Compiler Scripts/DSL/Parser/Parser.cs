@@ -674,10 +674,10 @@ namespace DSL
         Expression Equality()
         {
             Expression expression = Comparison();
-            EqualityExpressionsParser(expression);   
+            EqualityExpressionsParser(ref expression);   
             return expression;
         }
-        void EqualityExpressionsParser(Expression expression)
+        void EqualityExpressionsParser(ref Expression expression)
         {
             while(Match(TokenType.NOT_EQUAL)||Match(TokenType.EQUAL))
             {
@@ -714,7 +714,7 @@ namespace DSL
             CheckTermProperties(expression);
             return expression;
         }
-        Expression TermExpressionParser(Expression expression, bool intORString)
+        Expression TermExpressionParser(ref Expression expression, bool intORString)
         {
             Token operators = Previous();
             Expression right = Factor();
@@ -723,8 +723,8 @@ namespace DSL
         }
         void CheckTermProperties(Expression expression)
         {
-            if(Check(TokenType.PLUS) || Check(TokenType.MINUS))    while(Match(TokenType.PLUS)||Match(TokenType.MINUS))    expression = TermExpressionParser(expression,true);
-            else if(Check(TokenType.CONCAT) || Check(TokenType.CONCAT_CONCAT))    while(Match(TokenType.CONCAT)||Match(TokenType.CONCAT_CONCAT))  expression = TermExpressionParser(expression,false);
+            if(Check(TokenType.PLUS) || Check(TokenType.MINUS))    while(Match(TokenType.PLUS)||Match(TokenType.MINUS))    expression = TermExpressionParser(ref expression,true);
+            else if(Check(TokenType.CONCAT) || Check(TokenType.CONCAT_CONCAT))    while(Match(TokenType.CONCAT)||Match(TokenType.CONCAT_CONCAT))  expression = TermExpressionParser(ref expression,false);
         }
         #endregion
         #region Factor Expressions Parser

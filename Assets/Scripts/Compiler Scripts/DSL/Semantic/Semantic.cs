@@ -134,7 +134,7 @@ namespace DSL
             if (predicate.Var.VariableType != Variable.Type.CARD)    Errors.Add($"Predicate variable must be of type CARD, but got {predicate.Var.VariableType}");
             symbolTable.PushScope();
             symbolTable.DefineVariable(predicate.Var.Value, Variable.Type.CARD);
-            UnityEngine.Debug.Log(predicate.Condition);        
+            UnityEngine.Debug.Log(predicate.Condition + " dale");        
             CheckBooleanExpression(predicate.Condition);
             
             symbolTable.PopScope();
@@ -417,6 +417,7 @@ namespace DSL
                             case Owner: last = Variable.Type.INT;break;
                             case Range: last = Variable.Type.RANGE;break;
                         }
+                        UnityEngine.Debug.Log(last + "varcom");
                     }
                     else if(last != Variable.Type.NULL)    Errors.Add("There needs to be a card before accessing the property");
                     else
@@ -617,6 +618,7 @@ namespace DSL
                 else if (expression is Variable variable)
                 {
                     var varType = symbolTable.LookupVariable(variable.Value);
+                    UnityEngine.Debug.Log(varType + "perico");
                     if (varType != Variable.Type.BOOL)
                     {
                         Errors.Add($"Variable '{variable.Value}' is not of type BOOL");

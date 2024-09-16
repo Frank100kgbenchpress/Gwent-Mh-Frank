@@ -40,8 +40,8 @@ namespace DSL
             }
             else 
             {
-                Context.variables["targets"] = Context.turnSystem.board.GetCards();
-                Debug.Log(Context.turnSystem.Board().GetCards()[0].GetComponent<DisplayCard>().card.name);
+                //Context.variables["targets"] = Context.turnSystem.board.GetCards();
+                //Debug.Log(Context.turnSystem.Board().GetCards()[0].GetComponent<DisplayCard>().card.name);
                 EvaluateAction(effect.Action);
             }       
         }

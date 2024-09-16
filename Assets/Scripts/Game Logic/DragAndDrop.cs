@@ -165,10 +165,9 @@ public class DragAndDrop : MonoBehaviour
             if(change.change)
             {
                 deck = GameObject.Find("deckManager1").GetComponent<Deck>();
-                List<GameObject> deckCards = deck.GetCards();
                 if(cardDisplay.Owner == "Player")
                 {
-                    deckCards.Add(gameObject);
+                    deck.GetComponent<Deck>().Push(gameObject);
                     draw.DrawCard(1);
                     Destroy(gameObject);
                     change.counter++;
@@ -188,10 +187,9 @@ public class DragAndDrop : MonoBehaviour
             if(change.change)
             {
                 deck = GameObject.Find("deckManager2").GetComponent<Deck>();
-                List<GameObject> deckCards = deck.GetCards();
                 if(cardDisplay.Owner == "Enemy")
                 {
-                    deckCards.Add(gameObject);
+                    deck.GetComponent<Deck>().Push(gameObject);
                     draw.DrawCard(2);
                     Destroy(gameObject);
                     change.counter++;

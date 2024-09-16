@@ -36,7 +36,7 @@ public class Hand : CardList
         DisplayCard[] display = hand.GetComponentsInChildren<DisplayCard>();
         foreach(var cardDisplay in display)
         {
-            if(display.Equals(card.GetComponent<DisplayCard>()))
+            if(cardDisplay.Equals(card.GetComponent<DisplayCard>()))
             {
                 Destroy(card.gameObject);
                 break;
