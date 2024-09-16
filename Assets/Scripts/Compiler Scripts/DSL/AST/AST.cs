@@ -65,6 +65,15 @@ namespace DSL
             Right.Print(pos + 2);
         }
     }
+    public class UnaryBooleanExpression : UnaryExpression
+    {
+        public UnaryBooleanExpression(Token operators, Expression right) : base(operators,right){}
+    }
+
+    public class UnaryIntergerExpression : UnaryExpression
+    {
+        public UnaryIntergerExpression(Token operators, Expression right) : base(operators,right){}
+    }
     public class ExpressionGroup : Expression
     {
         public Expression Exp;
@@ -132,6 +141,20 @@ namespace DSL
             Left.Print(pos + 2);
             Right.Print(pos + 2);
         }
+    }
+    public class BinaryBooleanExpression : BinaryExpression
+    {
+        public BinaryBooleanExpression(Expression left, Token operators, Expression right) : base(left, operators, right){}
+    }
+
+    public class BinaryIntergerExpression : BinaryExpression
+    {
+        public BinaryIntergerExpression(Expression left, Token operators, Expression right) : base(left, operators, right){}
+    }
+
+    public class BinaryStringExpression : BinaryExpression
+    {
+        public BinaryStringExpression(Expression left, Token operators, Expression right) : base(left, operators, right){}
     }
     #endregion
     #region Variables (variables and variables comp)

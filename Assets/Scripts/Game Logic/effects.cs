@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using DSL;
 //los efectos//
 
 public class effects : MonoBehaviour
@@ -26,6 +27,11 @@ public class effects : MonoBehaviour
         if(effectName == "ClimaRanged") Weather("Ranged");
         if(effectName == "CllimaSiege") Weather("Siege");
         if(effectName == "Multiply") Multiply(card);
+        if(effectName == "a")
+        {
+            Evaluator evaluator = new Evaluator(card.GetComponent<DisplayCard>().card,card.GetComponent<DisplayCard>().card.Context);
+            evaluator.EvaluateEffects();
+        }
         if(effectName == "Draw")
         {
             draw = GameObject.Find("GameManager").GetComponent<Draw>();

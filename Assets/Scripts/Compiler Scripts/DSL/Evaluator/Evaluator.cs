@@ -4,8 +4,8 @@ namespace DSL
 {
     public class Evaluator
     {
-        Card Card{get;set;}
-        Context Context{get;set;}
+        Card Card;
+        Context Context;
         public Evaluator(Card card,Context context)=> (Card,Context) = (card,context);
         public void EvaluateEffects()
         {
@@ -38,7 +38,12 @@ namespace DSL
                 EvaluateAction(effect.Action);
                 Context.variables.Remove("targets");
             }
-            else    EvaluateAction(effect.Action);
+            else 
+            {
+                Context.variables["targets"] = Context.turnSystem.board.GetCards();
+                Debug.Log(Context.turnSystem.Board().GetCards()[0].GetComponent<DisplayCard>().card.name);
+                EvaluateAction(effect.Action);
+            }       
         }
         void EvaluatePostActions(PostAction postAction,string source)
         {

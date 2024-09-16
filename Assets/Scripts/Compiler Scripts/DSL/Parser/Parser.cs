@@ -397,33 +397,32 @@ namespace DSL
             Expression expression = null!;
             Selector selector = null!;
             List<Assignment> assignments = new();
-            ParsePostActionElements(expression,selector,assignments);
-            return new PostAction(expression,selector);
-        }
-        void ParsePostActionType(ref Expression expression)
-        {
-            Consume(TokenType.COLON,"Expected ':'");
-            expression = ParseExpression();
-            if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
-        }
-        void ParsePostActionSelector(ref Selector selector)
-        {
-            Consume(TokenType.COLON,"Expected ':'");
-            selector = ParseSelector();
-            if(selector.Source == null) selector.Source = "parent";
-            if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
-        }
-        void ParsePostActionElements(Expression expression , Selector selector , List<Assignment> assignments)
-        {
             while(!Check(TokenType.RIGHT_BRACE) && !IsAtEnd())
             {
-                if(Match(TokenType.TYPE))    ParsePostActionType(ref expression);
-                else if(Match(TokenType.SELECTOR)) ParsePostActionSelector(ref selector);
+                if(Match(TokenType.TYPE))
+                {
+                    expression = ParsePostActionType();
+                    if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
+                } 
+                else if(Match(TokenType.SELECTOR))
+                {
+                    Consume(TokenType.COLON,"Expected ':'");
+                    selector = ParseSelector();
+                    if(selector.Source == null) selector.Source = "parent";
+                    if(!Check(TokenType.RIGHT_BRACE)) Consume(TokenType.COMMA,"Expected ','");
+                } 
                 else if(Check(TokenType.IDENTIFIER))    ParseIdentifier(assignments); //ParseIdentifier Method Was created in On Activation Parser Region ;)
                 else throw new Exception($"'{Peek().Lexeme}' in {Peek().Line}: Invalid PostAction field");    
             }
             Consume(TokenType.RIGHT_BRACE,"Expected '}'");
             if(expression == null) throw new Exception("Missing PostAction Type");
+            
+            return new PostAction(expression,selector);
+        }
+        Expression ParsePostActionType()
+        {
+            Consume(TokenType.COLON,"Expected ':'");
+            return ParseExpression();
         }
         #endregion
         #region Predicate Parser
@@ -432,9 +431,11 @@ namespace DSL
             Consume(TokenType.LEFT_PAREN,"Expected '('");
             Variable unit = ParseVariable();
             unit.VariableType = Variable.Type.CARD;
+            
             Consume(TokenType.RIGHT_PAREN,"Expected ')'");
             Consume(TokenType.LAMBDA,"Expected '=>'");
             Expression expression = ParseExpression();
+            UnityEngine.Debug.Log(unit.VariableType + " Pepe");
             return new Predicate(unit,expression);
         }
         #endregion
@@ -665,6 +666,7 @@ namespace DSL
         Expression ParseExpression()
         {
             var result = Equality();
+            UnityEngine.Debug.Log(result+" viagra");
             return result;
         }
         #region Types of Expressions (equality , comparison , term , factor , unary and prinary)
@@ -681,7 +683,7 @@ namespace DSL
             {
                 Token operators = Previous();
                 Expression right = Comparison();
-                expression = new BinaryExpression(expression,operators,right);
+                expression = new BinaryBooleanExpression(expression,operators,right);
             }
         }
         #endregion
@@ -689,16 +691,19 @@ namespace DSL
         Expression Comparison()
         {
             Expression expression = Term();
-            ComparisonExpressionsParser(expression);
+            ComparisonExpressionsParser(ref expression);
+            UnityEngine.Debug.Log(expression.ToString()+" cocaina");
             return expression;
         }
-        void ComparisonExpressionsParser(Expression expression)
+        void ComparisonExpressionsParser(ref Expression expression)
         {
             while(Match(TokenType.GREATER)||Match(TokenType.GREATER_EQUAL)||Match(TokenType.LESS)||Match(TokenType.LESS_EQUAL))
             {
+                
                 Token operators = Previous();
                 Expression right = Term();
-                expression = new BinaryExpression(expression,operators,right);
+                expression = new BinaryBooleanExpression(expression,operators,right);
+                UnityEngine.Debug.Log(expression.ToString()+ " droga");
             }
         }
         #endregion
@@ -709,34 +714,32 @@ namespace DSL
             CheckTermProperties(expression);
             return expression;
         }
-        void TermExpressionParser(Expression expression)
+        Expression TermExpressionParser(Expression expression, bool intORString)
         {
             Token operators = Previous();
             Expression right = Factor();
-            expression = new BinaryExpression(expression,operators,right);
+            if(intORString)return  new BinaryIntergerExpression(expression,operators,right);
+            else return  new BinaryStringExpression(expression,operators,right);
         }
         void CheckTermProperties(Expression expression)
         {
-            if(Check(TokenType.PLUS) || Check(TokenType.MINUS))    while(Match(TokenType.PLUS)||Match(TokenType.MINUS))    TermExpressionParser(expression);
-            else if(Check(TokenType.CONCAT) || Check(TokenType.CONCAT_CONCAT))    while(Match(TokenType.CONCAT)||Match(TokenType.CONCAT_CONCAT))  TermExpressionParser(expression);
+            if(Check(TokenType.PLUS) || Check(TokenType.MINUS))    while(Match(TokenType.PLUS)||Match(TokenType.MINUS))    expression = TermExpressionParser(expression,true);
+            else if(Check(TokenType.CONCAT) || Check(TokenType.CONCAT_CONCAT))    while(Match(TokenType.CONCAT)||Match(TokenType.CONCAT_CONCAT))  expression = TermExpressionParser(expression,false);
         }
         #endregion
         #region Factor Expressions Parser
         Expression Factor()
         {
             Expression expression = Unary();
-            FactorExpressionsParser(expression);
-            return expression;
-        }
-        void FactorExpressionsParser(Expression expression)
-        {
             while(Match(TokenType.DIVIDE)||Match(TokenType.MULTIPLY)||Match(TokenType.MODULUS))
             {
                 Token operators = Previous();
                 Expression right = Unary();
-                expression = new BinaryExpression(expression,operators,right);
+                expression = new BinaryIntergerExpression(expression,operators,right);
             }
+            return expression;
         }
+        
         #endregion
         #region Unary Expressions Parser
         Expression Unary()
@@ -745,21 +748,28 @@ namespace DSL
             {
                 Token operators = Previous();
                 Expression right = Unary();
-                return new UnaryExpression(operators,right);
+                return new UnaryIntergerExpression(operators,right);
             }
             else if(Match(TokenType.NOT))
             {
                 Token operators = Previous();
                 Expression right = Unary();
-                return new UnaryExpression(operators,right);   
+                return new UnaryBooleanExpression(operators,right);   
             }
-            else if (Check(TokenType.IDENTIFIER) && (LookAhead(TokenType.PLUS_PLUS_LEFT)|| LookAhead(TokenType.MINUS_MINUS_LEFT)))
+            
+            else if (Check(TokenType.IDENTIFIER) && LookAhead(TokenType.PLUS_PLUS_LEFT))
             {
                 Expression left = ParseVariable();
                 Token operatorToken = Advance();
-                if(LookAhead(TokenType.PLUS_PLUS_LEFT))   operatorToken.Type = TokenType.PLUS_PLUS_RIGHT;
-                if(LookAhead(TokenType.MINUS_MINUS_LEFT)) operatorToken.Type = TokenType.MINUS_MINUS_RIGHT;
-                return new UnaryExpression(operatorToken, left);
+                operatorToken.Type = TokenType.PLUS_PLUS_RIGHT;
+                return new UnaryIntergerExpression(operatorToken, left);
+            }
+            else if (Check(TokenType.IDENTIFIER) && LookAhead(TokenType.MINUS_MINUS_LEFT))
+            {
+                Expression left = ParseVariable();
+                Token operatorToken = Advance();
+                operatorToken.Type = TokenType.MINUS_MINUS_RIGHT;
+                return new UnaryIntergerExpression(operatorToken, left);
             }
             return Primary();
         }

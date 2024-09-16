@@ -561,7 +561,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 15e46bfbb0d8666419035a8476738304, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -982,6 +982,7 @@ MonoBehaviour:
   deck: {fileID: 0}
   draw: {fileID: 0}
   change: {fileID: 0}
+  PlacedZone: 
 --- !u!114 &-5775442788110872538
 MonoBehaviour:
   m_ObjectHideFlags: 0

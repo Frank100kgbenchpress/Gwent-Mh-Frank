@@ -34,12 +34,7 @@ namespace DSL
             CheckNumericExpression(card.Power.power);
             CheckRangeSemantics(card.Range.range);
             CheckOnActivationSemantics(card.OnActivation.Elements);
-            AssingCardPRoperties(card); 
-            symbolTable.PopScope();
-        }
-        Card AssingCardPRoperties(CardNode card)
-        {
-            Card trueCard = ScriptableObject.CreateInstance<Card>();
+            Card trueCard = new Card();
             trueCard.Type = Convert.ToString(card.Type.Type.Evaluate(Context));
             trueCard.Name = Convert.ToString(card.Name.name.Evaluate(Context));
             trueCard.Faction = Convert.ToString(card.Faction.faction.Evaluate(Context));
@@ -48,8 +43,9 @@ namespace DSL
             foreach(var expression in card.Range.range)    trueCard.Range[pos++] = expression.Evaluate(Context) as string; 
             trueCard.Effects = card.OnActivation;
             Context.cards[trueCard.name] = trueCard;
-            return trueCard;
+            symbolTable.PopScope();
         }
+        
         void CheckEffectSemantics(EffectNode effect)
         {
             UnityEngine.Debug.Log("AssingCardPRoperties");
@@ -137,8 +133,10 @@ namespace DSL
         {
             if (predicate.Var.VariableType != Variable.Type.CARD)    Errors.Add($"Predicate variable must be of type CARD, but got {predicate.Var.VariableType}");
             symbolTable.PushScope();
-            symbolTable.DefineVariable(predicate.Var.Value, Variable.Type.CARD);        
+            symbolTable.DefineVariable(predicate.Var.Value, Variable.Type.CARD);
+            UnityEngine.Debug.Log(predicate.Condition);        
             CheckBooleanExpression(predicate.Condition);
+            
             symbolTable.PopScope();
         }
         void CheckPostActionSemantics(List<PostAction> postActions)
@@ -241,9 +239,10 @@ namespace DSL
                     symbolTable.LookupVariable(variable.Value);
                 }
                 
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    Errors.Add($"Variable '{variable.Value}' in while condition is not declared.");
+                    //Errors.Add($"Variable '{variable.Value}' in while condition is not declared.");
+                    throw ex;
                 }
             }
             CheckBooleanExpression(whileStmt.Condition);
@@ -323,39 +322,20 @@ namespace DSL
         #region Variable Semantics
         Variable.Type GetExpressionType(Expression expression)
         {
-            if(expression is String) return ReturnType(expression,1);
-            if(expression is Number) return ReturnType(expression,3);
-            if(expression is Bool) return ReturnType(expression,2);
-
-            if (expression is BinaryExpression binaryExpression)
+            if(expression is String || expression is BinaryStringExpression)
             {
-                if (InferExpressionType(binaryExpression.Left) == Variable.Type.INT && InferExpressionType(binaryExpression.Right) == Variable.Type.INT)
-                {
-                    return ReturnType(expression,3); // return int
-                }
-                else if (InferExpressionType(binaryExpression.Left) == Variable.Type.BOOL && InferExpressionType(binaryExpression.Right) == Variable.Type.BOOL)
-                {
-                    return ReturnType(expression,2);   //return bool
-                }
-                else
-                {
-                    return ReturnType(expression,1); // return string
-                }
+                CheckStringExpression(expression);
+                return Variable.Type.STRING;
             }
-            else if (expression is UnaryExpression unaryExpression)
+            else if(expression is Number || expression is UnaryIntergerExpression || expression is BinaryIntergerExpression)
             {
-                var rightType = InferExpressionType(unaryExpression.Right);
-                if (rightType == Variable.Type.INT || rightType == Variable.Type.BOOL)
-                {
-                    if (rightType == Variable.Type.INT)
-                    {
-                        return ReturnType(expression,3); // return int
-                    }
-                    else if (rightType == Variable.Type.BOOL)
-                    {
-                        return ReturnType(expression,2);   // return bool
-                    }
-                }
+                CheckNumericExpression(expression);
+                return Variable.Type.INT;
+            }
+            else if(expression is Bool || expression is UnaryBooleanExpression || expression is BinaryBooleanExpression)
+            {
+                CheckBooleanExpression(expression);
+                return Variable.Type.BOOL;
             }
             else if(expression is ExpressionGroup)
             {
@@ -366,39 +346,18 @@ namespace DSL
             {
                 if(expression is VariableComp)
                 {
-                    return ReturnType(expression,4); // return VariableComp
+                    VariableComp variableComp = (expression as VariableComp)!;
+                    CheckVarCompSemantics(variableComp);
+                    return variableComp.VariableType;
                 }
                 else
                 {
-                    UnityEngine.Debug.Log((expression as Variable).Value);
                     Variable variable = (expression as Variable)!;
                     return variable.VariableType;
                 }
             }
-            return Variable.Type.NULL;    
-        
         }
-        Variable.Type ReturnType(Expression expression , int returnType)
-        {
-            if(returnType == 1)
-            {
-                CheckStringExpression(expression);
-                return Variable.Type.STRING;
-            }
-            else if(returnType == 2)
-            {
-                CheckBooleanExpression(expression);
-                return Variable.Type.BOOL;
-            }
-            else if(returnType==3)
-            {
-                CheckNumericExpression(expression);
-                return Variable.Type.INT;
-            }
-            VariableComp variableComp = (expression as VariableComp)!;
-            CheckVarCompSemantics(variableComp);
-            return variableComp.VariableType;            
-        }
+
         void CheckVarCompSemantics(VariableComp variableComp)
         {
             Variable.Type last = symbolTable.LookupVariable(variableComp.Value);
@@ -485,15 +444,22 @@ namespace DSL
         }
         Variable.Type InferExpressionType(Expression expression) 
         {
-            switch (expression)
+            if (expression is Number)    return Variable.Type.INT;
+            else if (expression is String)    return Variable.Type.STRING;
+            else if(expression is Bool)    return Variable.Type.BOOL;
+            
+            else if(expression is VariableComp variableComp)
             {
-                case Number _: return Variable.Type.INT;
-                case String _: return Variable.Type.STRING;
-                case Bool _: return Variable.Type.BOOL;
-                case VariableComp variableComp: CheckVarCompSemantics(variableComp);
-                    return variableComp.VariableType;
-                case Variable variable: return symbolTable.LookupVariable(variable.Value);
-                default: return InferExpressionType((expression as ExpressionGroup).Exp);
+                CheckVarCompSemantics(variableComp);
+                return variableComp.VariableType;
+            }
+            else if(expression is Variable variable)
+            {
+                return symbolTable.LookupVariable(variable.Value);
+            }
+            else
+            {
+                return InferExpressionType((expression as ExpressionGroup).Exp);
             }
         }
         bool AreCompatibleTypes(Variable.Type leftType, Variable.Type rightType) => leftType == rightType;
@@ -510,7 +476,8 @@ namespace DSL
             }
             catch (Exception ex)
             {
-                Errors.Add(ex.Message);
+                //Errors.Add(ex.Message);
+                throw ex;
             }
         }
     #endregion
@@ -523,7 +490,7 @@ namespace DSL
                 if(expression is String)    return;
                 else if(expression is BinaryExpression)
                 {
-                    var binaryStringExpression = (expression as BinaryExpression)!;
+                    var binaryStringExpression = (expression as BinaryStringExpression)!;
                     CheckStringExpression(binaryStringExpression.Left);
                     CheckStringExpression(binaryStringExpression.Right);
                 }
@@ -551,7 +518,8 @@ namespace DSL
             }
             catch(Exception ex)
             {
-                Errors.Add(ex.Message);
+                //Errors.Add(ex.Message);
+                throw ex;
             }
         }
         void CheckNumericExpression(Expression expression)
@@ -559,14 +527,14 @@ namespace DSL
             try
             {
                 if(expression is Number)    return;
-                else if(expression is UnaryExpression)
+                else if(expression is UnaryIntergerExpression)
                 {
-                    var unaryIntergerExpression = (expression as UnaryExpression)!;
+                    var unaryIntergerExpression = (expression as UnaryIntergerExpression)!;
                     CheckNumericExpression(unaryIntergerExpression.Right);
                 }
-                else if(expression is BinaryExpression)
+                else if(expression is BinaryIntergerExpression)
                 {
-                    var binaryIntergerExpression = (expression as BinaryExpression)!;
+                    var binaryIntergerExpression = (expression as BinaryIntergerExpression)!;
                     CheckNumericExpression(binaryIntergerExpression.Left);
                     CheckNumericExpression(binaryIntergerExpression.Right);
                 }
@@ -586,15 +554,15 @@ namespace DSL
                     else
                     {
                         Variable variable = (expression as Variable)!;
-                        symbolTable.LookupVariable(variable.Value);
-                        if(variable.VariableType != Variable.Type.INT)    Errors.Add($"A number was expected but instead got {variable.VariableType}");
+                        if(symbolTable.LookupVariable(variable.Value) != Variable.Type.INT)    Errors.Add($"A number was expected but instead got {variable.VariableType}");
                     }
                 }
                 else    Errors.Add($"Invalid expression type for string context: {expression.GetType().Name}");
             }
             catch(Exception ex)
             {
-                Errors.Add(ex.Message);
+                //Errors.Add(ex.Message);
+                throw ex;
             }
         }
         void CheckBooleanExpression(Expression expression)
@@ -602,14 +570,14 @@ namespace DSL
             try
             {
                 if(expression is Bool)    return;
-                else if(expression is UnaryExpression)
+                else if(expression is UnaryBooleanExpression)
                 {
-                    var unaryBooleanExpression = (expression as UnaryExpression)!;
+                    var unaryBooleanExpression = (expression as UnaryBooleanExpression)!;
                     CheckBooleanExpression(unaryBooleanExpression.Right);
                 }
-                else if(expression is BinaryExpression)
+                else if(expression is BinaryBooleanExpression)
                 {
-                    var binaryBooleanExpression = (expression as BinaryExpression)!;
+                    var binaryBooleanExpression = (expression as BinaryBooleanExpression)!;
 
                     if(binaryBooleanExpression.Operators.Type == TokenType.GREATER||
                     binaryBooleanExpression.Operators.Type == TokenType.GREATER_EQUAL||
@@ -649,7 +617,11 @@ namespace DSL
                 else if (expression is Variable variable)
                 {
                     var varType = symbolTable.LookupVariable(variable.Value);
-                    if (varType != Variable.Type.BOOL)    Errors.Add($"Variable '{variable.Value}' is not of type BOOL");
+                    if (varType != Variable.Type.BOOL)
+                    {
+                        Errors.Add($"Variable '{variable.Value}' is not of type BOOL");
+                        throw new SystemException($"Variable '{variable.Value}' is not of type BOOL"+" chirimoya");
+                    }    
                 }
                 else if (expression is VariableComp variableComp)
                 {
@@ -663,7 +635,8 @@ namespace DSL
             }
             catch(Exception ex)
             {
-                Errors.Add(ex.Message);
+                //Errors.Add(ex.Message);
+                throw ex;
             }
         }
         #endregion

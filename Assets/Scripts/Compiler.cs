@@ -18,9 +18,11 @@ public class Compiler : MonoBehaviour
         List<string> errors = new();
         Lexer lexer = new Lexer(input,errors);
         List<Token> tokens = lexer.ScanTokens();
+        Debug.Log(errors.Count+ " errores lexer");
         errors.RemoveAt(errors.Count-1);
-        if(errors.Count != 0)
+        if(errors.Count > 0)
         {
+            Debug.Log("Manzana");
             string joinedText = string.Join("\n", errors);
             PrintErrors(joinedText);
             return;
@@ -36,8 +38,12 @@ public class Compiler : MonoBehaviour
         Context context = new Context();
         context.turnSystem = GameObject.Find("GameManager").GetComponent<TurnSystem>();
         SemanticalCheck semanticalCheck = new SemanticalCheck(node,context,errors);
-        errors.RemoveAt(errors.Count-1);
-        if(errors.Count != 0)
+        foreach (var er in errors)
+        {
+            Debug.Log(er + " Tomatico");
+        }
+        if(errors.Count ==1) errors.RemoveAt(0);
+        if(errors.Count > 0)
         {
             string joinedText = string.Join("\n", errors);
             PrintErrors(joinedText);
