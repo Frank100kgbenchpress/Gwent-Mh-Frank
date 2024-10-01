@@ -203,11 +203,11 @@ public class TurnSystem : MonoBehaviour
             card.transform.rotation = pos;
         }
     }
-    public int TriggerPlayer()=>   isYourTurn ? 1 : 2;
-    public Hand HandOfPlayer(int player) => player == 1 ? GameObject.Find("PlayerHand").GetComponent<Hand>() : GameObject.Find("EnemyHand").GetComponent<Hand>();
-    public Deck DeckOfPlayer(int player) => player == 1 ? GameObject.Find("deckManager1").GetComponent<Deck>() : GameObject.Find("deckManager2").GetComponent<Deck>();
+    public string TriggerPlayer()=>   isYourTurn ? "Player" : "Enemy";
+    public Hand HandOfPlayer(string player) => player == "Player" ? GameObject.Find("PlayerHand").GetComponent<Hand>() : GameObject.Find("EnemyHand").GetComponent<Hand>();
+    public Deck DeckOfPlayer(string owner) => owner == "Player" ? GameObject.Find("deckManager1").GetComponent<Deck>() : GameObject.Find("deckManager2").GetComponent<Deck>();
     public Board Board()  => board;
-    public Field FieldOfPlayer(int player) => player == 1 ? GameObject.Find("UnitsZone").GetComponent<Field>() : GameObject.Find("EnemyUnitsZone").GetComponent<Field>();
-    public Graveyard GraveyardOfPlayer(int player) => player == 1 ? GameObject.Find("Graveyard1").GetComponent<Graveyard>() : GameObject.Find("Graveyard2").GetComponent<Graveyard>();
+    public Field FieldOfPlayer(string player) => player == "Player" ? GameObject.Find("UnitZones").GetComponent<Field>() : GameObject.Find("EnemyUnitsZones").GetComponent<Field>();
+    public Graveyard GraveyardOfPlayer(string player) => player == "Player" ? GameObject.Find("Graveyard1").GetComponent<Graveyard>() : GameObject.Find("Graveyard2").GetComponent<Graveyard>();
     
 }

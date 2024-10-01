@@ -26,6 +26,6 @@ MonoBehaviour:
   - Siege
   Prefab: {fileID: 6525790140606352960, guid: 720ed5cdec3092849a3ac92a6048c6d3, type: 3}
   Faction: Wyverns
-  EffectText: Decoy
+  EffectText: 
   CardImage: {fileID: 21300000, guid: 968b41f8c4c96b641bc63df99aa458bc, type: 3}
   Boost: 0

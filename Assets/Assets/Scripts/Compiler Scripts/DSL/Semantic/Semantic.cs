@@ -26,7 +26,6 @@ namespace DSL
         #region Card And Effect Semantics stuff
         void CheckCardSemantics(CardNode card)
         {
-            UnityEngine.Debug.Log("Checking card semantics");
             symbolTable.PushScope();
             CheckTypeSemantics(card.Type);
             CheckNameSemantics(card.Name,true); // to check card name
@@ -48,7 +47,6 @@ namespace DSL
         
         void CheckEffectSemantics(EffectNode effect)
         {
-            UnityEngine.Debug.Log("AssingCardPRoperties");
             symbolTable.PushScope();
             CheckNameSemantics(effect.Name,false); // check effect name
             if(effect.Params != null)    CheckParamsSemantics(effect.Params);
@@ -133,8 +131,7 @@ namespace DSL
         {
             if (predicate.Var.VariableType != Variable.Type.CARD)    Errors.Add($"Predicate variable must be of type CARD, but got {predicate.Var.VariableType}");
             symbolTable.PushScope();
-            symbolTable.DefineVariable(predicate.Var.Value, Variable.Type.CARD);
-            UnityEngine.Debug.Log(predicate.Condition + " dale");        
+            symbolTable.DefineVariable(predicate.Var.Value, Variable.Type.CARD);        
             CheckBooleanExpression(predicate.Condition);
             
             symbolTable.PopScope();
@@ -143,13 +140,7 @@ namespace DSL
         {
             foreach(var postAction in postActions)
             {
-                CheckStringExpression(postAction.Type);
-                UnityEngine.Debug.Log("ulakalaka");
-                UnityEngine.Debug.Log(Convert.ToString(postAction.Type.Evaluate(Context)));
-                UnityEngine.Debug.Log(Context.GetEffect(Convert.ToString(postAction.Type.Evaluate(Context))!).Params);
-                UnityEngine.Debug.Log(Context.GetEffect(Convert.ToString(postAction.Type.Evaluate(Context))!));
-                
-                
+                CheckStringExpression(postAction.Type);                
                 if(Context.GetEffect(Convert.ToString(postAction.Type.Evaluate(Context))!).Params != null)
                 {
                     List<Node> parammeters = Context.GetEffect(Convert.ToString(postAction.Type.Evaluate(Context))!).Params.Arguments;
@@ -417,7 +408,6 @@ namespace DSL
                             case Owner: last = Variable.Type.INT;break;
                             case Range: last = Variable.Type.RANGE;break;
                         }
-                        UnityEngine.Debug.Log(last + "varcom");
                     }
                     else if(last != Variable.Type.NULL)    Errors.Add("There needs to be a card before accessing the property");
                     else
@@ -618,7 +608,6 @@ namespace DSL
                 else if (expression is Variable variable)
                 {
                     var varType = symbolTable.LookupVariable(variable.Value);
-                    UnityEngine.Debug.Log(varType + "perico");
                     if (varType != Variable.Type.BOOL)
                     {
                         Errors.Add($"Variable '{variable.Value}' is not of type BOOL");

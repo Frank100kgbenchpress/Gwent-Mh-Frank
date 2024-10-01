@@ -38,12 +38,7 @@ namespace DSL
                 EvaluateAction(effect.Action);
                 Context.variables.Remove("targets");
             }
-            else 
-            {
-                //Context.variables["targets"] = Context.turnSystem.board.GetCards();
-                //Debug.Log(Context.turnSystem.Board().GetCards()[0].GetComponent<DisplayCard>().card.name);
-                EvaluateAction(effect.Action);
-            }       
+            else     EvaluateAction(effect.Action);  
         }
         void EvaluatePostActions(PostAction postAction,string source)
         {
@@ -69,25 +64,29 @@ namespace DSL
             }
             if(selector.Single.Value && filtredCards.Count!=0)
             {
-                List<GameObject> result = new List<GameObject>{filtredCards[0]};
+                List<GameObject> result = new List<GameObject>{filtredCards[0]}; 
                 return result;
             }
-            else    return filtredCards;
+            else
+            {
+                return filtredCards;
+            }   
         }
         List<GameObject> EvaluateSource(string source)
         {
             switch(source)
             {
                 case "hand": return Context.turnSystem.HandOfPlayer(Context.turnSystem.TriggerPlayer()).GetCards();
-                case "otherHand":if(Context.turnSystem.TriggerPlayer()==2) return Context.turnSystem.HandOfPlayer(1).GetCards();
-                else return Context.turnSystem.HandOfPlayer(2).GetCards();
+                case "otherHand":if(Context.turnSystem.TriggerPlayer()=="Enemy") return Context.turnSystem.HandOfPlayer("Player").GetCards();
+                else     return Context.turnSystem.HandOfPlayer("Enemy").GetCards();
                 case "deck": return Context.turnSystem.DeckOfPlayer(Context.turnSystem.TriggerPlayer()).GetCards();
-                case "otherDeck":if(Context.turnSystem.TriggerPlayer()==2) return Context.turnSystem.DeckOfPlayer(1).GetCards();
-                else return Context.turnSystem.DeckOfPlayer(2).GetCards();
+                case "otherDeck":if(Context.turnSystem.TriggerPlayer()=="Enemy") return Context.turnSystem.DeckOfPlayer("Player").GetCards();
+                else return Context.turnSystem.DeckOfPlayer("Enemy").GetCards();
                 case "field": return Context.turnSystem.FieldOfPlayer(Context.turnSystem.TriggerPlayer()).GetCards();
-                case "otherField":if(Context.turnSystem.TriggerPlayer()==2) return Context.turnSystem.FieldOfPlayer(1).GetCards();
-                else return Context.turnSystem.FieldOfPlayer(2).GetCards();
+                case "otherField":if(Context.turnSystem.TriggerPlayer()=="Enemy") return Context.turnSystem.FieldOfPlayer("Player").GetCards();
+                else return Context.turnSystem.FieldOfPlayer("Player").GetCards();
                 default: return Context.turnSystem.Board().GetCards();
+                
             }
         }
         void EvaluateAction(Action action) => ExecuteStmtBlock(action.Block);

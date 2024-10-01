@@ -196,6 +196,7 @@ namespace DSL
         public void Execute(Context context)
         {
             object last = null;
+            if(context.variables.ContainsKey(Value)) last = context.variables[Value];
             foreach(var arg in args.Arguments)
             {
                 if(arg is Function)
@@ -264,7 +265,6 @@ namespace DSL
 
         public void AssignValue(Context context, object value)
         {
-            
             object last = Value != null ? context.variables[Value]: null;
             foreach(var arg in args.Arguments)
             {
@@ -373,7 +373,6 @@ namespace DSL
         {
             foreach(GameObject target in context.variables["targets"] as List<GameObject>)
             {
-                Debug.Log("washipupa");
                 context.variables["target"] = target;
                 foreach(var stmt in Body.statements)
                 {
@@ -417,15 +416,15 @@ namespace DSL
             switch(FunctionName)
             {
                 case "TriggerPlayer": return context.turnSystem.TriggerPlayer();
-                case "HandOfPlayer": if(Args.Arguments[0] is Function) return context.turnSystem.HandOfPlayer(Convert.ToInt32((Args.Arguments[0] as Function).GetValue(context,value)));
-                else return context.turnSystem.HandOfPlayer(Convert.ToInt32((Args.Arguments[0] as Expression).Evaluate(context)));
-                case "DeckOfPlayer": if(Args.Arguments[0] is Function) return context.turnSystem.DeckOfPlayer(Convert.ToInt32((Args.Arguments[0] as Function).GetValue(context,value)));
-                else return context.turnSystem.DeckOfPlayer(Convert.ToInt32((Args.Arguments[0] as Expression).Evaluate(context)));
-                case "GraveyardOfPlayer": if(Args.Arguments[0] is Function) return context.turnSystem.GraveyardOfPlayer(Convert.ToInt32((Args.Arguments[0] as Function).GetValue(context,value)));
-                else return context.turnSystem.GraveyardOfPlayer(Convert.ToInt32((Args.Arguments[0] as Expression).Evaluate(context)));
-                case "FieldOfPlayer": if(Args.Arguments[0] is Function) return context.turnSystem.FieldOfPlayer(Convert.ToInt32((Args.Arguments[0] as Function).GetValue(context,value)));
-                else return context.turnSystem.FieldOfPlayer(Convert.ToInt32((Args.Arguments[0] as Expression).Evaluate(context)));
-                case "Find": (value as CardList).Find(Args.Arguments[0] as Predicate);return null;
+                case "HandOfPlayer": if(Args.Arguments[0] is Function) return context.turnSystem.HandOfPlayer(Convert.ToString((Args.Arguments[0] as Function).GetValue(context,value)));
+                else return context.turnSystem.HandOfPlayer(Convert.ToString((Args.Arguments[0] as Expression).Evaluate(context)));
+                case "DeckOfPlayer": if(Args.Arguments[0] is Function) return context.turnSystem.DeckOfPlayer(Convert.ToString((Args.Arguments[0] as Function).GetValue(context,value)));
+                else return context.turnSystem.DeckOfPlayer(Convert.ToString((Args.Arguments[0] as Expression).Evaluate(context)));
+                case "GraveyardOfPlayer": if(Args.Arguments[0] is Function) return context.turnSystem.GraveyardOfPlayer(Convert.ToString((Args.Arguments[0] as Function).GetValue(context,value)));
+                else return context.turnSystem.GraveyardOfPlayer(Convert.ToString((Args.Arguments[0] as Expression).Evaluate(context)));
+                case "FieldOfPlayer": if(Args.Arguments[0] is Function) return context.turnSystem.FieldOfPlayer(Convert.ToString((Args.Arguments[0] as Function).GetValue(context,value)));
+                else return context.turnSystem.FieldOfPlayer(Convert.ToString((Args.Arguments[0] as Expression).Evaluate(context)));
+                case "Find": return (value as CardList).Find(Args.Arguments[0] as Predicate);
                 case "Push": (value as CardList).Push((Args.Arguments[0] as Expression).Evaluate(context) as GameObject);return null;
                 case "SendBottom": (value as CardList).SendBottom((Args.Arguments[0] as Expression).Evaluate(context) as GameObject);return null;
                 case "Pop": return (value as CardList).Pop();

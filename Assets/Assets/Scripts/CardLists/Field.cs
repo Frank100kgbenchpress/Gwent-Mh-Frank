@@ -7,7 +7,20 @@ public class Field : CardList
     public override List<GameObject> GetCards()
     {
         List<GameObject> cards = new ();
-        AddCards(cards);   
+        foreach(Transform transform in Units.transform)
+        {
+            foreach(Transform trans in transform)
+            {
+                cards.Add(trans.gameObject);
+            }
+        }
+        foreach(Transform transform in Inspires.transform)
+        {
+            foreach(Transform trans in transform)
+            {
+                cards.Add(trans.gameObject);
+            }
+        }   
         return cards;
     }
     void AddCards(List<GameObject> cards)

@@ -44,18 +44,6 @@ public class effects : MonoBehaviour
         if(effectName == "CleanRow") CleanRow();
         if(effectName == "Call") CallWeather(card);
         if(effectName == "Average") Average();
-        
-        if(effectName == "Decoy")
-        {
-            decoy = GameObject.Find("GameManager").GetComponent<TurnSystem>();
-            decoy.useDecoy = true;
-            if(card.GetComponent<DisplayCard>().Owner =="Player")
-            {
-                decoy.Team = false;
-            }
-            decoy.Team = true;
-        }
-        
     }
     //efecto de subir puntos el booleano es por si es una carta aumento ya que el efecto debe ser fijo por toda la ronda y en una carta normal es solo para las que estaban
     void RowPowerUpp(GameObject cardPlayed, bool loop)

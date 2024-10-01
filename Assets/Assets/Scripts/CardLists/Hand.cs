@@ -14,7 +14,6 @@ public class Hand : CardList
     }
     public override void Push(GameObject card)
     {
-        Debug.Log("lalala");
         GameObject auxCard = Instantiate(card);
         auxCard.transform.SetParent(hand.transform);
     }

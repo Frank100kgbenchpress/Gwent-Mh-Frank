@@ -666,7 +666,6 @@ namespace DSL
         Expression ParseExpression()
         {
             var result = Equality();
-            UnityEngine.Debug.Log(result+" viagra");
             return result;
         }
         #region Types of Expressions (equality , comparison , term , factor , unary and prinary)
@@ -703,7 +702,6 @@ namespace DSL
                 Token operators = Previous();
                 Expression right = Term();
                 expression = new BinaryBooleanExpression(expression,operators,right);
-                UnityEngine.Debug.Log(expression.ToString()+ " droga");
             }
         }
         #endregion

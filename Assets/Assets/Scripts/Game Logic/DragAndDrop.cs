@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 //aqui manejo todos los eventos relacionados con poner cartas//
 
 public class DragAndDrop : MonoBehaviour 
@@ -15,6 +16,7 @@ public class DragAndDrop : MonoBehaviour
     public Draw draw;
     public Change change;
     public string PlacedZone;
+    EventTrigger eventTrigger;
 
 
     void Update()
@@ -34,7 +36,8 @@ public class DragAndDrop : MonoBehaviour
         isOverDropZone=false;
         dropZone = null;
     }
-     
+     void Start() =>    eventTrigger = GetComponent<EventTrigger>();
+    
 
     public void StartDrag()
     {
@@ -86,7 +89,10 @@ public class DragAndDrop : MonoBehaviour
             {
                 endturn.EndTurn();
             }
-
+            if (eventTrigger != null)
+            {
+                Destroy(eventTrigger);
+            }
            
         }
         else
@@ -102,6 +108,27 @@ public class DragAndDrop : MonoBehaviour
         ZoneConditions conditions = dropZone.GetComponent<ZoneConditions>(); 
         string zoneName = conditions.Zone;
         string zoneOwner = conditions.OWner.ToString();
+        if (cardZone.Type == "Decoy")
+        {
+            // Find the card in the drop zone
+            DisplayCard targetCard = dropZone.GetComponentInChildren<DisplayCard>();
+            if (targetCard != null && targetCard.Owner == cardZone.Owner && targetCard.Type != "Oro")
+            {
+                // Move the target card to the hand
+                GameObject handZone = cardZone.Owner == "Player" ? GameObject.Find("PlayerHand") : GameObject.Find("EnemyHand");
+                targetCard.transform.SetParent(handZone.transform, false);
+                targetCard.transform.position = handZone.transform.position;
+
+                // Reset the target card's stats
+                targetCard.Points = targetCard.card.Attack;
+                targetCard.AttackText.text = targetCard.Points.ToString();
+                targetCard.Boost = false;
+
+                // Allow the Decoy to be placed
+                PlacedZone = zoneName;
+                return true;
+            }
+        }
         foreach (var range in cardZone.card.Range)
         {
             if(range == zoneName && cardZone.Owner == zoneOwner && !conditions.isInspire && cardZone.card.Type != "Aumento")
@@ -119,39 +146,7 @@ public class DragAndDrop : MonoBehaviour
         return false;
     }
     //esto era para que funcione el decoy//
-    public void OnPointerClick()
-    {
-        DisplayCard cardDisplay = GetComponent<DisplayCard>();
-        TurnSystem decoy = GameObject.Find("GameManager").GetComponent<TurnSystem>();
-        if(decoy.useDecoy && decoy.Team==false)
-        {
-            if(cardDisplay.Owner=="Player" && cardDisplay.card.Type != "Oro")
-            {
-                GameObject zone1 = GameObject.Find("PlayerHand");
-                cardDisplay.Points = cardDisplay.card.Attack;
-                cardDisplay.AttackText.text = cardDisplay.Points.ToString();
-                cardDisplay.Boost = false;
-                transform.position = zone1.transform.position;
-                transform.SetParent(zone1.transform,false);
-                decoy.useDecoy = false;
-                decoy.EndTurn();
-            }
-        }
-        else if(decoy.useDecoy && decoy.Team)
-        {
-            if(cardDisplay.Owner=="Enemy" && cardDisplay.card.Type !="Oro")
-            {
-                GameObject zone1 = GameObject.Find("EnemyHand");
-                cardDisplay.Points = cardDisplay.card.Attack;
-                cardDisplay.AttackText.text = cardDisplay.Points.ToString();
-                cardDisplay.Boost = false;
-                transform.position = zone1.transform.position;
-                transform.SetParent(zone1.transform,false);
-                decoy.useDecoy = false;
-                decoy.EndTurn();
-            }
-        }
-    }
+    
     //esto es para cuando quieras cambiar cartas la toques y se cambien//
     public void ChangingCards()
     {

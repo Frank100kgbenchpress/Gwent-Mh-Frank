@@ -11,7 +11,6 @@ namespace DSL
         public Dictionary<string,object> variables = new Dictionary<string,object>();
         
         public TurnSystem turnSystem;
-
         public void AddCard(string name)
         {
             if(cards.ContainsKey(name))
